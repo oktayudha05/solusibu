@@ -1,0 +1,24 @@
+{
+  "name": "solusibu",
+  "private": true,
+  "scripts": {
+    "still": "remotion still src/index.ts Short out/still.png --frame=45 --props=public/out/props.json",
+    "render": "remotion render src/index.ts Short out/short.mp4 --props=public/out/props.json",
+    "tsc": "tsc --noEmit",
+    "cek": "python3 cek.py",
+    "repo": "git init -b main -q && git add -A && git status --short && git commit -q -m 'awal: pipeline solusibu' -m 'Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>' && gh repo create oktayudha05/solusibu --public --source=. --remote=origin --push",
+    "tts": "sh -c 'P=python3; [ -x .venv/bin/python ] && P=.venv/bin/python; exec $P tts.py \"$@\"' --",
+    "venv": "python3 -m venv .venv && .venv/bin/pip install edge-tts"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.0",
+    "@remotion/google-fonts": "^4.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "remotion": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.0",
+    "typescript": "^5.5.0"
+  }
+}

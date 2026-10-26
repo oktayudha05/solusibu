@@ -1,0 +1,48 @@
+name: render
+on:
+  push:
+    paths: ['video/*/naskah.json']
+  workflow_dispatch:
+    inputs:
+      slug:
+        description: folder di video/
+        required: true
+permissions:
+  contents: write
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg libnss3 libdbus-1-3 libatk1.0-0 libasound2t64 libxrandr2 libxkbcommon-dev libxfixes3 libxcomposite1 libxdamage1 libgbm-dev libcups2 libatk-bridge2.0-0
+          pip install edge-tts
+          npm ci
+      - name: render & release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          INPUT_SLUG: ${{ inputs.slug }}
+        run: |
+          if [ -n "$INPUT_SLUG" ]; then S="$INPUT_SLUG"
+          else S=$(git diff --name-only HEAD~1 HEAD -- 'video/*/naskah.json' 2>/dev/null || ls video/*/naskah.json)
+          fi
+          mkdir -p out
+          for s in $(echo "$S" | sed 's#^video/##; s#/naskah.json$##'); do
+            [ -f "video/$s/naskah.json" ] || continue
+            python3 tts.py "video/$s"
+            npx remotion render src/index.ts Short "out/$s.mp4" --props=public/out/props.json
+            N="video/$s/publish.md"
+            [ -f "$N" ] || { N=out/notes.md; echo "belum ada publish.md" > "$N"; }
+            gh release create "$s-${{ github.run_number }}" "out/$s.mp4" --title "$(jq -r .judul "video/$s/naskah.json")" --notes-file "$N"
+          done

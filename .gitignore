@@ -1,0 +1,6 @@
+node_modules
+out
+public/out
+.venv
+__pycache__
+agen

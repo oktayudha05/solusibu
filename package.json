@@ -6,7 +6,10 @@
     "render": "remotion render src/index.ts Short out/short.mp4 --props=public/out/props.json",
     "tsc": "tsc --noEmit",
     "cek": "python3 cek.py",
-    "repo": "git init -b main -q && git add -A && git status --short && git commit -q -m 'awal: pipeline solusibu' -m 'Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>' && gh repo create oktayudha05/solusibu --public --source=. --remote=origin --push",
+    "simpan": "git add -A && git commit -q -m \"${MSG:-update pipeline}\" -m 'Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>' && git push -q",
+    "status":"gh run list -L 3 && gh release list -L 3",
+    "ambil": "rm -rf out/rilis && gh release download -p '*.mp4' -D out/rilis && F=$(ls out/rilis/*.mp4) && ffprobe -v error -show_entries format=duration:stream=width,height -of compact $F && for t in 3 20 40; do ffmpeg -v error -y -ss $t -i $F -frames:v 1 -vf scale=540:-1 out/rilis/f$t.png; done",
+    "tunggu":"R=$(gh run list -L 1 --json databaseId -q '.[0].databaseId'); gh run watch --exit-status $R > /dev/null || gh run view $R --log-failed | tail -30; gh release list -L 3",
     "tts": "sh -c 'P=python3; [ -x .venv/bin/python ] && P=.venv/bin/python; exec $P tts.py \"$@\"' --",
     "venv": "python3 -m venv .venv && .venv/bin/pip install edge-tts"
   },

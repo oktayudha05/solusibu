@@ -3,7 +3,7 @@
   "judul": "Minyak nyiprat pas goreng? Biang keroknya air",
   "tema": "E3",
   "cek_fakta": false,
-  "catatan": "CONTOH TEKNIS. Isi belum dicek fakta oleh periset, produk affiliate dummy.",
+  "catatan": "CONTOH TEKNIS. Isi belum dicek fakta oleh periset, produk affiliate dummy. Dipakai buat bukti end-to-end Actions.",
   "adegan": [
     { "template": "hook-kejutan",
       "teks": "Pernah lagi goreng, terus minyaknya nyiprat ke tangan? Perih banget kan.",

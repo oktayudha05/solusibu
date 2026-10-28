@@ -88,7 +88,7 @@ export const Video: React.FC<Naskah> = (n) => {
   // kunci "kata" atau "kata:tampilan" (angka diucap pakai huruf, tampil sbg angka). Cuma kata kunci yg tampil di layar.
   const kata: KataK[] = adegan.flatMap((a, i) => {
     const km = new Map(a.kunci.map((k) => { const [w, tampil] = k.split(':'); return [norm(w), tampil] as [string, string | undefined] }))
-    return a.kata.map(([k, s, e]) => ({ kata: k, s, e, kunci: km.has(norm(k)), tampil: km.get(norm(k)), sampai: selesai[i] - 0.15 }))
+    return a.kata.map(([k, s, e]) => ({ kata: k, s, e, kunci: km.has(norm(k)), tampil: km.get(norm(k)), sampai: Math.min(selesai[i] - 0.15, e + 1.8) })) // ditahan maks 1,8 dtk: akhir video bersih buat loop
   })
   const frasa = kata.filter((k) => k.kunci).map((k) => [k])
   const pose = (i: number) => adegan[i].data?.karakter ?? TEMPLATE[adegan[i].template]?.pose ?? 'ibu-senyum'

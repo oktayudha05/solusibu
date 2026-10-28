@@ -240,7 +240,7 @@ const Tumbuh: React.FC<Ctx> = (c) => {
     </div>
     {d.awal && <div style={{ position: 'absolute', left: 390, top: 1350, ...fontT(c, 'display', 64), color: w.tintaPintu, textShadow: `6px 6px 0 ${w.bayangan}`, ...muncul(t, c.mulai + 0.3), transformOrigin: '0 0' }}>{d.awal}</div>}
     {Array.from({ length: n }, (_, i) => <div key={'k' + i} style={{ position: 'absolute', left: x0 + (i % KOL) * SEL, top: yBawah - (Math.floor(i / KOL) + 1) * SEL,
-      width: SEL - 10, height: SEL - 10, outline: `4px dashed ${w.catatan2}`, opacity: 0.55 * prog(t, c.mulai + 0.2 + (i % 5) * F, c.mulai + 0.5 + (i % 5) * F) }} />)}
+      width: SEL - 10, height: SEL - 10, outline: `4px dashed ${w.catatan2}`, background: `${w.catatan2}33`, opacity: 0.7 * prog(t, c.mulai + 0.2 + (i % 5) * F, c.mulai + 0.5 + (i % 5) * F) }} />)}
     {Array.from({ length: n }, (_, i) => {
       const kol = i % KOL, br = Math.floor(i / KOL), s = at + i * 1.5 * F
       return <div key={i} style={{ position: 'absolute', left: x0 + kol * SEL, top: yBawah - (br + 1) * SEL, width: SEL - 10, height: SEL - 10,
@@ -401,8 +401,9 @@ const Langkah: React.FC<Ctx> = (c) => {
     })}
     {L.map((l: any, i: number) => {
       const at = ats[i], [x, y] = g.pos(i), warna = i === aktif ? w.catatan : w.catatan2, nf = g.kol === 2 ? 100 : 130
-      if (c.t < at - 0.2) return null
-      return <div key={i} style={{ position: 'absolute', left: 0, top: 0, ...muncul(c.t, at - 0.15), transformOrigin: `${x + g.w / 2}px ${y + g.h / 2}px` }}>
+      const masuk = i === 0 ? Math.min(at - 0.15, c.mulai + 0.25) : at - 0.15 // kartu 1 bareng panggung, sisanya pas diucap
+      if (c.t < masuk - 0.05) return null
+      return <div key={i} style={{ position: 'absolute', left: 0, top: 0, ...muncul(c.t, masuk), transformOrigin: `${x + g.w / 2}px ${y + g.h / 2}px` }}>
         <Kertas tema={c.tema} t={c.t} l={x} top={y} w={g.w} h={g.h} warna={warna} seed={91 + i * 7}>
           <div style={{ position: 'absolute', left: 22, top: 0, height: g.h, display: 'flex', alignItems: 'center', ...fontT(c, 'serif', nf), color: w.kata, textShadow: misreg(w.misreg ?? w.catatan2) }}>{i + 1}</div>
           <div style={{ position: 'absolute', left: 22 + nf * 0.75, top: 0, width: g.w - 40 - nf * 0.75, height: g.h, display: 'flex', alignItems: 'center', ...fontT(c, 'display', 58), color: w.tintaCatatan }}>{l.teks}</div>

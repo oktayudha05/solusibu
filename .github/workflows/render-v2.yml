@@ -1,0 +1,99 @@
+# solusibu v2: suara (OmniVoice CPU, clone suara/referensi.wav + seed tetap) + timing kata (MMS) + render Remotion.
+# Hasil = artifact (mp4). TIDAK upload ke YouTube; upload manual oleh Oring.
+name: render-v2
+on:
+  workflow_dispatch:
+    inputs:
+      tugas:
+        type: choice
+        options: [render, kandidat-suara]
+        default: render
+      slug:
+        description: "render: nama naskah di v2/naskah/ tanpa .json"
+        required: false
+  push:
+    branches: [v2]
+    paths: ["v2/naskah/*.json", "v2/suara/**", "v2/suara.py", ".github/workflows/render-v2.yml"]
+# workflow_dispatch baru muncul kalau file ini ada di branch default (main). Selama itu, pemicunya push ke v2:
+#   naskah berubah -> render naskah itu; pesan commit ada "[kandidat-suara]" -> bikin kandidat suara.
+
+concurrency: { group: render-v2, cancel-in-progress: false }
+permissions: { contents: read }
+
+jobs:
+  cek:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: v2 } }
+    outputs: { tugas: "${{ steps.daftar.outputs.tugas }}", slug: "${{ steps.daftar.outputs.slug }}" }
+    env:
+      TUGAS: ${{ inputs.tugas || (contains(github.event.head_commit.message, '[kandidat-suara]') && 'kandidat-suara') || 'render' }}
+      SLUG: ${{ inputs.slug }}
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 2 }
+      - id: daftar
+        run: |
+          if [ "$TUGAS" = kandidat-suara ]; then echo "tugas=kandidat-suara" >> "$GITHUB_OUTPUT"; exit 0; fi
+          if [ -n "$SLUG" ]; then daftar="$SLUG"
+          else  # ponytail: cuma commit terakhir di push; push banyak commit sekaligus -> render manual per slug
+            daftar=$(git diff --relative --name-only --diff-filter=AM HEAD~1 HEAD -- naskah/ | sed -n 's#^naskah/\(.*\)\.json$#\1#p')
+          fi
+          for s in $daftar; do
+            [[ "$s" =~ ^[a-z0-9-]+$ && -f "naskah/$s.json" ]] || { echo "slug ga valid / naskah ga ada: $s"; exit 1; }
+          done
+          [ -n "$daftar" ] || { echo "ga ada naskah berubah, skip"; exit 0; }
+          { echo "tugas=render"; echo "slug=$(echo $daftar)"; } >> "$GITHUB_OUTPUT"
+
+  jalan:
+    needs: cek
+    if: needs.cek.outputs.tugas != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    defaults: { run: { working-directory: v2 } }
+    env:
+      TUGAS: ${{ needs.cek.outputs.tugas }}
+      DAFTAR: ${{ needs.cek.outputs.slug }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12", cache: pip, cache-dependency-path: v2/requirements.txt }
+      - run: |
+          pip install -q -r requirements.txt
+          sudo apt-get install -y -qq ffmpeg >/dev/null
+
+      - name: cache model (OmniVoice + MMS)
+        id: model
+        uses: actions/cache/restore@v4
+        with: { path: ~/.cache/huggingface/hub, key: hf-omnivoice-mms-v1 }
+      - name: unduh model
+        if: steps.model.outputs.cache-hit != 'true'
+        run: python -c "from huggingface_hub import snapshot_download as d; d('k2-fsa/OmniVoice'); d('MahmoudAshraf/mms-300m-1130-forced-aligner')"
+      - if: steps.model.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with: { path: ~/.cache/huggingface/hub, key: hf-omnivoice-mms-v1 }
+
+      - name: kandidat suara
+        if: env.TUGAS == 'kandidat-suara'
+        run: python suara.py --kandidat out/kandidat-suara
+      - uses: actions/upload-artifact@v4
+        if: env.TUGAS == 'kandidat-suara'
+        with: { name: kandidat-suara, path: v2/out/kandidat-suara/ }
+
+      - uses: actions/setup-node@v4
+        if: env.TUGAS == 'render'
+        with: { node-version: 22, cache: npm, cache-dependency-path: v2/remotion/package-lock.json }
+      - name: suara + render
+        if: env.TUGAS == 'render'
+        run: |
+          (cd remotion && npm ci --no-audit --no-fund && ln -sfn ../../aset public/aset && ln -sfn ../../out public/out)
+          for s in $DAFTAR; do
+            python suara.py "naskah/$s.json" "out/$s"
+            (cd remotion && npx remotion render src/index.tsx Video "../out/$s/video.mp4" --props="../out/$s/props.json")
+          done
+      - uses: actions/upload-artifact@v4
+        if: env.TUGAS == 'render'
+        with:
+          name: video-${{ github.run_number }}
+          path: |
+            v2/out/*/video.mp4
+            v2/out/*/suara-log.json

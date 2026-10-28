@@ -1,0 +1,528 @@
+[
+ {
+  "id": "ibu-senyum",
+  "file": "sprite/ibu-senyum.png",
+  "jenis": "pose",
+  "tag": [
+   "ibu",
+   "senyum",
+   "diam",
+   "netral"
+  ],
+  "ukuran": [
+   296,
+   624
+  ],
+  "catatan": "pose default"
+ },
+ {
+  "id": "ibu-jelasin",
+  "file": "sprite/ibu-jelasin.png",
+  "jenis": "pose",
+  "tag": [
+   "ibu",
+   "jelasin",
+   "tangan-terbuka",
+   "ngomong"
+  ],
+  "ukuran": [
+   368,
+   624
+  ],
+  "catatan": ""
+ },
+ {
+  "id": "ibu-nunjuk",
+  "file": "sprite/ibu-nunjuk.png",
+  "jenis": "pose",
+  "tag": [
+   "ibu",
+   "nunjuk",
+   "tunjuk",
+   "arah"
+  ],
+  "ukuran": [
+   408,
+   624
+  ],
+  "catatan": "menghadap kanan; flipH buat nunjuk kiri"
+ },
+ {
+  "id": "ibu-jempol",
+  "file": "sprite/ibu-jempol.png",
+  "jenis": "pose",
+  "tag": [
+   "ibu",
+   "jempol",
+   "setuju",
+   "berhasil"
+  ],
+  "ukuran": [
+   368,
+   624
+  ],
+  "catatan": ""
+ },
+ {
+  "id": "ibu-kaget",
+  "file": "sprite/ibu-kaget.png",
+  "jenis": "pose",
+  "tag": [
+   "ibu",
+   "kaget",
+   "syok",
+   "hook"
+  ],
+  "ukuran": [
+   384,
+   616
+  ],
+  "catatan": ""
+ },
+ {
+  "id": "ibu-mikir",
+  "file": "sprite/ibu-mikir.png",
+  "jenis": "pose",
+  "tag": [
+   "ibu",
+   "mikir",
+   "bingung",
+   "tanya"
+  ],
+  "ukuran": [
+   296,
+   624
+  ],
+  "catatan": ""
+ },
+ {
+  "id": "ibu-wajan",
+  "file": "sprite/ibu-wajan.png",
+  "jenis": "pose",
+  "tag": [
+   "ibu",
+   "masak",
+   "pegang-wajan",
+   "dapur"
+  ],
+  "ukuran": [
+   448,
+   616
+  ],
+  "catatan": ""
+ },
+ {
+  "id": "ibu-tepok-jidat",
+  "file": "sprite/ibu-tepok-jidat.png",
+  "jenis": "pose",
+  "tag": [
+   "ibu",
+   "salah",
+   "malu",
+   "lupa",
+   "facepalm"
+  ],
+  "ukuran": [
+   304,
+   608
+  ],
+  "catatan": ""
+ },
+ {
+  "id": "anak-diam",
+  "file": "sprite/anak-diam.png",
+  "jenis": "pose",
+  "tag": [
+   "anak",
+   "diam",
+   "netral"
+  ],
+  "ukuran": [
+   304,
+   552
+  ],
+  "catatan": ""
+ },
+ {
+  "id": "anak-lari",
+  "file": "sprite/anak-lari.png",
+  "jenis": "pose",
+  "tag": [
+   "anak",
+   "lari",
+   "buru-buru"
+  ],
+  "ukuran": [
+   400,
+   552
+  ],
+  "catatan": ""
+ },
+ {
+  "id": "anak-numpahin",
+  "file": "sprite/anak-numpahin.png",
+  "jenis": "pose",
+  "tag": [
+   "anak",
+   "tumpah",
+   "air",
+   "jatuh",
+   "salah"
+  ],
+  "ukuran": [
+   600,
+   504
+  ],
+  "catatan": "gelas tumpah"
+ },
+ {
+  "id": "anak-nangis",
+  "file": "sprite/anak-nangis.png",
+  "jenis": "pose",
+  "tag": [
+   "anak",
+   "nangis",
+   "sedih"
+  ],
+  "ukuran": [
+   448,
+   504
+  ],
+  "catatan": ""
+ },
+ {
+  "id": "anak-senang",
+  "file": "sprite/anak-senang.png",
+  "jenis": "pose",
+  "tag": [
+   "anak",
+   "senang",
+   "horee",
+   "berhasil"
+  ],
+  "ukuran": [
+   448,
+   536
+  ],
+  "catatan": ""
+ },
+ {
+  "id": "nenek-senyum",
+  "file": "sprite/nenek-senyum.png",
+  "jenis": "pose",
+  "tag": [
+   "nenek",
+   "senyum",
+   "netral",
+   "sutil"
+  ],
+  "ukuran": [
+   256,
+   448
+  ],
+  "catatan": ""
+ },
+ {
+  "id": "nenek-nasihat",
+  "file": "sprite/nenek-nasihat.png",
+  "jenis": "pose",
+  "tag": [
+   "nenek",
+   "nasihat",
+   "tips",
+   "jari-atas"
+  ],
+  "ukuran": [
+   320,
+   448
+  ],
+  "catatan": ""
+ },
+ {
+  "id": "nenek-ketawa",
+  "file": "sprite/nenek-ketawa.png",
+  "jenis": "pose",
+  "tag": [
+   "nenek",
+   "ketawa",
+   "senang"
+  ],
+  "ukuran": [
+   320,
+   448
+  ],
+  "catatan": ""
+ },
+ {
+  "id": "nenek-tersipu",
+  "file": "sprite/nenek-tersipu.png",
+  "jenis": "pose",
+  "tag": [
+   "nenek",
+   "malu",
+   "tersipu"
+  ],
+  "ukuran": [
+   264,
+   424
+  ],
+  "catatan": ""
+ },
+ {
+  "id": "nenek-mikir",
+  "file": "sprite/nenek-mikir.png",
+  "jenis": "pose",
+  "tag": [
+   "nenek",
+   "mikir",
+   "ragu"
+  ],
+  "ukuran": [
+   304,
+   416
+  ],
+  "catatan": ""
+ },
+ {
+  "id": "wajan-minyak",
+  "file": "sprite/wajan-minyak.png",
+  "jenis": "properti",
+  "tag": [
+   "dapur",
+   "wajan",
+   "minyak",
+   "goreng",
+   "masak"
+  ],
+  "ukuran": [
+   304,
+   288
+  ],
+  "catatan": ""
+ },
+ {
+  "id": "rice-cooker",
+  "file": "sprite/rice-cooker.png",
+  "jenis": "properti",
+  "tag": [
+   "dapur",
+   "nasi",
+   "rice-cooker",
+   "magicom"
+  ],
+  "ukuran": [
+   296,
+   304
+  ],
+  "catatan": ""
+ },
+ {
+  "id": "nasi-piring",
+  "file": "sprite/nasi-piring.png",
+  "jenis": "properti",
+  "tag": [
+   "dapur",
+   "nasi",
+   "piring",
+   "makan"
+  ],
+  "ukuran": [
+   296,
+   224
+  ],
+  "catatan": ""
+ },
+ {
+  "id": "kompor",
+  "file": "sprite/kompor.png",
+  "jenis": "properti",
+  "tag": [
+   "dapur",
+   "kompor",
+   "gas",
+   "api"
+  ],
+  "ukuran": [
+   304,
+   272
+  ],
+  "catatan": ""
+ },
+ {
+  "id": "sabun-cuci",
+  "file": "sprite/sabun-cuci.png",
+  "jenis": "properti",
+  "tag": [
+   "dapur",
+   "sabun",
+   "cuci-piring",
+   "botol"
+  ],
+  "ukuran": [
+   160,
+   352
+  ],
+  "catatan": ""
+ },
+ {
+  "id": "keset",
+  "file": "sprite/keset.png",
+  "jenis": "properti",
+  "tag": [
+   "dapur",
+   "keset",
+   "bau",
+   "lantai",
+   "welcome"
+  ],
+  "ukuran": [
+   352,
+   224
+  ],
+  "catatan": "tulisan WELCOME"
+ },
+ {
+  "id": "lemon",
+  "file": "sprite/lemon.png",
+  "jenis": "properti",
+  "tag": [
+   "dapur",
+   "lemon",
+   "jeruk",
+   "asam"
+  ],
+  "ukuran": [
+   216,
+   264
+  ],
+  "catatan": "kuning terang, warnai ulang kalau perlu"
+ },
+ {
+  "id": "baking-soda",
+  "file": "sprite/baking-soda.png",
+  "jenis": "properti",
+  "tag": [
+   "dapur",
+   "baking-soda",
+   "soda-kue",
+   "bersih"
+  ],
+  "ukuran": [
+   248,
+   312
+  ],
+  "catatan": "tulisan BAKING SODA"
+ },
+ {
+  "id": "cuka",
+  "file": "sprite/cuka.png",
+  "jenis": "properti",
+  "tag": [
+   "dapur",
+   "cuka",
+   "asam",
+   "botol",
+   "bersih"
+  ],
+  "ukuran": [
+   160,
+   376
+  ],
+  "catatan": "tulisan CUKA"
+ },
+ {
+  "id": "garam",
+  "file": "sprite/garam.png",
+  "jenis": "properti",
+  "tag": [
+   "dapur",
+   "garam",
+   "toples"
+  ],
+  "ukuran": [
+   200,
+   296
+  ],
+  "catatan": "tulisan GARAM"
+ },
+ {
+  "id": "spons",
+  "file": "sprite/spons.png",
+  "jenis": "properti",
+  "tag": [
+   "dapur",
+   "spons",
+   "cuci-piring"
+  ],
+  "ukuran": [
+   296,
+   256
+  ],
+  "catatan": ""
+ },
+ {
+  "id": "tong-sampah",
+  "file": "sprite/tong-sampah.png",
+  "jenis": "properti",
+  "tag": [
+   "dapur",
+   "sampah",
+   "tong",
+   "buang"
+  ],
+  "ukuran": [
+   248,
+   352
+  ],
+  "catatan": ""
+ },
+ {
+  "id": "tetes-air",
+  "file": "sprite/tetes-air.png",
+  "jenis": "properti",
+  "tag": [
+   "dapur",
+   "air",
+   "tetes",
+   "basah"
+  ],
+  "ukuran": [
+   160,
+   248
+  ],
+  "catatan": "biru, warnai ulang ikut palet"
+ },
+ {
+  "id": "asap",
+  "file": "sprite/asap.png",
+  "jenis": "properti",
+  "tag": [
+   "dapur",
+   "asap",
+   "uap",
+   "bau",
+   "panas"
+  ],
+  "ukuran": [
+   248,
+   272
+  ],
+  "catatan": ""
+ },
+ {
+  "id": "ciprat-minyak",
+  "file": "sprite/ciprat-minyak.png",
+  "jenis": "properti",
+  "tag": [
+   "dapur",
+   "ciprat",
+   "minyak",
+   "muncrat"
+  ],
+  "ukuran": [
+   256,
+   264
+  ],
+  "catatan": "kuning, warnai ulang ikut palet"
+ }
+]

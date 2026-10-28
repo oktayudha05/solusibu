@@ -1,0 +1,6 @@
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.8.0+cpu
+torchaudio==2.8.0+cpu
+omnivoice==0.2.1
+soundfile==0.14.0
+ctc-forced-aligner @ git+https://github.com/MahmoudAshraf97/ctc-forced-aligner.git@64293cc6d711e57666c4a8b098e9fd93b381fd88

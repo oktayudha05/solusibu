@@ -1,7 +1,4 @@
 node_modules
-vendor
 out
-public/out
 .venv
 __pycache__
-agen

@@ -1,0 +1,7 @@
+file 'assets/p0.wav'
+file 'assets/p1.wav'
+file 'assets/p2.wav'
+file 'assets/p3.wav'
+file 'assets/p4.wav'
+file 'assets/p5.wav'
+file 'assets/p6.wav'

@@ -1,0 +1,34 @@
+{
+  "judul": "Nasi semalam ga bau, aman ga?",
+  "suara": "id-ID-GadisNeural",
+  "kecepatan": "+5%",
+  "adegan": [
+    {"narasi": "Nasi semalam, dicium ga bau. Kamu makan atau buang?",
+     "visual": {"jenis": "hook", "teks": "Nasi ga bau = aman?",
+                "deskripsi": "Sendok menggantung di atas semangkuk nasi, hidung mengendus. Jawaban sengaja ditahan."}},
+    {"narasi": "Kelihatannya normal. Baunya normal. Rasanya juga normal. Tapi belum tentu aman.",
+     "visual": {"jenis": "ikon", "ikon": "silang", "teks": "Normal, tapi belum tentu *aman*",
+                "deskripsi": "Nasi tampak normal, tiga centang kecil (lihat, cium, rasa) muncul, lalu silang merah besar menimpa."}},
+    {"narasi": "Beras bawa kuman yang tahan panas. Dimasak ga mati semua. Pas nasi dingin pelan di meja, mereka bangun.",
+     "visual": {"jenis": "ikon", "ikon": "termometer", "teks": "*Spora* tahan panas, bangun pas nasi dingin pelan", "gerak": "pulse",
+                "deskripsi": "Butir nasi dibelah, titik spora tetap duduk saat api lewat. Jarum termometer turun pelan, titiknya membesar."}},
+    {"narasi": "Di suhu ruang, kumannya terus berkembang biak.",
+     "visual": {"jenis": "ikon", "ikon": "jam", "teks": "Di suhu ruang, kuman terus *berkembang*", "gerak": "pulse",
+                "deskripsi": "Jam dinding berputar pelan, titik kuman kecil di atas nasi bertambah sedikit demi sedikit."}},
+    {"narasi": "Jadi habis masak, jangan didinginin di dalam rice cooker. Sendok ke wadah kecil, sekitar satu jam, masuk kulkas.",
+     "visual": {"jenis": "diagram", "judul": "Habis masak",
+                "langkah": [
+                  {"ikon": "nasi", "label": "Sendok ke wadah *kecil*"},
+                  {"ikon": "jam", "label": "Dalam sekitar 1 jam"},
+                  {"ikon": "es", "label": "Masuk kulkas"}],
+                "deskripsi": "Rice cooker disilang, tangan menyendok nasi ke wadah dangkal, jam berputar ke angka 1, wadah masuk kulkas."}},
+    {"narasi": "Di kulkas habiskan sehari. Panasin sekali aja.",
+     "visual": {"jenis": "poin", "judul": "Setelah disimpan",
+                "poin": ["Kulkas: habiskan sehari", "Panasin sekali, sampai mengepul", "Bonus: bekukan per porsi"],
+                "deskripsi": "Dua ikon utama muncul berurutan: kulkas lalu uap mengepul. Baris bonus freezer muncul pelan dan lebih redup."}},
+    {"narasi": "Cukup ingat satu: sejam habis masak, nasi masuk kulkas. Simpan, biar pas nasi semalam bikin ragu, kamu tinggal buka lagi.",
+     "visual": {"jenis": "penutup", "teks": "Sejam habis masak, masuk kulkas.",
+                "ajakan": ["Simpan buat pas ragu sama nasi semalam"],
+                "deskripsi": "Jam menunjuk angka 1, nasi dalam wadah masuk kulkas. Tahan frame ini sekitar 2 dtk tanpa narasi supaya bisa di-screenshot."}}
+  ]
+}

@@ -10,7 +10,13 @@ JENIS = {
     "banding": ["kiri", "kanan"],
     "angka": ["angka", "teks"],
     "aff": ["produk", "teks"],
+    "diagram": ["langkah"],
+    "ikon": ["ikon", "teks"],
+    "penutup": ["teks"],
 }
+# harus sinkron dengan NAMA_IKON di src/Ikon.tsx
+IKON = {"tetes", "wajan", "api", "nasi", "termometer", "uap", "es", "percikan", "mengembang", "minyak", "jam", "centang", "silang", "simpan", "ikuti"}
+GERAK = {"goyang", "pulse", "melayang"}
 KATA_PER_DTK = 2.5
 
 
@@ -24,6 +30,7 @@ def periksa(n):
         return err + ["'adegan' wajib list, minimal 1"]
     kata = 0
     aff = []
+    penutup = []
     for i, a in enumerate(ad):
         w = f"adegan {i + 1}"
         nar, v = a.get("narasi"), a.get("visual")
@@ -41,6 +48,26 @@ def periksa(n):
                 s = v.get(sisi)
                 if isinstance(s, dict) and not (s.get("label") and s.get("teks")):
                     err.append(f"{w}: '{sisi}' wajib punya label & teks")
+        if v["jenis"] == "diagram":
+            ls = v.get("langkah")
+            if not isinstance(ls, list) or not 2 <= len(ls) <= 4:
+                err.append(f"{w}: diagram 'langkah' harus list 2-4 item")
+            else:
+                for j, l in enumerate(ls):
+                    if not isinstance(l, dict) or not l.get("label"):
+                        err.append(f"{w}: langkah {j + 1} wajib punya 'label'")
+                    elif l.get("ikon") is not None and l["ikon"] not in IKON:
+                        err.append(f"{w}: langkah {j + 1} ikon '{l['ikon']}' ga ada, pilih {sorted(IKON)}")
+        if v["jenis"] == "ikon":
+            if v.get("ikon") not in IKON:
+                err.append(f"{w}: ikon '{v.get('ikon')}' ga ada, pilih {sorted(IKON)}")
+            if v.get("gerak") is not None and v["gerak"] not in GERAK:
+                err.append(f"{w}: gerak harus salah satu {sorted(GERAK)}")
+        if v["jenis"] == "penutup":
+            penutup.append(i)
+            aj = v.get("ajakan")
+            if aj is not None and not (isinstance(aj, list) and aj and all(isinstance(x, str) and x for x in aj)):
+                err.append(f"{w}: penutup 'ajakan' harus list string (opsional)")
         if "link di deskripsi" in (nar + json.dumps(v, ensure_ascii=False)).lower():
             err.append(f"{w}: jangan 'link di deskripsi' (ga bisa diklik di Shorts), pakai 'link di profil'")
         if v["jenis"] == "aff":
@@ -50,8 +77,11 @@ def periksa(n):
         kata += len(nar.split())
     if len(aff) > 1:
         err.append(f"aff maks 1, ketemu {len(aff)}")
-    if aff and aff[0] != len(ad) - 1:
-        err.append("adegan aff harus yang terakhir")
+    if len(penutup) > 1 or (penutup and penutup[0] != len(ad) - 1):
+        err.append("penutup maks 1 dan harus adegan terakhir")
+    akhir = len(ad) - 1 - len(penutup)  # aff terakhir, atau tepat sebelum penutup
+    if aff and aff[0] != akhir:
+        err.append("adegan aff harus yang terakhir (atau tepat sebelum penutup)")
     dtk = kata / KATA_PER_DTK
     if not 30 <= dtk <= 60:
         err.append(f"estimasi durasi {dtk:.0f} dtk ({kata} kata), harus 30-60 dtk")
@@ -74,6 +104,18 @@ def tes():
     assert periksa(base(aff("afiliasi"), isi(90)))  # aff bukan terakhir
     assert periksa(base(isi(90), aff("afiliasi"), aff("afiliasi")))  # aff > 1
     assert periksa(base(isi(80), aff("afiliasi, link di deskripsi")))
+    tutup = adegan("simpan ya", {"jenis": "penutup", "teks": "t"})
+    dia = lambda ls: adegan("x", {"jenis": "diagram", "langkah": ls})
+    ok2 = [{"label": "a", "ikon": "tetes"}, {"label": "b"}]
+    assert periksa(base(isi(90), dia(ok2), tutup)) == []
+    assert periksa(base(isi(90), adegan("x", {"jenis": "ikon", "ikon": "wajan", "teks": "t"}))) == []
+    assert periksa(base(isi(90), aff("afiliasi"), tutup)) == []  # aff sebelum penutup
+    assert periksa(base(isi(90), dia(ok2[:1])))  # kurang dari 2 langkah
+    assert periksa(base(isi(90), dia([{"label": "a", "ikon": "ngawur"}, {"label": "b"}])))
+    assert periksa(base(isi(90), adegan("x", {"jenis": "ikon", "ikon": "ngawur", "teks": "t"})))
+    assert periksa(base(tutup, isi(90)))  # penutup bukan terakhir
+    assert periksa(base(isi(90), tutup, tutup))  # penutup > 1
+    assert periksa(base(isi(90), tutup, aff("afiliasi")))  # aff setelah penutup
     assert periksa({"adegan": []})
     print("tes cek.py lolos")
 

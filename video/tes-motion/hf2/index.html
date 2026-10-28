@@ -1,0 +1,807 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1080, height=1920" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<style>
+@font-face{font-family:'Montserrat';font-weight:800;src:url('assets/fonts/mont-800.ttf')}
+@font-face{font-family:'Poppins';font-weight:700;src:url('assets/fonts/pop-700.ttf')}
+@font-face{font-family:'Poppins';font-weight:600;src:url('assets/fonts/pop-600.ttf')}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:1080px;height:1920px;overflow:hidden;background:#1E1A17}
+#root{position:absolute;inset:0;overflow:hidden;background:#1E1A17}
+.scn{position:absolute;inset:0;overflow:hidden}
+.world{position:absolute;inset:0}
+.world svg{position:absolute;inset:0;width:1080px;height:1920px}
+#defs{position:absolute;width:0;height:0}
+/* judul: Montserrat ExtraBold, zona aman x48-888, y>=288 */
+.ttl{position:absolute;left:48px;width:840px;top:300px;text-align:center;font-family:'Montserrat',sans-serif;font-weight:800;line-height:1.04;letter-spacing:-.01em;text-transform:uppercase}
+.ttl .ln{display:block;white-space:nowrap}
+.s88{font-size:88px}
+.ttl .w{display:inline-block;opacity:0}
+.tA,.tC{text-shadow:3px 3px 0 #141010,-3px 3px 0 #141010,3px -3px 0 #141010,-3px -3px 0 #141010,0 8px 18px rgba(0,0,0,.65)}
+.tA{color:#F6EBD9}.tA .hl{color:#E8A33D}
+.tC{color:#EDEFEA}.tC .hl{color:#F0B73A}
+.tB{color:#2B2623;text-shadow:2px 2px 0 #F4EDE1,-2px 2px 0 #F4EDE1,2px -2px 0 #F4EDE1,-2px -2px 0 #F4EDE1}.tB .hl{color:#D9482B}
+.sm{font-family:'Poppins',sans-serif;font-weight:700;text-transform:none;letter-spacing:0}
+.s60{font-size:60px}.s100{font-size:100px}.s110{font-size:110px}.s120{font-size:120px}.s130{font-size:130px}.s150{font-size:150px}.s170{font-size:170px}
+#grain{position:absolute;inset:-60px;background:url('assets/grain.png');opacity:.10;mix-blend-mode:soft-light;pointer-events:none}
+#vig{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 45%,rgba(0,0,0,0) 55%,rgba(0,0,0,.42) 100%);pointer-events:none}
+#lens{position:absolute;inset:0;width:1080px;height:1920px;pointer-events:none}
+/* caption: Poppins Bold, di atas y=1248 */
+#cap{position:absolute;left:48px;width:840px;top:1050px;height:190px;--bg:rgba(30,26,23,.74);--fg:#F6EBD9;--hi:#E8A33D}
+.cg{position:absolute;left:0;right:0;bottom:0;text-align:center;opacity:0;font-family:'Poppins',sans-serif;font-weight:700;font-size:62px;line-height:1.14;color:var(--fg);background:var(--bg);border-radius:34px;padding:14px 26px}
+.cg b{font-weight:700}
+</style>
+</head>
+<body>
+<svg id="defs" xmlns="http://www.w3.org/2000/svg" width="0" height="0">
+<defs>
+ <linearGradient id="gMetal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C3C8CA"/><stop offset=".45" stop-color="#7C8386"/><stop offset="1" stop-color="#3A4043"/></linearGradient>
+ <linearGradient id="gMetalD" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3A4043"/><stop offset="1" stop-color="#151718"/></linearGradient>
+ <radialGradient id="gInner" cx=".5" cy=".25" r=".85"><stop offset="0" stop-color="#454B4E"/><stop offset="1" stop-color="#101213"/></radialGradient>
+ <radialGradient id="gOilA" cx=".5" cy=".3" r=".8"><stop offset="0" stop-color="#FFD98F"/><stop offset=".5" stop-color="#E8A33D"/><stop offset="1" stop-color="#8E5514"/></radialGradient>
+ <radialGradient id="gOilB" cx=".5" cy=".3" r=".8"><stop offset="0" stop-color="#FFE9A8"/><stop offset=".5" stop-color="#E3B04B"/><stop offset="1" stop-color="#A87A22"/></radialGradient>
+ <linearGradient id="gOilV" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F6C35A"/><stop offset=".4" stop-color="#C98A24"/><stop offset="1" stop-color="#6B3F0E"/></linearGradient>
+ <linearGradient id="gOilDeep" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C98A24"/><stop offset=".6" stop-color="#7B4A10"/><stop offset="1" stop-color="#3A220A"/></linearGradient>
+ <radialGradient id="gWater" cx=".38" cy=".35" r=".75"><stop offset="0" stop-color="#F4FEFF"/><stop offset=".3" stop-color="#A9E0EA"/><stop offset=".75" stop-color="#3E9EB6"/><stop offset="1" stop-color="#1D6A82"/></radialGradient>
+ <radialGradient id="gDrop" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#FFF1C2"/><stop offset=".35" stop-color="#F0B73A"/><stop offset="1" stop-color="#A8661A"/></radialGradient>
+ <radialGradient id="gBubble" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#EDEFEA" stop-opacity=".06"/><stop offset=".72" stop-color="#EDEFEA" stop-opacity=".2"/><stop offset=".93" stop-color="#EDEFEA" stop-opacity=".8"/><stop offset="1" stop-color="#EDEFEA" stop-opacity=".25"/></radialGradient>
+ <linearGradient id="gFlame" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF3C4"/><stop offset=".35" stop-color="#FFC24B"/><stop offset=".72" stop-color="#F26B21"/><stop offset="1" stop-color="#C8372D" stop-opacity="0"/></linearGradient>
+ <radialGradient id="gGlow" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#F26B21" stop-opacity=".7"/><stop offset="1" stop-color="#F26B21" stop-opacity="0"/></radialGradient>
+ <linearGradient id="gGas" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F28C28" stop-opacity=".95"/><stop offset=".22" stop-color="#FFC46B" stop-opacity=".8"/><stop offset=".4" stop-color="#7FB2FF" stop-opacity=".9"/><stop offset="1" stop-color="#2A52C9" stop-opacity=".95"/></linearGradient>
+ <radialGradient id="gLight"cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#FFFFFF" stop-opacity=".85"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/></radialGradient>
+ <linearGradient id="gWood" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#B98A5E"/><stop offset="1" stop-color="#7A5233"/></linearGradient>
+ <radialGradient id="gChick" cx=".4" cy=".3" r=".85"><stop offset="0" stop-color="#F7D2BE"/><stop offset=".55" stop-color="#E3A58D"/><stop offset="1" stop-color="#B9735E"/></radialGradient>
+ <linearGradient id="gBone" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FBF3E4"/><stop offset="1" stop-color="#D4C2A5"/></linearGradient>
+ <linearGradient id="gTissue" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#E9E3D6"/></linearGradient>
+ <radialGradient id="gPlate" cx=".5" cy=".4" r=".6"><stop offset="0" stop-color="#FFFBF2"/><stop offset="1" stop-color="#E3D9C6"/></radialGradient>
+ <linearGradient id="gTeal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2A5A5E"/><stop offset="1" stop-color="#14292B"/></linearGradient>
+ <linearGradient id="gGlass" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity=".28"/><stop offset=".25" stop-color="#fff" stop-opacity=".04"/><stop offset=".8" stop-color="#fff" stop-opacity=".04"/><stop offset="1" stop-color="#fff" stop-opacity=".22"/></linearGradient>
+ <filter id="fWob" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence id="tbW" type="fractalNoise" baseFrequency=".016" numOctaves="2" seed="2" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G"/></filter>
+ <filter id="fHeat" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence id="tbH" type="turbulence" baseFrequency="0.008 0.02" numOctaves="1" seed="4" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="26" xChannelSelector="R" yChannelSelector="G"/></filter>
+ <filter id="fHeat2" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence id="tbH2" type="turbulence" baseFrequency="0.006 0.015" numOctaves="1" seed="9" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="12" xChannelSelector="R" yChannelSelector="G"/></filter>
+ <linearGradient id="gStreak" x1="1" y1="0" x2="0" y2="0"><stop offset="0" stop-color="#F7BE55"/><stop offset=".35" stop-color="#E8A33D"/><stop offset="1" stop-color="#C98A24" stop-opacity=".12"/></linearGradient>
+ <pattern id="pQuilt" width="26" height="26" patternUnits="userSpaceOnUse"><path d="M0,13 L13,0 L26,13 L13,26Z" fill="none" stroke="#CFC6B2" stroke-width="1.6"/><circle cx="13" cy="13" r="2.2" fill="#D9D0BC"/></pattern>
+ <linearGradient id="gSkin" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F0C7A8"/><stop offset="1" stop-color="#D9A381"/></linearGradient>
+ <filter id="fB6"><feGaussianBlur stdDeviation="6"/></filter>
+ <filter id="fB14" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="14"/></filter>
+ <filter id="fB30" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="30"/></filter>
+</defs>
+</svg>
+
+<div id="root" data-composition-id="main" data-start="0" data-duration="42.51" data-width="1080" data-height="1920">
+
+<div id="sc_hook" class="scn clip" data-start="0" data-duration="4.18" data-track-index="1"><div class="world"><svg viewBox="0 0 1080 1920"></svg></div></div>
+<div id="sc_hot" class="scn clip" data-start="4.18" data-duration="2.82" data-track-index="1"><div class="world"><svg viewBox="0 0 1080 1920"></svg></div></div>
+<div id="sc_therm" class="scn clip" data-start="7" data-duration="5.164" data-track-index="1"><div class="world"><svg viewBox="0 0 1080 1920"></svg></div></div>
+<div id="sc_glass" class="scn clip" data-start="12.164" data-duration="2.736" data-track-index="1"><div class="world"><svg viewBox="0 0 1080 1920"></svg></div></div>
+<div id="sc_sink" class="scn clip" data-start="14.9" data-duration="4.284" data-track-index="1"><div class="world"><svg viewBox="0 0 1080 1920"></svg></div></div>
+<div id="sc_steam" class="scn clip" data-start="19.184" data-duration="5.172" data-track-index="1"><div class="world"><svg viewBox="0 0 1080 1920"></svg></div></div>
+<div id="sc_grow" class="scn clip" data-start="24.356" data-duration="3.644" data-track-index="1"><div class="world"><svg viewBox="0 0 1080 1920"></svg></div></div>
+<div id="sc_burst" class="scn clip" data-start="28" data-duration="2.662" data-track-index="1"><div class="world"><svg viewBox="0 0 1080 1920"></svg></div></div>
+<div id="sc_dry" class="scn clip" data-start="30.662" data-duration="4.538" data-track-index="1"><div class="world"><svg viewBox="0 0 1080 1920"></svg></div></div>
+<div id="sc_slide" class="scn clip" data-start="35.2" data-duration="3.854" data-track-index="1"><div class="world"><svg viewBox="0 0 1080 1920"></svg></div></div>
+<div id="sc_end" class="scn clip" data-start="39.054" data-duration="3.456" data-track-index="1"><div class="world"><svg viewBox="0 0 1080 1920"></svg></div></div>
+
+<!-- judul per beat (HUD, tidak ikut kamera) -->
+<div id="t_hook" class="ttl tA clip" data-start="0" data-duration="4.18" data-track-index="2"><span class="ln s130"><span class="w">Kenapa</span></span><span class="ln s150"><span class="w hl">Muncrat?</span></span></div>
+<div id="t_hot" class="ttl tA clip" data-start="4.18" data-duration="2.82" data-track-index="2"><span class="ln s170"><span class="w hl">Panas</span></span><span class="ln s150"><span class="w">banget</span></span></div>
+<div id="t_therm" class="ttl tA clip" data-start="7" data-duration="5.164" data-track-index="2"><span class="ln sm s60" style="margin-bottom:6px"><span class="w">suhu minyak, sekitar</span></span><span class="ln s130"><span class="w hl">160–190°C</span></span></div>
+<div id="t_glass" class="ttl tC clip" data-start="12.164" data-duration="2.736" data-track-index="2"><span class="ln s100"><span class="w">Air lebih</span></span><span class="ln s130"><span class="w hl">berat</span></span></div>
+<div id="t_sink" class="ttl tC clip" data-start="14.9" data-duration="4.284" data-track-index="2"><span class="ln s130"><span class="w hl">Tenggelam</span></span></div>
+<div id="t_steam1" class="ttl tC clip" data-start="19.184" data-duration="2.7" data-track-index="2"><span class="ln s100"><span class="w">Di dasar</span></span><span class="ln s100"><span class="w">yang panas</span></span></div>
+<div id="t_steam2" class="ttl tC clip" data-start="21.8" data-duration="2.556" data-track-index="2"><span class="ln s170"><span class="w hl">Jadi uap</span></span><span class="ln sm s60"><span class="w">dalam sekejap</span></span></div>
+<div id="t_grow" class="ttl tC clip" data-start="24.356" data-duration="3.644" data-track-index="2"><span class="ln sm s60"><span class="w">mengembang sekitar</span></span><span class="ln s150"><span class="w hl" id="num">1×</span></span></div>
+<div id="t_burst" class="ttl tA clip" data-start="28.4" data-duration="2.262" data-track-index="2"><span class="ln s150"><span class="w hl">Muncrat!</span></span></div>
+<div id="t_dry" class="ttl tB clip" data-start="30.662" data-duration="4.538" data-track-index="2"><span class="ln s110"><span class="w hl">Keringkan</span></span><span class="ln s110"><span class="w">dulu</span></span></div>
+<div id="t_slide" class="ttl tB clip" data-start="35.2" data-duration="3.854" data-track-index="2"><span class="ln s110"><span class="w hl">Pelan-pelan</span></span><span class="ln sm s60"><span class="w">dari sisi wajan</span></span></div>
+<div id="t_end" class="ttl tB clip" data-start="39.054" data-duration="3.456" data-track-index="2"><span class="ln s88"><span class="w">Kering dulu,</span></span><span class="ln s88"><span class="w hl">baru masuk.</span></span></div>
+
+<svg id="lens" class="clip" data-start="0" data-duration="42.51" data-track-index="3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920"></svg>
+<div id="vig" class="clip" data-start="0" data-duration="42.51" data-track-index="4"></div>
+<div id="grain" class="clip" data-start="0" data-duration="42.51" data-track-index="5"></div>
+<div id="cap" class="clip" data-start="0" data-duration="42.51" data-track-index="6"></div>
+<audio id="mix" src="assets/mix.wav" data-start="0" data-duration="42.51" data-track-index="9"></audio>
+</div>
+
+<script>
+const TIMING=[{"mulai":0,"durasi":4.182,"kata":[["Kenapa",0.1,0.588083],["minyak",0.588083,0.909499],["panas",0.909541,1.278582],["muncrat",1.278583,1.790499],["kalau",2.1,2.44525],["kena",2.44525,2.742875],["air",2.742875,3.230958]]},{"mulai":4.182,"durasi":7.982,"kata":[["Minyak",0.1,0.540458],["goreng",0.540458,0.826166],["itu",0.826208,1.183333],["panas",1.183333,1.611916],["banget",1.611916,2.064291],["Sekitar",2.859541,3.419041],["seratus",3.419041,3.883332],["enam",3.883333,4.252374],["puluh",4.252375,4.728583],["sampai",4.728583,5.133333],["seratus",5.133333,5.609541],["sembilan",5.609541,6.049999],["puluh",6.05,6.347625],["derajat",6.347625,6.835708]]},{"mulai":12.164,"durasi":7.02,"kata":[["Air",0.1,0.492875],["lebih",0.492875,0.814291],["berat",0.814291,1.159541],["dari",1.159541,1.480957],["minyak",1.480958,1.921416],["Jadi",2.716666,3.359541],["tetesnya",3.70475,4.228541],["tenggelam",4.228583,4.728583],["sampai",4.728583,5.192874],["ke",5.192875,5.323791],["dasar",5.323791,5.919041]]},{"mulai":19.184,"durasi":5.172,"kata":[["Di",0.1,0.290458],["dasar",0.290458,0.659499],["yang",0.659541,0.826207],["panas",0.826208,1.385749],["air",1.707125,1.969041],["berubah",1.969041,2.457124],["jadi",2.457125,2.730916],["uap",2.730958,3.159541],["dalam",3.159541,3.552374],["sekejap",3.552375,4.064291]]},{"mulai":24.356,"durasi":6.306,"kata":[["Uap",0.1,0.409541],["mengembang",0.409541,0.861916],["sekitar",0.861916,1.266666],["seribu",1.266666,1.707124],["enam",1.707125,2.076166],["ratus",2.076208,2.361916],["kali",2.361916,2.873832],["lalu",3.19525,3.540458],["mendorong",3.540458,4.016666],["minyak",4.016666,4.421416],["keluar",4.421416,5.040457]]},{"mulai":30.662,"durasi":8.392,"kata":[["Solusinya",0.1,1.064291],["keringkan",1.397625,1.885708],["bahan",1.885708,2.207124],["dulu",2.207125,2.6],["pakai",2.6,3.016666],["tisu",3.016666,3.611916],["Lalu",4.407125,4.8],["masukkan",4.8,5.311916],["pelan-pelan",5.311916,5.883332],["dari",5.883333,6.192874],["sisi",6.192875,6.573791],["wajan",6.573791,7.180916]]},{"mulai":39.054,"durasi":3.456,"kata":[["Kering",0.1,0.433333],["dulu",0.433333,0.933333],["baru",1.242875,1.588083],["masuk",1.588083,2.040458]]}];
+const tl=gsap.timeline({paused:true});
+const $=s=>document.querySelector(s);
+const NS="http://www.w3.org/2000/svg";
+function mk(tag,at,par){const e=document.createElementNS(NS,tag);for(const k in at)e.setAttribute(k,at[k]);if(par)par.appendChild(e);return e}
+function rng(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function loop(a,b,p,f){for(let t=a,i=0;t<b;t+=p,i++)f(t,i)}
+const END=42.51;
+const SV=id=>$("#"+id+" svg");
+const W=id=>$("#"+id+" .world");
+const PI=Math.PI;
+
+/* ===== tangan manusia: garis "mendidih" (seed noise berganti ~7 fps) ===== */
+loop(0,END,.14,(t,i)=>tl.set("#tbW",{attr:{seed:1+(i%5)}},t));
+const heatO={v:.02};
+tl.to(heatO,{v:.035,duration:END,ease:"none",onUpdate(){$("#tbH").setAttribute("baseFrequency","0.008 "+heatO.v.toFixed(4));$("#tbH2").setAttribute("baseFrequency","0.006 "+(heatO.v*.7).toFixed(4))}},0);
+/* grain bergeser tiap 0.1 dtk */
+loop(0,END,.1,(t,i)=>tl.set("#grain",{x:((i*97)%61)-30,y:((i*53)%47)-23},t));
+
+/* ===== komponen gambar ===== */
+function waterDrop(par,sc,wob=true){
+  const g=mk("g",{},par),f=mk("g",wob?{filter:"url(#fWob)"}:{},g);
+  mk("path",{d:"M0,-60 C20,-25 40,0 40,25 A40,40 0 0 1 -40,25 C-40,0 -20,-25 0,-60Z",fill:"url(#gWater)",stroke:"#14566B","stroke-width":2.5,"stroke-opacity":.7},f);
+  mk("ellipse",{cx:-14,cy:12,rx:8,ry:17,fill:"#fff","fill-opacity":.85,transform:"rotate(18 -14 12)"},g);
+  mk("circle",{cx:-20,cy:-6,r:3.5,fill:"#fff"},g);
+  mk("path",{d:"M18,52 Q34,40 36,22",fill:"none",stroke:"#BFEFF5","stroke-width":3,"stroke-linecap":"round","stroke-opacity":.7},g);
+  gsap.set(g,{scale:sc});return g;
+}
+function oilDrop(par,r,seedHL=true){
+  const g=mk("g",{},par);
+  mk("circle",{r,fill:"url(#gDrop)"},g);
+  if(seedHL)mk("ellipse",{cx:-r*.3,cy:-r*.35,rx:r*.28,ry:r*.16,fill:"#fff","fill-opacity":.8,transform:`rotate(-30 ${-r*.3} ${-r*.35})`},g);
+  return g;
+}
+function bubbleShape(par,r){
+  const g=mk("g",{},par);
+  mk("circle",{r,fill:"url(#gBubble)",stroke:"#EDEFEA","stroke-opacity":.5,"stroke-width":3},g);
+  mk("path",{d:`M${-r*.62},${-r*.2} A${r*.66},${r*.66} 0 0 1 ${-r*.12},${-r*.62}`,fill:"none",stroke:"#fff","stroke-width":Math.max(3,r*.06),"stroke-linecap":"round","stroke-opacity":.8},g);
+  mk("circle",{cx:r*.38,cy:r*.4,r:Math.max(3,r*.05),fill:"#fff","fill-opacity":.7},g);
+  return g;
+}
+function bokeh(par,seed,n,y0,y1,col,op){
+  const r=rng(seed),g=mk("g",{filter:"url(#fB14)"},par);
+  for(let i=0;i<n;i++)mk("circle",{cx:r()*1080,cy:y0+r()*(y1-y0),r:30+r()*70,fill:col,"fill-opacity":op*(.4+r()*.6)},g);
+  return g;
+}
+/* wajan dilihat dari atas-miring (close-up): palet lewat gradien minyak */
+function panTop(par,oilG,T0,T1){
+  const g=mk("g",{},par);
+  if(T1){ // kompor di bawah wajan: nyala api teal-oranye, mengisi ruang bawah
+    mk("ellipse",{cx:500,cy:1620,rx:760,ry:330,fill:"url(#gGlow)",opacity:.85},g);
+    mk("rect",{x:-60,y:1560,width:1200,height:420,fill:"#0F0D0C"},g);
+    flameRow(g,-20,1100,1612,T0,T1,70,1.3);
+    [[-40,1590,300],[760,1590,320]].forEach(([x,y,wd])=>mk("rect",{x,y,width:wd,height:34,rx:10,fill:"#2A2623"},g));
+  }
+  mk("ellipse",{cx:500,cy:930,rx:660,ry:250,fill:"url(#gMetal)"},g);
+  mk("ellipse",{cx:500,cy:945,rx:612,ry:222,fill:"url(#gInner)"},g);
+  const oil=mk("ellipse",{cx:500,cy:985,rx:560,ry:176,fill:"url(#"+oilG+")",filter:"url(#fHeat2)"},g);
+  [[330,985,160,8],[640,1020,130,7],[470,955,90,6]].forEach(([x,y,wd,h])=>mk("ellipse",{cx:x,cy:y,rx:wd,ry:h,fill:"#8E5514","fill-opacity":.18},g));
+  mk("path",{d:"M150,950 Q330,880 520,905",fill:"none",stroke:"#fff","stroke-opacity":.5,"stroke-width":9,"stroke-linecap":"round"},g);
+  mk("path",{d:"M610,900 Q780,890 880,950",fill:"none",stroke:"#fff","stroke-opacity":.32,"stroke-width":6,"stroke-linecap":"round"},g);
+  mk("path",{d:"M-160,930 A660,250 0 0 0 1160,930 L1160,1500 L-160,1500Z",fill:"url(#gMetal)"},g);
+  mk("path",{d:"M-160,930 A660,250 0 0 0 1160,930",fill:"none",stroke:"#FFD9A0","stroke-opacity":.7,"stroke-width":8},g);
+  mk("rect",{x:-160,y:1250,width:1400,height:300,fill:"url(#gMetalD)"},g);
+  mk("rect",{x:-160,y:1180,width:1400,height:70,fill:"#000","fill-opacity":.18},g);
+  return g;
+}
+/* percikan minyak: tetes bergradien terbang busur; near=membesar ke arah kamera */
+function crown(par,t,cx,cy,n,seed,o){
+  const r=rng(seed);o=Object.assign({spread:2.4,hgt:560,size:12,grow:1.6,near:0},o||{});
+  // mahkota (seperti foto milk crown): kolom cairan tipis melengkung dengan bulatan di ujung, mulus
+  const nsp=Math.min(14,Math.round(n/3)+4);
+  for(let i=0;i<nsp;i++){
+    const a=(i/(nsp-1)-.5)*2.6,h=90+r()*150,wd=4+r()*4,bd=wd*(1.6+r()*.9),e=mk("g",{opacity:0},par);
+    const cv=a*h*.18;
+    mk("path",{d:`M0,0 Q${cv},${-h*.55} ${cv*1.6},${-h}`,fill:"none",stroke:"url(#gOilV)","stroke-width":wd*2,"stroke-linecap":"round"},e);
+    mk("circle",{cx:cv*1.6,cy:-h,r:bd,fill:"url(#gDrop)"},e);
+    mk("circle",{cx:cv*1.6-bd*.3,cy:-h-bd*.3,r:bd*.25,fill:"#fff","fill-opacity":.7},e);
+    gsap.set(e,{x:cx+Math.sin(a)*(o.size*14),y:cy+10,rotation:a*34,scaleY:0,opacity:0,transformOrigin:"0px 0px"});
+    tl.set(e,{opacity:1},t);
+    tl.to(e,{scaleY:1,duration:.18,ease:"power3.out"},t);
+    tl.to(e,{scaleY:.05,y:cy+40,duration:.32,ease:"power2.in"},t+.22);
+    tl.set(e,{opacity:0},t+.56);
+  }
+  // tetesan: ukuran acak (kebanyakan kecil), memanjang searah gerak, ekor buram (motion blur)
+  for(let i=0;i<n;i++){
+    const nr=i<o.near,q=r(),rr=nr?o.size*(1.5+r()*1.0):Math.max(2.5,o.size*(.16+q*q*1.0));
+    const a=(r()-.5)*o.spread,dx=Math.sin(a)*o.hgt*(.5+r()*.5),pk=o.hgt*(.35+r()*.65)*Math.cos(a*.5),d=.45+r()*.4;
+    const L=rr*(2.4+r()*3.6),e=mk("g",{opacity:nr?0:0},par);
+    if(nr){ // dekat kamera: bulatan buram (di luar fokus), bukan bongkahan
+      mk("circle",{r:rr*1.5,fill:"#E8A33D","fill-opacity":.55,filter:"url(#fB14)"},e);
+    }else{
+      // ekor tipis (menyempit mulus) + kepala bulat
+      mk("path",{d:`M0,${-rr*.55} Q${-L*.55},${-rr*.2} ${-L},0 Q${-L*.55},${rr*.2} 0,${rr*.55}Z`,fill:"url(#gStreak)","fill-opacity":.85},e);
+      mk("circle",{r:rr,fill:"url(#gDrop)"},e);
+      if(rr>5)mk("circle",{cx:-rr*.3,cy:-rr*.32,r:rr*.24,fill:"#fff","fill-opacity":.75},e);
+    }
+    const a0=Math.atan2(-2.2*pk/d,dx/(d*2))*180/PI,a1=Math.atan2(2.2*(pk+110)/d,dx/(d*2))*180/PI;
+    gsap.set(e,{x:cx,y:cy,opacity:0,rotation:a0,scaleX:1.5});
+    tl.set(e,{opacity:1,x:cx,y:cy,rotation:a0,scaleX:1.5},t);
+    tl.to(e,{x:cx+dx,duration:d*2,ease:"none"},t);
+    tl.to(e,{y:cy-pk,duration:d,ease:"power2.out"},t);
+    tl.to(e,{y:cy+110,duration:d,ease:"power2.in"},t+d);
+    tl.to(e,{rotation:a1,duration:d*2,ease:"sine.inOut"},t);
+    tl.to(e,{scaleX:.6,duration:d,ease:"power1.out"},t);
+    tl.to(e,{scaleX:1.5,duration:d,ease:"power1.in"},t+d);
+    if(nr||o.grow>1)tl.to(e,{scaleY:nr?2.4:1+(o.grow-1)*r()*.8,duration:d*2,ease:"power1.in"},t);
+    tl.set(e,{opacity:0},t+d*2);
+  }
+}
+function ripple(par,t,cx,cy,rx,ry,col,op=.8,d=.9){
+  [0,.12].forEach((dl,i)=>{
+    const e=mk("ellipse",{cx,cy,rx:rx*.3,ry:ry*.3,fill:"none",stroke:col,"stroke-width":7-i*2,opacity:0},par);
+    gsap.set(e,{transformOrigin:"50% 50%"});
+    tl.fromTo(e,{scale:1,opacity:op},{scale:3.3+i*.5,opacity:0,duration:d,ease:"power2.out",immediateRender:false},t+dl);
+  });
+}
+function shake(el,t,amp,n=9){
+  for(let i=0;i<n;i++){const k=amp*(1-i/n);tl.to(el,{x:(i%2?-1:1)*k,y:(i%3?1:-1)*k*.7,duration:.045,ease:"none"},t+i*.045)}
+  tl.to(el,{x:0,y:0,duration:.08},t+n*.045);
+}
+function oilBubbles(par,seed,n,x0,x1,y0,y1,t0,t1,col="#FFF2CC"){
+  const r=rng(seed);
+  for(let i=0;i<n;i++){
+    const rr=6+r()*16,x=x0+r()*(x1-x0),y=y0+r()*(y1-y0),g=mk("g",{opacity:0},par);
+    mk("circle",{r:rr,fill:"none",stroke:col,"stroke-opacity":.6,"stroke-width":3},g);mk("circle",{cx:-rr*.35,cy:-rr*.35,r:rr*.2,fill:"#fff","fill-opacity":.7},g);
+    gsap.set(g,{x,y});
+    const d=1.4+r()*1.6,st=t0+r()*(t1-t0-d);
+    tl.fromTo(g,{y,opacity:0},{y:y-(120+r()*160),opacity:1,duration:d,ease:"none",immediateRender:false},st);
+    tl.to(g,{opacity:0,duration:.2},st+d);
+  }
+}
+function flame(par,x,y,sc,seed,t0,t1){
+  const g=mk("g",{},par),r=rng(seed);
+  mk("path",{d:"M0,0 C-48,-40 -44,-120 0,-190 C44,-120 48,-40 0,0Z",fill:"url(#gFlame)"},g);
+  mk("path",{d:"M0,0 C-24,-22 -22,-70 0,-110 C22,-70 24,-22 0,0Z",fill:"#FFF3C4","fill-opacity":.75},g);
+  gsap.set(g,{x,y,scaleX:sc,scaleY:sc});
+  loop(t0,t1,.2,(t)=>tl.to(g,{scaleY:sc*(.82+r()*.45),scaleX:sc*(.88+r()*.25),skewX:(r()-.5)*8,duration:.2,ease:"sine.inOut"},t));
+  return g;
+}
+/* api kompor gas: lidah api kecil tak seragam, dasar biru + ujung oranye tipis, kedip acak per lidah */
+function flameRow(par,x0,x1,baseY,T0,T1,seed,sc=1){
+  const r=rng(seed),g=mk("g",{},par);
+  // burner kecil di tengah (lingkar api), hanya sedikit lidah api rendah yang mengintip di bawah wajan
+  const xa=x0+(x1-x0)*.24,xb=x1-(x1-x0)*.24;
+  mk("rect",{x:xa-20,y:baseY-6,width:xb-xa+40,height:20,rx:10,fill:"#1A1716"},g);
+  let x=xa+r()*14,i=0;
+  while(x<xb){
+    const h=(16+r()*20)*sc,wd=(8+r()*6)*sc,f=mk("g",{},g);
+    mk("path",{d:`M0,0 C${-wd},${-h*.25} ${-wd*.7},${-h*.7} ${wd*.15},${-h} C${wd*.8},${-h*.65} ${wd},${-h*.25} 0,0Z`,fill:"url(#gGas)"},f);
+    mk("path",{d:`M0,0 C${-wd*.45},${-h*.15} ${-wd*.3},${-h*.4} 0,${-h*.55} C${wd*.35},${-h*.4} ${wd*.45},${-h*.15} 0,0Z`,fill:"#DCEBFF","fill-opacity":.8},f);
+    gsap.set(f,{x,y:baseY});
+    const per=.11+r()*.14,ph=r()*per;
+    loop(T0+ph,T1,per,(t,k)=>tl.to(f,{scaleY:.72+r()*.6,scaleX:.85+r()*.3,skewX:(r()-.5)*14,duration:per,ease:"sine.inOut"},t));
+    x+=(34+r()*34)*sc;i++;
+  }
+  return g;
+}
+function chicken(par){
+  const g=mk("g",{},par),f=mk("g",{filter:"url(#fWob)"},g);
+  // paha ayam: daging membulat meruncing ke tulang, dua tonjolan di ujung tulang (sumbu +x)
+  mk("path",{d:"M215,26 L335,24 L335,56 L215,54Z",fill:"url(#gBone)",stroke:"#7A5E48","stroke-width":5,"stroke-linejoin":"round"},f);
+  mk("circle",{cx:344,cy:20,r:25,fill:"url(#gBone)",stroke:"#7A5E48","stroke-width":5},f);
+  mk("circle",{cx:344,cy:60,r:25,fill:"url(#gBone)",stroke:"#7A5E48","stroke-width":5},f);
+  mk("path",{d:"M-170,10 C-176,-96 -60,-152 40,-124 C110,-102 150,-46 176,-8 C194,14 214,22 238,24 L238,58 C214,60 194,68 172,86 C140,128 60,162 -40,142 C-120,124 -166,82 -170,10Z",fill:"url(#gChick)",stroke:"#8E4F3E","stroke-width":5,"stroke-linejoin":"round"},f);
+  // kulit: lipatan & tekstur pori
+  mk("path",{d:"M-120,-60 C-80,-104 -10,-112 40,-96",fill:"none",stroke:"#FFE6D8","stroke-width":13,"stroke-linecap":"round","stroke-opacity":.6},g);
+  mk("path",{d:"M-130,60 C-90,98 -20,112 50,100",fill:"none",stroke:"#9C5A48","stroke-width":6,"stroke-linecap":"round","stroke-opacity":.35},g);
+  mk("path",{d:"M150,-6 C172,18 190,26 214,28 M150,84 C172,66 190,58 214,54",fill:"none",stroke:"#9C5A48","stroke-width":5,"stroke-linecap":"round","stroke-opacity":.45},g);
+  const r=rng(5);for(let i=0;i<46;i++){const a=r()*PI*2,d=r()*125;mk("circle",{cx:Math.cos(a)*d-5,cy:Math.sin(a)*d*.8+8,r:1.6+r()*2.6,fill:"#B9735E","fill-opacity":.5},g)}
+  const gloss=mk("g",{},g);
+  mk("ellipse",{cx:-50,cy:-55,rx:80,ry:28,fill:"#fff","fill-opacity":.5,transform:"rotate(-18 -50 -55)",filter:"url(#fB6)"},gloss);
+  mk("ellipse",{cx:60,cy:70,rx:60,ry:20,fill:"#fff","fill-opacity":.4,transform:"rotate(-8 60 70)",filter:"url(#fB6)"},gloss);
+  return {g,gloss};
+}
+/* penampang minyak (cutaway) bersama untuk STEAM & GROW: kedalaman, tekstur logam, api di bawah */
+function cutaway(s,T0,T1){
+  mk("rect",{width:1080,height:1920,fill:"#141010"},s);
+  bokeh(s,17,8,0,300,"#EDEFEA",.10);
+  mk("rect",{x:0,y:0,width:1080,height:330,fill:"url(#gTeal)","fill-opacity":.85},s);
+  mk("rect",{x:-20,y:292,width:1120,height:38,rx:8,fill:"url(#gMetal)"},s);
+  const oil=mk("g",{filter:"url(#fHeat2)"},s);
+  mk("rect",{x:-40,y:330,width:1160,height:720,fill:"url(#gOilDeep)"},oil);
+  mk("rect",{x:-40,y:330,width:1160,height:330,fill:"url(#gOilV)","fill-opacity":.6},oil);
+  const sh=mk("g",{filter:"url(#fB14)"},oil);
+  [[100,0],[420,0],[760,0]].forEach(([x],i)=>{const p=mk("path",{d:`M${x},330 L${x+120},330 L${x+250},1040 L${x+40},1040Z`,fill:"#FFF2CC","fill-opacity":.10},sh);
+    tl.to(p,{x:30,duration:2.6,yoyo:true,repeat:Math.ceil((T1-T0)/2.6),ease:"sine.inOut"},T0+i*.3)});
+  // butir halus melayang
+  const rs=rng(44);for(let i=0;i<34;i++){const x=rs()*1080,y=360+rs()*640,e=mk("circle",{cx:x,cy:y,r:1.5+rs()*3,fill:"#FFF2CC","fill-opacity":.35+rs()*.3},oil);
+    tl.to(e,{y:-30-rs()*60,x:(rs()-.5)*40,duration:(T1-T0)+1,ease:"none"},T0)}
+  mk("ellipse",{cx:540,cy:1060,rx:800,ry:260,fill:"url(#gGlow)"},s);
+  // dasar wajan: logam bergores, bekas gosong, paku keling
+  mk("rect",{x:-40,y:1040,width:1160,height:170,fill:"url(#gMetal)"},s);
+  mk("rect",{x:-40,y:1040,width:1160,height:12,fill:"#FFB347"},s);
+  const r=rng(9);for(let i=0;i<30;i++){const y=1066+r()*130,x=r()*1080;mk("line",{x1:x,x2:x+60+r()*160,y1:y,y2:y+r()*6,stroke:"#fff","stroke-opacity":.08+r()*.12,"stroke-width":1.5+r()*2.5},s)}
+  [[180,1130,120],[600,1150,170],[900,1120,100]].forEach(([x,y,w])=>mk("ellipse",{cx:x,cy:y,rx:w,ry:22,fill:"#111","fill-opacity":.35,filter:"url(#fB14)"},s));
+  mk("rect",{x:-10,y:300,width:56,height:900,fill:"url(#gMetalD)"},s);mk("rect",{x:1034,y:300,width:56,height:900,fill:"url(#gMetalD)"},s);
+  // di bawah wajan: kompor + api yang memanaskan dasar
+  mk("rect",{x:-40,y:1210,width:1160,height:720,fill:"#0F0D0C"},s);
+  mk("ellipse",{cx:540,cy:1380,rx:760,ry:260,fill:"url(#gGlow)"},s);
+  flameRow(s,-20,1100,1300,T0,T1,120,1.3);
+}
+
+/* ===== HOOK 0-4.18 : close-up tetes jatuh ke minyak (palet A) ===== */
+(function(){
+  const T0=0,s=SV("sc_hook"),w=W("sc_hook");
+  mk("rect",{width:1080,height:1920,fill:"#1E1A17"},s);
+  mk("ellipse",{cx:500,cy:1450,rx:900,ry:650,fill:"url(#gGlow)",opacity:.6},s);
+  mk("rect",{x:-40,y:330,width:420,height:420,rx:30,fill:"#2B2420",filter:"url(#fB30)"},s);
+  mk("rect",{x:700,y:260,width:420,height:520,rx:30,fill:"#2B2420",filter:"url(#fB30)"},s);
+  bokeh(s,3,9,120,620,"#E8A33D",.3);
+  const pan=panTop(s,"gOilA",T0,T0+4.18);
+  const hx=mk("g",{},s);
+  ripple(hx,1.28,500,985,170,50,"#FFE7B0",.95,1.0);
+  const D=waterDrop(s,2.0);gsap.set(D,{x:500,y:735});
+  tl.to(D,{scaleX:2.1,scaleY:1.9,duration:.35,ease:"sine.inOut",yoyo:true,repeat:1},.05);
+  tl.to(D,{scaleX:2.15,scaleY:1.8,duration:.25,ease:"power2.out"},.75);
+  tl.to(D,{y:975,scaleX:1.7,scaleY:2.6,duration:.3,ease:"power3.in"},.95);
+  tl.set(D,{opacity:0},1.27);
+  const fl=mk("ellipse",{cx:500,cy:975,rx:240,ry:70,fill:"#FFF0C8",opacity:0},s);
+  tl.fromTo(fl,{opacity:.95,scale:.4},{opacity:0,scale:1.6,duration:.35,ease:"power2.out",immediateRender:false},1.27);
+  crown(s,1.27,500,965,46,11,{spread:2.3,hgt:500,size:11,near:3});
+  gsap.set(w,{transformOrigin:"50% 55%"});
+  tl.fromTo(w,{scale:1.14},{scale:1.04,duration:1.25,ease:"power2.in",immediateRender:false},0);
+  tl.fromTo(w,{scale:1.16},{scale:1.04,duration:2.9,ease:"power3.out",immediateRender:false},1.27);
+  shake(w,1.27,18,9);
+  oilBubbles(s,8,8,200,800,930,1060,.2,4.1);
+  // FG: spatula buram
+  const fg=mk("g",{filter:"url(#fB14)"},s);
+  mk("rect",{x:-120,y:1230,width:560,height:120,rx:50,fill:"#0C0A09","fill-opacity":.92,transform:"rotate(-9 -120 1230)"},fg);
+  const T=$("#t_hook");
+  const wh=T.querySelectorAll(".w");
+  gsap.set(wh[0],{opacity:1});gsap.set(wh[1],{opacity:1});
+  tl.fromTo(wh[1],{scale:1},{scale:1.14,duration:.12,ease:"power2.out",immediateRender:false},1.27);
+  tl.to(wh[1],{scale:1,duration:.3,ease:"power2.inOut"},1.4);
+  tl.to(T,{opacity:0,y:-30,duration:.2,ease:"power2.in"},3.95);
+})();
+
+/* ===== HOT 4.18-7 : wajan di atas api, panas (palet A) ===== */
+(function(){
+  const T0=4.18,s=SV("sc_hot"),w=W("sc_hot");
+  mk("rect",{width:1080,height:1920,fill:"#1E1A17"},s);
+  mk("ellipse",{cx:480,cy:1150,rx:760,ry:520,fill:"url(#gGlow)",opacity:.75},s);
+  bokeh(s,21,7,150,700,"#E8A33D",.24);
+  mk("rect",{x:-60,y:420,width:380,height:420,rx:30,fill:"#2B2420",filter:"url(#fB30)"},s);
+  // api
+  const fg=mk("g",{},s);
+  flameRow(fg,-60,1000,1092,T0,T0+2.82,30,1.5);
+  // wajan tampak samping (potongan)
+  const p=mk("g",{filter:"url(#fWob)"},s);
+  mk("rect",{x:-260,y:810,width:340,height:46,rx:22,fill:"url(#gMetalD)"},p);
+  mk("path",{d:"M60,760 L900,760 L860,1000 Q850,1052 800,1052 L160,1052 Q110,1052 100,1000 Z",fill:"url(#gMetal)"},p);
+  mk("path",{d:"M100,792 L860,792 L828,990 Q822,1018 796,1018 L164,1018 Q138,1018 132,990 Z",fill:"url(#gOilV)"},s);
+  mk("path",{d:"M100,792 L860,792",stroke:"#FFE9B0","stroke-width":6,"stroke-opacity":.8},s);
+  mk("rect",{x:60,y:752,width:840,height:16,rx:8,fill:"#C3C8CA"},s);
+  oilBubbles(s,14,10,160,800,900,1000,T0,T0+2.8);
+  // uap panas (garis bergelombang) naik, terdistorsi
+  const hz=mk("g",{filter:"url(#fHeat)"},s);
+  for(let i=0;i<5;i++){const x=120+i*170,e=mk("rect",{x,y:520,width:60,height:230,rx:30,fill:"#F6EBD9","fill-opacity":.10},hz);
+    tl.fromTo(e,{y:60,opacity:0},{y:-90,opacity:1,duration:1.1,ease:"none",repeat:2,immediateRender:false},T0+i*.18)}
+  gsap.set(w,{transformOrigin:"50% 60%"});
+  tl.fromTo(w,{scale:1.0},{scale:1.1,duration:2.82,ease:"power1.inOut",immediateRender:false},T0);
+  // api membesar tiap "banget"
+  tl.fromTo(fg,{scale:1,transformOrigin:"480px 1285px"},{scale:1.15,duration:.4,ease:"power2.out",immediateRender:false},T0+1.5);
+  const f2=mk("rect",{width:1080,height:1920,fill:"#F26B21",opacity:0,"mix-blend-mode":"screen"},s);
+  tl.fromTo(f2,{opacity:0},{opacity:.14,duration:.2,yoyo:true,repeat:1,immediateRender:false},T0+1.55);
+})();
+
+/* ===== THERM 7-12.16 : termometer 160-190°C vs air mendidih 100°C (palet A) ===== */
+(function(){
+  const T0=7,s=SV("sc_therm"),w=W("sc_therm");
+  mk("rect",{width:1080,height:1920,fill:"#1E1A17"},s);
+  mk("ellipse",{cx:360,cy:1100,rx:620,ry:420,fill:"url(#gGlow)",opacity:.5},s);
+  bokeh(s,41,6,200,1500,"#E8A33D",.14);
+  // kompor gas di bawah: mengisi seperempat bawah & menjelaskan sumber panas
+  mk("rect",{x:-40,y:1560,width:1160,height:420,fill:"#0F0D0C"},s);
+  mk("ellipse",{cx:540,cy:1640,rx:760,ry:260,fill:"url(#gGlow)",opacity:.8},s);
+  flameRow(s,-20,1100,1640,T0,T0+5.164,210,1.5);
+  const yT=c=>900-c*1.75;           // 0°C -> 900, 210°C -> 533 (bulb di atas zona caption y>1040)
+  mk("circle",{cx:360,cy:975,r:150,fill:"url(#gGlow)",opacity:.9},s);
+  // tabung + bulb (lebih besar), skala di kiri
+  const th=mk("g",{filter:"url(#fWob)"},s);
+  mk("rect",{x:300,y:520,width:120,height:440,rx:60,fill:"#F6EBD9","fill-opacity":.14,stroke:"#A7ADAF","stroke-width":7},th);
+  mk("circle",{cx:360,cy:975,r:72,fill:"#F6EBD9","fill-opacity":.14,stroke:"#A7ADAF","stroke-width":7},th);
+  const merc=mk("rect",{x:334,y:yT(0),width:52,height:0,rx:26,fill:"#C8372D"},s);
+  mk("circle",{cx:360,cy:975,r:54,fill:"#C8372D"},s);
+  mk("ellipse",{cx:342,cy:958,rx:10,ry:16,fill:"#fff","fill-opacity":.5},s);
+  // skala (label di kiri tabung, rata kanan)
+  [0,50,100,150,200].forEach(c=>{mk("line",{x1:268,x2:298,y1:yT(c),y2:yT(c),stroke:"#A7ADAF","stroke-width":4},s);
+    const t=mk("text",{x:256,y:yT(c)+15,"text-anchor":"end","font-family":"Poppins","font-weight":600,"font-size":42,fill:"#A7ADAF"},s);t.textContent=c+"°"});
+  // band 160-190 (di kanan tabung, tidak menutup skala)
+  const band=mk("rect",{x:440,y:yT(190),width:440,height:yT(160)-yT(190),rx:18,fill:"#E8A33D","fill-opacity":.0},s);
+  const bandL=mk("text",{x:466,y:yT(175)+15,"font-family":"Poppins","font-weight":700,"font-size":44,fill:"#1E1A17","fill-opacity":0},s);bandL.textContent="minyak goreng";
+  // air mendidih 100
+  const l100=mk("g",{opacity:0},s);
+  mk("line",{x1:298,x2:880,y1:yT(100),y2:yT(100),stroke:"#7FD0DE","stroke-width":5,"stroke-dasharray":"16 12"},l100);
+  const t100=mk("text",{x:440,y:yT(100)-16,"font-family":"Poppins","font-weight":700,"font-size":46,fill:"#7FD0DE"},l100);t100.textContent="air mendidih 100°";
+  // mercury naik: 7.3->100 (8.1) ->160 (8.9) -> 190 (10.4)
+  const H=c=>965-yT(c);
+  tl.fromTo(merc,{attr:{y:965,height:0}},{attr:{y:yT(100),height:H(100)},duration:.85,ease:"power2.out",immediateRender:false},7.25);
+  tl.to(l100,{opacity:1,duration:.25},8.0);
+  tl.fromTo(l100,{y:12},{y:0,duration:.3,ease:"power3.out",immediateRender:false},8.0);
+  tl.to(merc,{attr:{y:yT(166),height:H(166)},duration:.7,ease:"power2.out"},8.4);
+  tl.to(merc,{attr:{y:yT(160),height:H(160)},duration:.25,ease:"power2.inOut"},9.1);
+  tl.to(band,{attr:{"fill-opacity":.9},duration:.3},9.0);
+  tl.to(bandL,{attr:{"fill-opacity":1},duration:.3},9.15);
+  tl.to(merc,{attr:{y:yT(190),height:H(190)},duration:1.1,ease:"power2.inOut"},9.7);
+  tl.to(band,{attr:{"fill-opacity":.9},duration:.01},10.8);
+  gsap.set(w,{transformOrigin:"30% 60%"});
+  tl.fromTo(w,{scale:1.0},{scale:1.07,duration:5.1,ease:"none",immediateRender:false},T0);
+})();
+
+/* ===== GLASS 12.164-14.9 : air lebih berat dari minyak (palet C) ===== */
+(function(){
+  const T0=12.164,s=SV("sc_glass"),w=W("sc_glass");
+  mk("rect",{width:1080,height:1920,fill:"url(#gTeal)"},s);
+  mk("ellipse",{cx:470,cy:900,rx:620,ry:520,fill:"url(#gLight)",opacity:.12},s);
+  bokeh(s,51,8,200,1500,"#EDEFEA",.10);
+  mk("rect",{x:-40,y:1042,width:1160,height:900,fill:"#0F1E20"},s);
+  const rr0=rng(19);for(let i=0;i<14;i++){const y=1060+i*40+rr0()*10;mk("path",{d:`M-20,${y} Q${300+rr0()*200},${y-8+rr0()*16} 1120,${y}`,fill:"none",stroke:"#2A4A4D","stroke-opacity":.5,"stroke-width":3},s)}
+  mk("ellipse",{cx:468,cy:1048,rx:300,ry:30,fill:"#000","fill-opacity":.55,filter:"url(#fB14)"},s);
+  const gp="M268,600 L294,1010 Q300,1030 468,1030 Q636,1030 642,1010 L668,600Z";
+  const cp=mk("clipPath",{id:"glassClip"},s);mk("path",{d:gp},cp);
+  const inner=mk("g",{"clip-path":"url(#glassClip)"},s);
+  mk("rect",{x:240,y:840,width:460,height:230,fill:"#3E9EB6"},inner);
+  mk("rect",{x:240,y:840,width:460,height:230,fill:"url(#gWater)","fill-opacity":.35},inner);
+  const oilL=mk("rect",{x:240,y:662,width:460,height:182,fill:"url(#gOilV)"},inner);
+  mk("path",{d:"M240,840 Q354,826 468,840 T700,840",fill:"none",stroke:"#FFF2CC","stroke-width":5,"stroke-opacity":.7},inner);
+  mk("path",{d:"M240,662 Q354,652 468,662 T700,662",fill:"none",stroke:"#FFE9B0","stroke-width":6,"stroke-opacity":.9},inner);
+  oilBubbles(inner,61,5,290,640,700,820,T0,T0+2.7);
+  const gl=mk("g",{filter:"url(#fWob)"},s);
+  mk("path",{d:gp,fill:"url(#gGlass)",stroke:"#EDEFEA","stroke-width":5,"stroke-opacity":.75},gl);
+  mk("ellipse",{cx:468,cy:600,rx:200,ry:22,fill:"none",stroke:"#EDEFEA","stroke-width":5,"stroke-opacity":.8},gl);
+  mk("path",{d:"M304,650 L324,970",stroke:"#fff","stroke-width":14,"stroke-linecap":"round","stroke-opacity":.35},s);
+  // label menempel ke objek
+  const lb=(x,y,txt,col,id)=>{const g=mk("g",{opacity:0,id},s);mk("line",{x1:x-60,y1:y-14,x2:x-8,y2:y-14,stroke:col,"stroke-width":5},g);
+    const t=mk("text",{x,y,"font-family":"Poppins","font-weight":700,"font-size":56,fill:col},g);t.textContent=txt;return g};
+  const lo=lb(700,760,"minyak","#F0B73A","lbO"),la=lb(700,950,"air","#9ED8E4","lbA");
+  tl.fromTo(lo,{opacity:0,x:30},{opacity:1,x:0,duration:.35,ease:"power3.out",immediateRender:false},T0+.35);
+  tl.fromTo(la,{opacity:0,x:30},{opacity:1,x:0,duration:.35,ease:"power3.out",immediateRender:false},T0+.6);
+  // tetes air jatuh -> tembus minyak -> menyatu dgn air
+  const D=waterDrop(s,.8);gsap.set(D,{x:468,y:570,opacity:0});
+  tl.fromTo(D,{opacity:0},{opacity:1,duration:.15,immediateRender:false},T0+.25);
+  tl.to(D,{y:662,scaleY:1.0,duration:.3,ease:"power2.in"},T0+.3);
+  tl.to(D,{y:828,duration:1.0,ease:"power1.inOut"},T0+.62);
+  tl.to(D,{scaleX:1.5,scaleY:.45,y:842,duration:.18,ease:"power2.out"},T0+1.62);
+  tl.to(D,{opacity:0,duration:.2},T0+1.76);
+  ripple(s,T0+.62,468,662,80,16,"#FFE9B0",.8,.8);
+  ripple(s,T0+1.75,468,848,100,18,"#BFEFF5",.8,.9);
+  gsap.set(w,{transformOrigin:"50% 65%"});
+  tl.fromTo(w,{scale:1.0},{scale:1.08,duration:2.7,ease:"power1.inOut",immediateRender:false},T0);
+})();
+
+/* ===== SINK 14.9-19.18 : tetes tenggelam sampai dasar, kamera ikut turun (palet C) ===== */
+(function(){
+  const T0=14.9,s=SV("sc_sink"),w=W("sc_sink");
+  mk("rect",{width:1080,height:1920,fill:"url(#gTeal)"},s);
+  const S=820; // jarak gulir dunia
+  const lay=(mult)=>{const g=mk("g",{},s);tl.fromTo(g,{y:0},{y:-S*mult,duration:2.7,ease:"power1.inOut",immediateRender:false},T0+1.25);return g};
+  const world=lay(1);
+  mk("rect",{x:0,y:560,width:1080,height:1560,fill:"url(#gOilV)"},world);
+  mk("rect",{x:0,y:1250,width:1080,height:900,fill:"url(#gOilDeep)"},world);
+  mk("rect",{x:0,y:556,width:1080,height:14,fill:"#FFE9B0","fill-opacity":.9},world);
+  bokeh(world,23,7,0,500,"#EDEFEA",.10);
+  mk("rect",{x:-20,y:512,width:1120,height:44,rx:8,fill:"url(#gMetal)"},world);
+  mk("ellipse",{cx:540,cy:1990,rx:800,ry:300,fill:"url(#gGlow)"},world);
+  mk("rect",{x:-40,y:1930,width:1160,height:170,fill:"url(#gMetal)"},world);
+  mk("rect",{x:-40,y:1920,width:1160,height:14,fill:"#FFB347"},world);
+  const rm=rng(29);for(let i=0;i<30;i++){const y=1950+rm()*140,x=rm()*1080;mk("line",{x1:x,x2:x+60+rm()*160,y1:y,y2:y+rm()*6,stroke:"#fff","stroke-opacity":.08+rm()*.12,"stroke-width":1.5+rm()*2.5},world)}
+  mk("rect",{x:-40,y:2100,width:1160,height:700,fill:"#0F0D0C"},world);
+  mk("ellipse",{cx:540,cy:2260,rx:760,ry:260,fill:"url(#gGlow)"},world);
+  flameRow(world,-20,1100,2190,T0,T0+4.3,140,1.3);
+  // sinar dari permukaan
+  const sh=mk("g",{filter:"url(#fB14)"},world);
+  [[120,0],[420,40],[760,0]].forEach(([x,d],i)=>mk("path",{d:`M${x},570 L${x+110},570 L${x+240},1500 L${x+60},1500Z`,fill:"#FFF2CC","fill-opacity":.13},sh));
+  // dinding wajan kiri-kanan
+  mk("rect",{x:-10,y:0,width:70,height:2400,fill:"url(#gMetalD)"},s);
+  mk("rect",{x:1020,y:0,width:70,height:2400,fill:"url(#gMetalD)"},s);
+  // gelembung berparalaks (jauh pelan, dekat cepat)
+  const far=lay(.7),near=lay(1.35);
+  oilBubbles(far,71,28,80,1000,640,1900,T0+.4,T0+4.2,"#FFE9B0");
+  const nb=mk("g",{filter:"url(#fB6)"},near);oilBubbles(nb,72,9,60,1020,800,1900,T0+.4,T0+4.2,"#FFF2CC");
+  // bibir minyak + tetes
+  const D=waterDrop(s,1.6);gsap.set(D,{x:468,y:520});
+  tl.fromTo(D,{y:520},{y:780,duration:.95,ease:"power2.in",immediateRender:false},T0+.15);
+  tl.to(D,{scaleX:1.4,scaleY:1.85,duration:.2},T0+.15);
+  tl.to(D,{scaleX:1.75,scaleY:1.45,duration:.15,ease:"power2.out"},T0+1.1);
+  tl.to(D,{x:490,rotation:5,duration:.9,yoyo:true,repeat:3,ease:"sine.inOut"},T0+1.3);
+  tl.to(D,{scaleX:1.6,scaleY:1.6,duration:.4},T0+1.3);
+  tl.to(D,{y:1090,scaleX:1.9,scaleY:1.25,duration:.7,ease:"power2.in"},T0+3.35);
+  tl.to(D,{scaleX:2.3,scaleY:.95,duration:.15,ease:"power2.out"},T0+4.05);
+  ripple(s,T0+.95,468,570,150,28,"#FFF2CC",.9,1.0);
+  const trail=mk("rect",{x:456,y:560,width:24,height:240,rx:12,fill:"#BFEFF5","fill-opacity":.25,filter:"url(#fB6)"},s);
+  tl.fromTo(trail,{opacity:0},{opacity:1,duration:.3,immediateRender:false},T0+1.2);tl.to(trail,{opacity:0,duration:.4},T0+3.2);
+  gsap.set(w,{transformOrigin:"50% 55%"});
+  tl.fromTo(w,{scale:1.0},{scale:1.08,duration:4.2,ease:"none",immediateRender:false},T0);
+})();
+
+/* ===== STEAM 19.184-24.356 : dasar panas, tetes -> uap dalam sekejap (palet C) ===== */
+(function(){
+  const T0=19.184,s=SV("sc_steam"),w=W("sc_steam");
+  cutaway(s,T0,T0+5.172);
+  oilBubbles(s,81,26,80,1000,500,1030,T0,T0+5);
+  // percik kecil dari dasar (sizzle)
+  const spk=mk("g",{},s);
+  loop(T0+.4,T0+2.7,.12,(t,i)=>{const q=rng(300+i),e=mk("circle",{cx:440+q()*60,cy:1030,r:4+q()*6,fill:"#FFE9B0",opacity:0},spk);
+    tl.fromTo(e,{y:0,x:0,opacity:1},{y:-60-q()*90,x:(q()-.5)*200,opacity:0,duration:.5,ease:"power2.out",immediateRender:false},t)});
+  const D=waterDrop(s,1.75);gsap.set(D,{x:468,y:932});
+  tl.fromTo(D,{scaleX:1.75,scaleY:1.5},{scaleX:2.0,scaleY:1.3,duration:.3,ease:"power2.out",immediateRender:false},T0);
+  tl.to(D,{x:474,duration:.07,repeat:25,yoyo:true,ease:"none"},T0+.3);
+  tl.to(D,{scaleX:1.5,scaleY:1.15,duration:1.2,ease:"power2.in"},T0+.5);
+  tl.set(D,{opacity:0},T0+2.72);
+  // uap: gelembung mekar (elastis sekali) + awan uap
+  const B=bubbleShape(s,120);gsap.set(B,{x:468,y:880,opacity:0,scale:.15});
+  tl.set(B,{opacity:1},T0+2.7);
+  tl.to(B,{scale:1.25,duration:.4,ease:"elastic.out(1,.55)"},T0+2.7);
+  tl.to(B,{y:860,scale:1.35,duration:2.0,ease:"sine.inOut"},T0+3.1);
+  const fl=mk("circle",{cx:468,cy:900,r:260,fill:"#FFF8E6",opacity:0},s);
+  tl.fromTo(fl,{opacity:.9,scale:.3},{opacity:0,scale:1.2,duration:.45,ease:"power2.out",immediateRender:false},T0+2.7);
+  const cl=mk("g",{filter:"url(#fB14)"},s);
+  for(let i=0;i<9;i++){const a=i/9*PI*2,e=mk("circle",{cx:468+Math.cos(a)*70,cy:880+Math.sin(a)*60,r:46,fill:"#EDEFEA","fill-opacity":0},cl);
+    tl.fromTo(e,{attr:{"fill-opacity":0}},{attr:{"fill-opacity":.4},duration:.4,immediateRender:false},T0+2.8);
+    tl.to(e,{x:Math.cos(a)*50,y:Math.sin(a)*40-60,duration:2.2,ease:"sine.inOut"},T0+2.8)}
+  const wx=mk("g",{},s);
+  loop(T0+3.0,T0+5.1,.3,(t,i)=>{const q=rng(500+i),e=mk("circle",{cx:380+q()*180,cy:860,r:26+q()*26,fill:"#EDEFEA",opacity:0,filter:"url(#fB14)"},wx);
+    tl.fromTo(e,{y:0,opacity:.5},{y:-420,opacity:0,duration:1.6,ease:"power1.out",immediateRender:false},t)});
+  shake(w,T0+2.7,10,7);
+  gsap.set(w,{transformOrigin:"50% 60%"});
+  tl.fromTo(w,{scale:1.1},{scale:1.0,duration:2.7,ease:"power2.out",immediateRender:false},T0);
+  tl.fromTo(w,{scale:1.0},{scale:1.06,duration:2.5,ease:"none",immediateRender:false},T0+2.7);
+})();
+
+/* ===== GROW 24.356-28 : uap mengembang ~1.600x (palet C->A) ===== */
+(function(){
+  const T0=24.356,s=SV("sc_grow"),w=W("sc_grow");
+  cutaway(s,T0,T0+3.644);
+  oilBubbles(s,91,24,80,1000,500,1030,T0,T0+3.4);
+  const B=bubbleShape(s,120);gsap.set(B,{x:468,y:860,scale:1.35});
+  tl.to(B,{scale:2.2,y:790,duration:1.6,ease:"power2.out"},T0);
+  tl.to(B,{scale:3.0,y:740,duration:1.6,ease:"power2.in"},T0+1.7);
+  const inner=mk("g",{filter:"url(#fB14)"},s);
+  for(let i=0;i<8;i++){const a=i/8*PI*2,e=mk("circle",{cx:468+Math.cos(a)*90,cy:800+Math.sin(a)*70,r:60,fill:"#EDEFEA","fill-opacity":.28},inner);
+    tl.to(e,{x:Math.cos(a+1)*120,y:Math.sin(a+1)*90,duration:3.4,ease:"sine.inOut"},T0)}
+  tl.to(inner,{scale:2.4,transformOrigin:"468px 800px",duration:3.4,ease:"power1.in"},T0);
+  // pembanding: 1 tetes air kecil
+  const ref=mk("g",{},s);
+  mk("rect",{x:60,y:710,width:340,height:90,rx:45,fill:"#0F1E20","fill-opacity":.82,stroke:"#9ED8E4","stroke-width":3},ref);
+  const rd=waterDrop(ref,.58);gsap.set(rd,{x:112,y:753});
+  const rt=mk("text",{x:156,y:768,"font-family":"Poppins","font-weight":700,"font-size":42,fill:"#EDEFEA"},ref);rt.textContent="1 tetes air";
+  tl.fromTo(ref,{opacity:0,y:30},{opacity:1,y:0,duration:.4,ease:"power3.out",immediateRender:false},T0+.5);
+  // hitung 1 -> 1.600 sinkron "seribu enam ratus kali" (25.66-26.8)
+  const nObj={v:1},num=$("#num"),fmt=v=>String(Math.round(v)).replace(/\B(?=(\d{3})+(?!\d))/g,".")+"×";
+  num.textContent="1×";
+  tl.to(nObj,{v:1600,duration:1.3,ease:"power2.inOut",onUpdate(){num.textContent=fmt(nObj.v)}},T0+1.25);
+  gsap.set(w,{transformOrigin:"50% 60%"});
+  tl.fromTo(w,{scale:1.06},{scale:1.2,duration:3.6,ease:"power2.in",immediateRender:false},T0);
+  shake(w,T0+2.6,8,10);shake(w,T0+3.2,14,10);
+})();
+
+/* ===== BURST 28-30.66 : kubah minyak pecah, muncrat besar (palet A) ===== */
+(function(){
+  const T0=28,s=SV("sc_burst"),w=W("sc_burst");
+  mk("rect",{width:1080,height:1920,fill:"#1E1A17"},s);
+  mk("ellipse",{cx:500,cy:1450,rx:900,ry:650,fill:"url(#gGlow)",opacity:.6},s);
+  mk("rect",{x:-40,y:330,width:420,height:420,rx:30,fill:"#2B2420",filter:"url(#fB30)"},s);
+  bokeh(s,103,9,120,620,"#E8A33D",.3);
+  panTop(s,"gOilA",T0,T0+2.662);
+  // kubah minyak naik (antisipasi), lalu pecah di 28.76
+  const dome=mk("ellipse",{cx:500,cy:985,rx:90,ry:6,fill:"url(#gOilB)",stroke:"#FFF2CC","stroke-width":4,"stroke-opacity":.7},s);
+  tl.fromTo(dome,{attr:{rx:90,ry:6}},{attr:{rx:300,ry:170,cy:880},duration:.74,ease:"power3.in",immediateRender:false},T0);
+  // build-up: permukaan minyak mendidih, gelembung kecil pecah berurutan, getar makin kuat
+  [[380,1010],[620,1030],[470,960],[560,1000],[330,975],[680,990],[520,1040],[430,1030]].forEach(([x,y],i)=>{
+    const bt=T0+.05+i*.09,bm=mk("ellipse",{cx:x,cy:y,rx:14,ry:5,fill:"url(#gOilB)",stroke:"#FFF2CC","stroke-width":3,"stroke-opacity":.7,opacity:0},s);
+    tl.fromTo(bm,{opacity:1,scale:.4},{scale:2.4+i*.12,duration:.22,ease:"power2.out",immediateRender:false},bt);
+    tl.set(bm,{opacity:0},bt+.24);
+    crown(s,bt+.2,x,y-4,10,200+i,{spread:1.6,hgt:150+i*14,size:6,grow:1});
+  });
+  [[T0+.05,5],[T0+.3,9],[T0+.52,14]].forEach(([t,a])=>shake(w,t,a,6));
+  tl.set(dome,{opacity:0},T0+.76);
+  const fl=mk("ellipse",{cx:500,cy:930,rx:300,ry:100,fill:"#FFF0C8",opacity:0},s);
+  tl.fromTo(fl,{opacity:.9,scale:.5},{opacity:0,scale:1.8,duration:.4,ease:"power2.out",immediateRender:false},T0+.76);
+  ripple(s,T0+.76,500,985,260,70,"#FFE7B0",.95,1.3);
+  ripple(s,T0+.95,500,985,200,56,"#FFE7B0",.7,1.3);
+  crown(s,T0+.76,500,900,160,111,{spread:3.0,hgt:960,size:16,near:12,grow:2.2});
+  crown(s,T0+.8,360,940,70,112,{spread:2.4,hgt:720,size:12});
+  crown(s,T0+.8,640,940,70,113,{spread:2.4,hgt:720,size:12});
+  crown(s,T0+1.0,500,930,60,115,{spread:2.8,hgt:820,size:12,grow:1.6});
+  crown(s,T0+1.3,500,950,40,114,{spread:2.6,hgt:600,size:10});
+  // uap tersisa
+  const wx=mk("g",{},s);
+  loop(T0+.8,T0+2.6,.22,(t,i)=>{const q=rng(700+i),e=mk("circle",{cx:300+q()*400,cy:900,r:50+q()*50,fill:"#EDEFEA",opacity:0,filter:"url(#fB14)"},wx);
+    tl.fromTo(e,{y:0,opacity:.35},{y:-520,opacity:0,duration:1.5,ease:"power1.out",immediateRender:false},t)});
+  const fg=mk("g",{filter:"url(#fB14)"},s);
+  mk("rect",{x:-120,y:1230,width:560,height:120,rx:50,fill:"#0C0A09","fill-opacity":.92,transform:"rotate(-9 -120 1230)"},fg);
+  gsap.set(w,{transformOrigin:"50% 55%"});
+  tl.fromTo(w,{scale:1.02},{scale:1.1,duration:.76,ease:"power2.in",immediateRender:false},T0);
+  tl.fromTo(w,{scale:1.2},{scale:1.04,duration:1.9,ease:"power3.out",immediateRender:false},T0+.76);
+  shake(w,T0+.76,44,16);shake(w,T0+1.25,18,9);
+  // cipratan menempel di lensa (satu-satunya momen "dekat kamera")
+  const lens=$("#lens"),RL=rng(77);
+  for(let i=0;i<9;i++){
+    const x=90+RL()*900,y=520+RL()*620,r=22+RL()*46,g=mk("g",{},lens);
+    const bf=mk("g",{filter:"url(#fWob)"},g);
+    mk("circle",{r,fill:"#E8A33D","fill-opacity":.72,stroke:"#B9741C","stroke-width":3},bf);
+    mk("ellipse",{cx:r*.7,cy:r*.35,rx:r*.38,ry:r*.3,fill:"#E8A33D","fill-opacity":.72},bf);
+    mk("ellipse",{cx:-r*.65,cy:r*.2,rx:r*.3,ry:r*.26,fill:"#E8A33D","fill-opacity":.72},bf);
+    mk("rect",{x:-r*.1,y:r*.4,width:r*.2,height:r*1.4,rx:r*.1,fill:"#E8A33D","fill-opacity":.6},bf);
+    mk("circle",{cx:0,cy:r*1.85,r:r*.17,fill:"#E8A33D","fill-opacity":.7},bf);
+    mk("path",{d:`M${-r*.4},${-r*.3} Q${-r*.1},${-r*.5} ${r*.2},${-r*.35}`,fill:"none",stroke:"#FFF3C8","stroke-width":Math.max(3,r*.08),"stroke-linecap":"round","stroke-opacity":.6},g);
+    gsap.set(g,{x,y,opacity:0});
+    const t=T0+.8+RL()*.35;
+    tl.fromTo(g,{opacity:0,scale:.2},{opacity:1,scale:1,duration:.16,ease:"power3.out",immediateRender:false},t);
+    tl.to(g,{y:y+110+RL()*140,scaleY:1.5,duration:1.9,ease:"power1.in"},t+.2);
+    tl.to(g,{opacity:0,duration:.5},t+1.5);
+  }
+})();
+
+/* ===== palet B: meja kayu, ayam di piring, tisu (DRY) ===== */
+(function(){
+  const T0=30.662,s=SV("sc_dry"),w=W("sc_dry");
+  mk("rect",{width:1080,height:1920,fill:"#F4EDE1"},s);
+  mk("ellipse",{cx:200,cy:300,rx:520,ry:420,fill:"url(#gLight)",opacity:.8},s);
+  const bk=mk("g",{filter:"url(#fB30)"},s);
+  mk("circle",{cx:880,cy:420,r:140,fill:"#C9B79A","fill-opacity":.5},bk);mk("circle",{cx:960,cy:700,r:100,fill:"#A9744F","fill-opacity":.35},bk);
+  mk("rect",{x:0,y:962,width:1080,height:1000,fill:"url(#gWood)"},s);
+  const r=rng(12);for(let i=0;i<30;i++){const y=985+i*34+r()*8;mk("path",{d:`M-20,${y} Q${300+r()*200},${y-14+r()*28} ${700+r()*200},${y+r()*10} T1120,${y}`,fill:"none",stroke:"#6B4A33","stroke-opacity":.18+r()*.2,"stroke-width":2+r()*3},s)}
+  mk("rect",{x:0,y:958,width:1080,height:14,fill:"#2B2623","fill-opacity":.22,filter:"url(#fB6)"},s);
+  mk("ellipse",{cx:420,cy:1042,rx:540,ry:120,fill:"#000","fill-opacity":.28,filter:"url(#fB14)"},s);
+  mk("ellipse",{cx:420,cy:1005,rx:520,ry:112,fill:"url(#gPlate)",stroke:"#CDBFA6","stroke-width":5},s);
+  mk("ellipse",{cx:420,cy:1005,rx:400,ry:82,fill:"none",stroke:"#D8CCB6","stroke-width":3},s);
+  const ck=chicken(s);gsap.set(ck.g,{x:300,y:800,scale:1.3,rotation:-6});
+  // tetes air basah
+  const dg=mk("g",{},s),drops=[];
+  [[-120,-30,.3],[-60,-80,.26],[10,-95,.34],[70,-60,.27],[110,-5,.3],[-130,30,.28],[-50,50,.36],[20,20,.26],[80,70,.3],[-20,-35,.4],[140,50,.24],[-100,-70,.22]].forEach(([x,y,sc],i)=>{
+    const d=waterDrop(dg,sc,false);gsap.set(d,{x:300+x*1.3,y:800+y*1.3,opacity:0});drops.push([d,x,y,sc]);
+    tl.fromTo(d,{opacity:0,y:800+y*1.3-90},{opacity:1,y:800+y*1.3,duration:.4,ease:"power2.in",immediateRender:false},T0+.05+i*.05);
+    tl.to(d,{scaleY:sc*1.08,duration:.5,yoyo:true,repeat:1,ease:"sine.inOut"},T0+.7+i*.04);
+  });
+  // tisu dapur: lembaran bertekstur (pola belah ketupat), lipatan, sudut terlipat, + tangan yang menekan
+  const ti=mk("g",{},s);
+  mk("ellipse",{cx:12,cy:20,rx:170,ry:112,fill:"#000","fill-opacity":.22,filter:"url(#fB14)"},ti);
+  const tf=mk("g",{filter:"url(#fWob)"},ti);
+  const shp="M-165,-105 Q-80,-120 0,-108 T165,-104 L172,0 Q160,60 168,108 Q80,120 0,108 T-166,110 Q-178,0 -165,-105Z";
+  mk("path",{d:shp,fill:"url(#gTissue)",stroke:"#CFC6B2","stroke-width":4},tf);
+  mk("path",{d:shp,fill:"url(#pQuilt)","fill-opacity":.75},tf);
+  mk("path",{d:"M-170,-26 Q0,-10 170,-30",fill:"none",stroke:"#C9BFA9","stroke-width":3},tf);
+  mk("path",{d:"M-170,-21 Q0,-5 170,-25",fill:"none",stroke:"#fff","stroke-width":3,"stroke-opacity":.9},tf);
+  mk("path",{d:"M-42,-108 Q-54,0 -38,108",fill:"none",stroke:"#C9BFA9","stroke-width":3,"stroke-opacity":.8},tf);
+  mk("path",{d:"M168,108 L112,108 L168,52Z",fill:"#E4DCCB",stroke:"#CFC6B2","stroke-width":3,"stroke-linejoin":"round"},tf);
+  const wet=[[-60,-30,46],[50,34,54],[20,-58,30]].map(([x,y,rr])=>{const e=mk("ellipse",{cx:x,cy:y,rx:rr,ry:rr*.8,fill:"#7FA5B5","fill-opacity":0,filter:"url(#fB6)"},ti);return e});
+  // tangan: 4 jari menekan dari kanan + telapak
+  const hd=mk("g",{filter:"url(#fWob)"},ti);
+  mk("rect",{x:150,y:-86,width:190,height:178,rx:62,fill:"url(#gSkin)",stroke:"#8E5A44","stroke-width":5},hd);
+  [-70,-28,14,56].forEach((y,i)=>{mk("rect",{x:18-i%2*10,y,width:190,height:38,rx:19,fill:"url(#gSkin)",stroke:"#8E5A44","stroke-width":4},hd);
+    mk("ellipse",{cx:34-i%2*10,cy:y+19,rx:9,ry:11,fill:"#F6DAC8","fill-opacity":.9},hd)});
+  mk("path",{d:"M190,-60 q18,70 0,140",fill:"none",stroke:"#8E5A44","stroke-width":3,"stroke-opacity":.4},hd);
+  gsap.set(ti,{x:1250,y:620,rotation:18,scale:1.2});
+  tl.to(ti,{x:420,y:800,rotation:-6,duration:.5,ease:"power3.out"},T0+1.4);
+  [[560,6,2.0],[230,-5,2.35],[560,5,2.7],[260,-3,3.05]].forEach(([x,rot,t])=>tl.to(ti,{x,y:800,rotation:rot,duration:.35,ease:"sine.inOut"},T0+t));
+  tl.to(ti,{x:1300,y:640,rotation:20,duration:.5,ease:"power2.in"},T0+3.4);
+  wet.forEach((e,i)=>tl.to(e,{attr:{"fill-opacity":.55},duration:.35},T0+2.0+i*.4));
+  // tetes hilang saat tisu lewat
+  drops.forEach(([d,x,y,sc],i)=>tl.to(d,{opacity:0,scaleX:sc*1.4,scaleY:sc*.2,duration:.2,ease:"power2.in"},T0+1.95+((x+140)/280)*.5+(x>20?.35:0)));
+  tl.to(ck.gloss,{opacity:.15,duration:.5},T0+2.9);
+  // label "tisu" menempel ke objek
+  const lb=mk("g",{opacity:0},s);
+  mk("rect",{x:590,y:560,width:280,height:80,rx:40,fill:"#2B2623"},lb);
+  const lt=mk("text",{x:730,y:616,"text-anchor":"middle","font-family":"Poppins","font-weight":700,"font-size":44,fill:"#F4EDE1"},lb);lt.textContent="tisu dapur";
+  tl.fromTo(lb,{opacity:0,scale:.6,transformOrigin:"730px 600px"},{opacity:1,scale:1,duration:.35,ease:"back.out(1.6)",immediateRender:false},T0+1.5);
+  tl.to(lb,{opacity:0,duration:.2},T0+3.3);
+  // kinclong + centang di akhir
+  const ok=mk("g",{opacity:0},s);
+  mk("circle",{cx:0,cy:0,r:74,fill:"#2F7D4F"},ok);mk("path",{d:"M-30,2 L-8,26 L34,-26",fill:"none",stroke:"#F4EDE1","stroke-width":16,"stroke-linecap":"round","stroke-linejoin":"round"},ok);
+  gsap.set(ok,{x:790,y:640});
+  tl.fromTo(ok,{opacity:0,scale:.3},{opacity:1,scale:1,duration:.4,ease:"back.out(1.7)",immediateRender:false},T0+3.55);
+  gsap.set(w,{transformOrigin:"45% 55%"});
+  tl.fromTo(w,{scale:1.02},{scale:1.08,duration:4.5,ease:"none",immediateRender:false},T0);
+})();
+
+/* ===== SLIDE 35.2-39.054 : masuk pelan dari sisi wajan, tenang (palet B) ===== */
+function panB(id,T0,dur,chickenFinal){
+  const s=SV(id),w=W(id);
+  mk("rect",{width:1080,height:1920,fill:"#F4EDE1"},s);
+  mk("ellipse",{cx:200,cy:300,rx:520,ry:420,fill:"url(#gLight)",opacity:.8},s);
+  const bk=mk("g",{filter:"url(#fB30)"},s);
+  mk("circle",{cx:880,cy:420,r:140,fill:"#C9B79A","fill-opacity":.5},bk);mk("circle",{cx:120,cy:700,r:110,fill:"#A9744F","fill-opacity":.3},bk);
+  mk("rect",{x:0,y:1280,width:1080,height:700,fill:"url(#gWood)"},s);
+  const r=rng(33);for(let i=0;i<16;i++){const y=1300+i*30+r()*8;mk("path",{d:`M-20,${y} Q${300+r()*200},${y-12+r()*24} ${700+r()*200},${y+r()*8} T1120,${y}`,fill:"none",stroke:"#6B4A33","stroke-opacity":.2,"stroke-width":2+r()*3},s)}
+  panTop(s,"gOilB");
+  return {s,w};
+}
+(function(){
+  const T0=35.2,{s,w}=panB("sc_slide",T0);
+  oilBubbles(s,201,10,200,800,940,1080,T0,T0+3.8);
+  // ayam kering meluncur dari tepi kiri, busur landai, tenggelam separuh
+  const cl=mk("clipPath",{id:"clipSl"},s);mk("rect",{x:-300,y:0,width:1700,height:1006},cl);
+  const cg=mk("g",{"clip-path":"url(#clipSl)"},s);
+  const ck=chicken(cg);gsap.set(ck.gloss,{opacity:.0});
+  gsap.set(ck.g,{x:-330,y:800,scale:.8,rotation:24});
+  tl.to(ck.g,{x:180,y:900,rotation:-22,duration:1.0,ease:"power2.out"},T0+.2);
+  tl.to(ck.g,{x:440,y:965,rotation:-58,duration:1.0,ease:"power2.inOut"},T0+1.15);
+  tl.to(ck.g,{y:1012,duration:.5,ease:"sine.out"},T0+2.2);
+  loop(T0+2.7,T0+3.85,.9,(t,i)=>tl.to(ck.g,{y:1012+((i%2)?-4:4),duration:.9,ease:"sine.inOut"},t));
+  // garis air: minyak menutupi bagian bawah ayam (tenggelam separuh) + meniskus + riak
+  mk("ellipse",{cx:440,cy:1006,rx:185,ry:38,fill:"url(#gOilB)","fill-opacity":.96,stroke:"#FFF2CC","stroke-width":5,"stroke-opacity":.75},s);
+  mk("ellipse",{cx:440,cy:1006,rx:150,ry:26,fill:"none",stroke:"#8E5514","stroke-width":3,"stroke-opacity":.35},s);
+  ripple(s,T0+2.2,440,1006,120,28,"#FFF2CC",.7,1.5);
+  ripple(s,T0+2.6,440,1006,100,24,"#FFF2CC",.5,1.5);
+  // gelembung kecil tenang
+  loop(T0+2.4,T0+3.85,.25,(t,i)=>{const q=rng(600+i),e=mk("circle",{cx:340+q()*280,cy:1030,r:4+q()*7,fill:"none",stroke:"#FFF2CC","stroke-width":3,opacity:0},s);
+    tl.fromTo(e,{y:0,opacity:.9},{y:-26-q()*34,opacity:0,duration:.8,ease:"power1.out",immediateRender:false},t)});
+  // uap tipis
+  loop(T0+.2,T0+3.8,.5,(t,i)=>{const q=rng(650+i),e=mk("circle",{cx:300+q()*400,cy:900,r:44+q()*30,fill:"#fff",opacity:0,filter:"url(#fB14)"},s);
+    tl.fromTo(e,{y:0,opacity:.35},{y:-380,opacity:0,duration:2,ease:"power1.out",immediateRender:false},t)});
+  // FG buram: sendok kayu
+  const fg=mk("g",{filter:"url(#fB14)"},s);
+  mk("rect",{x:-200,y:1340,width:620,height:90,rx:44,fill:"#6B4A33","fill-opacity":.85,transform:"rotate(8 -200 1340)"},fg);
+  gsap.set(w,{transformOrigin:"50% 62%"});
+  tl.fromTo(w,{scale:1.0},{scale:1.07,duration:3.85,ease:"none",immediateRender:false},T0);
+})();
+
+/* ===== END 39.054-42.51 ===== */
+(function(){
+  const T0=39.054,{s,w}=panB("sc_end",T0);
+  oilBubbles(s,301,12,200,800,940,1080,T0,T0+3.4);
+  const cl=mk("clipPath",{id:"clipEn"},s);mk("rect",{x:-300,y:0,width:1700,height:1006},cl);
+  const cg=mk("g",{"clip-path":"url(#clipEn)"},s);
+  const ck=chicken(cg);gsap.set(ck.gloss,{opacity:0});
+  gsap.set(ck.g,{x:440,y:1012,scale:.8,rotation:-58});
+  loop(T0,T0+3.5,.9,(t,i)=>tl.to(ck.g,{y:1012+((i%2)?-5:5),rotation:-58+((i%2)?-1.5:1.5),duration:.9,ease:"sine.inOut"},t));
+  mk("ellipse",{cx:440,cy:1006,rx:185,ry:38,fill:"url(#gOilB)","fill-opacity":.96,stroke:"#FFF2CC","stroke-width":5,"stroke-opacity":.75},s);
+  mk("ellipse",{cx:440,cy:1006,rx:150,ry:26,fill:"none",stroke:"#8E5514","stroke-width":3,"stroke-opacity":.35},s);
+  loop(T0+.1,T0+3.4,.8,(t)=>ripple(s,t,440,1006,110,26,"#FFF2CC",.5,1.4));
+  loop(T0,T0+3.4,.22,(t,i)=>{const q=rng(800+i),e=mk("circle",{cx:340+q()*280,cy:1030,r:4+q()*7,fill:"none",stroke:"#FFF2CC","stroke-width":3,opacity:0},s);
+    tl.fromTo(e,{y:0,opacity:.9},{y:-26-q()*34,opacity:0,duration:.8,ease:"power1.out",immediateRender:false},t)});
+  loop(T0,T0+3.4,.45,(t,i)=>{const q=rng(850+i),e=mk("circle",{cx:300+q()*400,cy:900,r:44+q()*30,fill:"#fff",opacity:0,filter:"url(#fB14)"},s);
+    tl.fromTo(e,{y:0,opacity:.35},{y:-380,opacity:0,duration:2,ease:"power1.out",immediateRender:false},t)});
+  // centang kecil muncul (aman)
+  const ok=mk("g",{opacity:0},s);
+  mk("circle",{r:64,fill:"#2F7D4F"},ok);mk("path",{d:"M-26,2 L-8,22 L30,-22",fill:"none",stroke:"#F4EDE1","stroke-width":14,"stroke-linecap":"round","stroke-linejoin":"round"},ok);
+  gsap.set(ok,{x:790,y:820});
+  tl.fromTo(ok,{opacity:0,scale:.3},{opacity:1,scale:1,duration:.4,ease:"back.out(1.7)",immediateRender:false},T0+1.3);
+  const fg=mk("g",{filter:"url(#fB14)"},s);
+  mk("rect",{x:-200,y:1340,width:620,height:90,rx:44,fill:"#6B4A33","fill-opacity":.85,transform:"rotate(8 -200 1340)"},fg);
+  gsap.set(w,{transformOrigin:"50% 62%"});
+  tl.fromTo(w,{scale:1.07},{scale:1.13,duration:3.45,ease:"none",immediateRender:false},T0);
+})();
+
+/* ===== judul: per kata muncul (ease-out) + keluar cepat ===== */
+function T(id,times,end){
+  const ws=[...document.querySelectorAll(id+" .w")];
+  ws.forEach((wd,i)=>{
+    if(times[i]<=0){return}
+    tl.fromTo(wd,{y:50,opacity:0,scale:.92},{y:0,opacity:1,scale:1,duration:.45,ease:"power3.out",immediateRender:false},times[i]);
+  });
+  tl.to(id,{opacity:0,y:-24,duration:.2,ease:"power2.in"},end-.22);
+}
+T("#t_hot",[4.3,4.9],7.0);
+T("#t_therm",[7.05,8.9],12.164);
+T("#t_glass",[12.3,12.9],14.9);
+T("#t_sink",[15.0],19.184);
+T("#t_steam1",[19.3,19.9],21.8);
+T("#t_steam2",[21.9,22.5],24.356);
+T("#t_grow",[24.45,25.2],28.0);
+T("#t_burst",[28.76],30.662);
+T("#t_dry",[30.8,31.9],35.2);
+T("#t_slide",[35.3,36.1],39.054);
+T("#t_end",[39.15,40.3],END);
+// muncrat! overshoot sekali
+tl.fromTo("#t_burst .w",{scale:1.35,opacity:0},{scale:1,opacity:1,duration:.4,ease:"back.out(1.8)",immediateRender:false},28.76);
+
+/* ===== caption: 3-6 kata per layar, jeda kalimat = pindah layar ===== */
+const cap=$("#cap");
+tl.set(cap,{"--bg":"rgba(244,237,225,.9)","--fg":"#2B2623","--hi":"#D9482B"},30.662);
+TIMING.forEach(a=>{
+  const gs=[];let g=[];
+  a.kata.forEach((k,i)=>{
+    const prev=g[g.length-1];
+    if(g.length&&(g.length>=5||(prev&&k[1]-prev[2]>.35)||g.map(x=>x[0]).join(" ").length+k[0].length>26)){gs.push(g);g=[]}
+    g.push(k);
+  });
+  if(g.length)gs.push(g);
+  gs.forEach((gr,gi)=>{
+    const st=a.mulai+gr[0][1]-.06,en=gi+1<gs.length?a.mulai+gs[gi+1][0][1]-.06:a.mulai+gr[gr.length-1][2]+.4;
+    const e=document.createElement("div");e.className="cg";
+    gr.forEach((k,i)=>{const b=document.createElement("b");b.textContent=k[0]+(i<gr.length-1?" ":"");e.appendChild(b)});
+    cap.appendChild(e);
+    tl.fromTo(e,{opacity:0,y:18,scale:.97},{opacity:1,y:0,scale:1,duration:.15,ease:"power2.out",immediateRender:false},st);
+    tl.set(e,{opacity:0},en);
+    [...e.children].forEach((b,i)=>{const bt=a.mulai+gr[i][1];tl.set(b,{color:"var(--hi)"},bt);tl.set(b,{color:"var(--fg)"},Math.min(en,a.mulai+gr[i][2]+.05))});
+  });
+});
+
+window.__timelines["main"]=tl;
+tl.seek(0);
+</script>
+</body>
+</html>

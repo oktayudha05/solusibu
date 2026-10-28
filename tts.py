@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-"""python3 tts.py <folder video>: naskah.json -> public/out/s<i>.mp3 + props.json (durasi & kata per adegan)."""
+"""python3 tts.py <folder video> [subfolder]: naskah.json -> public/<subfolder>/s<i>.mp3 + props.json (durasi & kata per adegan).
+subfolder relatif ke public/, default out. Contoh: tts.py video/x out/x -> public/out/x/."""
 import asyncio, json, subprocess, sys
 from pathlib import Path
 
 import edge_tts
 
-OUT = Path(__file__).parent / "public" / "out"
+PUBLIC = Path(__file__).parent / "public"
 JEDA = 0.25  # dtk napas di akhir tiap adegan
 
 
@@ -27,14 +28,15 @@ async def suara(teks, voice, rate, file):
     return kata
 
 
-async def main(folder):
+async def main(folder, sub="out"):
     naskah = json.loads((Path(folder) / "naskah.json").read_text())
+    OUT = PUBLIC / sub
     OUT.mkdir(parents=True, exist_ok=True)
     total = 0
     for i, a in enumerate(naskah["adegan"]):
         f = OUT / f"s{i}.mp3"
         a["kata"] = await suara(a["narasi"], naskah["suara"], naskah["kecepatan"], f)
-        a["audio"] = f"out/s{i}.mp3"  # relatif ke public/ (staticFile)
+        a["audio"] = f"{sub}/s{i}.mp3"  # relatif ke public/ (staticFile)
         a["durasi"] = durasi_audio(f) + JEDA
         total += a["durasi"]
     (OUT / "props.json").write_text(json.dumps(naskah, ensure_ascii=False, indent=1))
@@ -44,6 +46,9 @@ async def main(folder):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        sys.exit("pakai: tts.py <folder video>")
-    asyncio.run(main(sys.argv[1]))
+    if len(sys.argv) not in (2, 3):
+        sys.exit("pakai: tts.py <folder video> [subfolder di public/, default out]")
+    sub = sys.argv[2] if len(sys.argv) == 3 else "out"
+    if Path(sub).is_absolute() or ".." in Path(sub).parts:
+        sys.exit("subfolder harus relatif & tanpa ..")
+    asyncio.run(main(sys.argv[1], sub))

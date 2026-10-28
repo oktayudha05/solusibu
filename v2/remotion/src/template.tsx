@@ -85,10 +85,10 @@ const Sumber: React.FC<{ c: Ctx; at: number; teks?: string }> = ({ c, at, teks }
 
 // ================= 1. HOOK-FREEZE (dapur) =================
 // frame 0 sudah ada aksinya: uap + ciprat → BEKU (flash) → kotak bidik + label "pelakunya?" → lanjut jatuh pas adegan habis.
-const hookBeku = (c: Ctx) => c.mulai + 0.42
+const hookBeku = (c: Ctx) => c.mulai + 0.3
 const hookPeristiwa = (c: Ctx): Peristiwa => {
   const m = c.mulai
-  return { jatuh: m - 1.6, sentuh: m - 1.15, dasar: m - 0.75, didih: m - 0.6, uap: m - 0.38, ciprat: m + 0.12, beku: [hookBeku(c), c.selesai - 0.25] }
+  return { jatuh: m - 1.9, sentuh: m - 1.45, dasar: m - 1.05, didih: m - 0.9, uap: m - 0.68, ciprat: m - 0.1, beku: [hookBeku(c), c.selesai - 0.25] } // frame 0 = ciprat udah jalan
 }
 const HookLayar: React.FC<CtxLayar> = (c) => {
   const w = c.tema.warna, b = hookBeku(c), t = c.t
@@ -116,7 +116,7 @@ const hookKamera = (c: Ctx): KeyKamera[] => {
 }
 const hookSfx = (c: Ctx): Sfx => {
   const b = hookBeku(c)
-  return [[c.mulai + 0.12, 'props-splash'], [b, 'impact-heavy-soft'], [b + 3 * F, 'writing-scribble'], ...labelSfx(waktu(c, c.a.data.label_pada, 0.9)), [c.selesai - 0.25, 'whoosh-fast-soft']]
+  return [[c.mulai, 'props-splash'], [b, 'impact-heavy-soft'], [b + 3 * F, 'writing-scribble'], ...labelSfx(waktu(c, c.a.data.label_pada, 0.9)), [c.selesai - 0.25, 'whoosh-fast-soft']]
 }
 
 // ================= 2. PENAMPANG-ZOOM (dapur) =================
@@ -203,13 +203,13 @@ const Termometer: React.FC<Ctx> = (c) => {
   </>
 }
 // sendok makan (vektor kotak) + grid kotak 1 L
-const SEL = 150, KOL = 4
+const SEL = 130, KOL = 5
 const Tumbuh: React.FC<Ctx> = (c) => {
   const w = c.tema.warna, d = c.a.data, t = c.t, at = waktu(c, d.pada, 1), n = d.sel ?? 24
-  const baris = Math.ceil(n / KOL), x0 = 300, yBawah = 1180
+  const baris = Math.ceil(n / KOL), x0 = 330, yBawah = 1230
   return <>
     {/* sendok: kepala kotak + gagang */}
-    <div style={{ position: 'absolute', left: 200, top: 1250, ...muncul(t, c.mulai + 0.1) }}>
+    <div style={{ position: 'absolute', left: 200, top: 1270, ...muncul(t, c.mulai + 0.1) }}>
       <div style={{ position: 'absolute', left: 0, top: 0, width: 300, height: 110, background: w.catatan2, filter: bayang(w.bayangan, 10), clipPath: 'polygon(0 0,100% 0,88% 100%,12% 100%)' }} />
       <div style={{ position: 'absolute', left: 290, top: 20, width: 380, height: 40, background: w.catatan2, filter: bayang(w.bayangan, 10) }} />
       <div style={{ position: 'absolute', left: 30, top: 8, width: 240, height: 34, background: w.tetes }} />
@@ -218,8 +218,8 @@ const Tumbuh: React.FC<Ctx> = (c) => {
     {d.awal && <div style={{ position: 'absolute', left: 330, top: 1380, ...fontT(c, 'display', 64), color: w.tintaPintu, textShadow: `6px 6px 0 ${w.bayangan}`, ...muncul(t, c.mulai + 0.3), transformOrigin: '0 0' }}>{d.awal}</div>}
     {/* panah uap naik dari sendok ke tumpukan */}
     <svg width={1080} height={1920} style={{ position: 'absolute', left: 0, top: 0, overflow: 'visible' }}>
-      <Gores d={`M 350 1230 L 350 1100 L ${x0 - 20} 1100`} p={prog(t, at - 0.3, at, ease.inOut3)} warna={w.stabilo} lebar={10} bayangan={w.bayangan} />
-      {t > at && <polygon points={kepala([x0 - 4, 1100], [350, 1100], 36)} fill={w.stabilo} />}
+      <Gores d={`M 300 1250 L 300 1150 L ${x0 - 20} 1150`} p={prog(t, at - 0.3, at, ease.inOut3)} warna={w.stabilo} lebar={10} bayangan={w.bayangan} />
+      {t > at && <polygon points={kepala([x0 - 4, 1150], [300, 1150], 36)} fill={w.stabilo} />}
     </svg>
     {Array.from({ length: n }, (_, i) => <div key={'k' + i} style={{ position: 'absolute', left: x0 + (i % KOL) * SEL, top: yBawah - (Math.floor(i / KOL) + 1) * SEL,
       width: SEL - 10, height: SEL - 10, outline: `4px dashed ${w.catatan2}`, opacity: 0.55 * prog(t, c.mulai + 0.2 + (i % 5) * F, c.mulai + 0.5 + (i % 5) * F) }} />)}
@@ -240,7 +240,7 @@ const Tumbuh: React.FC<Ctx> = (c) => {
 const TumbuhLayar: React.FC<CtxLayar> = (c) => {
   const w = c.tema.warna, d = c.a.data, t = c.t, at = waktu(c, d.pada, 1), n = d.sel ?? 24
   const angka = Math.round(Math.exp(kf(t, [[at, 0], [at + n * 2 * F + 0.2, Math.log(d.ke ?? 1600), ease.out3]])))
-  const pos = proyeksi(c.cam, [c.ox + 300 + KOL * SEL / 2, c.oy + 1180 - Math.ceil(n / KOL) * SEL * 0.5])
+  const pos = proyeksi(c.cam, [c.ox + 330 + KOL * SEL / 2, c.oy + 1230 - Math.ceil(n / KOL) * SEL * 0.5])
   const atH = waktu(c, d.hasil_pada, 2.5)
   return <>
     {t >= at && <div style={{ position: 'absolute', left: Math.min(Math.max(64, pos[0] - 300), 280), top: Math.max(660, pos[1] - 120), width: 600, textAlign: 'center' }}>
@@ -263,7 +263,7 @@ const skalaKamera = (c: Ctx): KeyKamera[] => {
   if (c.a.data.mode === 'tumbuh') {
     const at = waktu(c, c.a.data.pada, 1)
     return [{ t: c.mulai + 10 * F, fokus: o(520, 1060), zoom: 1.15, ease: 'inOut5' }, { t: at - 0.1, fokus: o(520, 1050), zoom: 1.2 },
-      { t: at + 0.9, fokus: o(560, 900), zoom: 0.92, ease: 'inOut3' }, { t: c.selesai, fokus: o(560, 890), zoom: 0.9 }]
+      { t: at + 0.9, fokus: o(610, 930), zoom: 0.98, ease: 'inOut3' }, { t: c.selesai, fokus: o(610, 925), zoom: 0.96 }]
   }
   const d = c.a.data, t1 = waktu(c, d.seri[0]?.pada, 0.4), t2 = waktu(c, d.seri[1]?.pada, 1.6)
   return [{ t: c.mulai + 10 * F, fokus: o(560, 880), zoom: 1.0, ease: 'inOut5' }, { t: Math.min(t1, t2) + 0.2, fokus: o(550, 870), zoom: 1.01, ease: 'inOut3' },
@@ -396,16 +396,18 @@ const PayLayar: React.FC<CtxLayar> = (c) => {
   const w = c.tema.warna, t = c.t, r: string[] = c.a.data.rangkum ?? [], pulang = payPulang(c), af = c.affiliate
   const keluar = prog(t, pulang - 0.1, pulang + 0.2, ease.in3)
   return <>
+    {/* panah dulu (di bawah), baru kotak kata: panah ga nyoret teks */}
+    <svg width={1080} height={1920} style={{ position: 'absolute', inset: 0, opacity: 1 - keluar }}>
+      {r.map((_, i) => {
+        const at = c.mulai + 0.5 + i * 8 * F, y = 690 + i * 190, xp = (i - 1) % 2 ? 400 : 300, x = i % 2 ? 400 : 300
+        return i > 0 ? <Gores key={i} d={`M ${xp + 220} ${y - 110} L ${x + 220} ${y - 4}`} p={prog(t, at - 4 * F, at, ease.out3)} warna={w.tintaPintu} lebar={8} bayangan={w.bayangan} /> : null
+      })}
+    </svg>
     {r.map((s, i) => {
-      const at = c.mulai + 0.5 + i * 8 * F, x = i % 2 ? 400 : 100, y = 690 + i * 190
-      return <React.Fragment key={i}>
-        {i > 0 && <svg width={1080} height={1920} style={{ position: 'absolute', inset: 0, opacity: 1 - keluar }}>
-          <Gores d={`M ${(i - 1) % 2 ? 620 : 320} ${y - 100} L ${i % 2 ? 560 : 330} ${y - 8}`} p={prog(t, at - 4 * F, at, ease.out3)} warna={w.tintaPintu} lebar={8} bayangan={w.bayangan} />
-        </svg>}
-        <div style={{ position: 'absolute', left: x, top: y, width: 440, textAlign: 'center', opacity: prog(t, at, at + 3 * F) * (1 - keluar), transform: `rotate(${i % 2 ? 2 : -2}deg) scale(${popS(t, at)})` }}>
-          <span style={{ display: 'inline-block', background: i === r.length - 1 ? w.stabilo : w.catatan, color: w.latar, padding: '4px 26px', ...fontT(c, i === r.length - 1 ? 'serif' : 'display', i === r.length - 1 ? 110 : 76), boxShadow: `9px 9px 0 ${w.bayangan}` }}>{s}</span>
-        </div>
-      </React.Fragment>
+      const at = c.mulai + 0.5 + i * 8 * F, x = i % 2 ? 400 : 300, y = 690 + i * 190 // kanan maskot, kiri rel tombol
+      return <div key={i} style={{ position: 'absolute', left: x, top: y, width: 440, textAlign: 'center', opacity: prog(t, at, at + 3 * F) * (1 - keluar), transform: `rotate(${i % 2 ? 2 : -2}deg) scale(${popS(t, at)})` }}>
+        <span style={{ display: 'inline-block', background: i === r.length - 1 ? w.stabilo : w.catatan, color: w.latar, padding: '4px 26px', ...fontT(c, i === r.length - 1 ? 'serif' : 'display', i === r.length - 1 ? 110 : 76), boxShadow: `9px 9px 0 ${w.bayangan}` }}>{s}</span>
+      </div>
     })}
     {af && <div style={{ position: 'absolute', left: 64, top: 1240, width: 760, background: w.catatan2, color: w.latar, boxShadow: `9px 9px 0 ${w.bayangan}`, ...muncul(t, c.mulai + 0.8), opacity: 1 - keluar }}>
       <div style={{ padding: '16px 26px', ...fontT(c, 'tangan', 60) }}>{af.produk} · {af.teks}</div>

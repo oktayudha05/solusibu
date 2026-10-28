@@ -135,7 +135,7 @@ const Ciprat: React.FC<{ tema: Tema; te: number; k: Peristiwa }> = ({ tema, te, 
     {[0, 1, 2].map((i) => {
       const x = 540 + (i - 1) * 300 + (i - 1) * 380 * dt, y = 620 - 820 * dt + 1200 * dt * dt
       return <Sprite key={i} src="aset/sprite/ciprat-minyak.png" warna={w.cipratan} fx={bayang(w.bayangan, 8)}
-        style={{ left: x - 128, top: y - 132, width: 256, height: 264, transform: i === 0 ? 'scaleX(-1)' : undefined, opacity: prog(te, k.ciprat, k.ciprat + 0.05) }} />
+        style={{ left: x - 128, top: y - 132, width: 256, height: 264, transform: `${i === 0 ? 'scaleX(-1) ' : ''}rotate(${(i - 1) * 28 + dt * 160 * (i - 1)}deg) scale(${[0.75, 1, 0.75][i]})`, opacity: prog(te, k.ciprat, k.ciprat + 0.05) }} />
     })}
   </>
 }

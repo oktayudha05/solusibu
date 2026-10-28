@@ -1,0 +1,177 @@
+{
+ "slug": "minyak-muncrat",
+ "judul": "Setetes air bikin minyak muncrat? Ini sebabnya",
+ "tema": "E3",
+ "cek_fakta": true,
+ "adegan": [
+  {
+   "template": "hook-freeze",
+   "teks": "Setetes air doang, minyaknya muncrat kayak gini. Kok bisa?",
+   "kunci": [
+    "muncrat"
+   ],
+   "data": {
+    "label": "cuma setetes air?",
+    "label_pada": "Kok",
+    "karakter": "ibu-kaget"
+   }
+  },
+  {
+   "template": "skala-angka",
+   "teks": "Minyak goreng panasnya sampai seratus sembilan puluh derajat. Air mendidih di seratus.",
+   "kunci": [
+    "mendidih"
+   ],
+   "data": {
+    "mode": "termometer",
+    "maks": 220,
+    "seri": [
+     {
+      "label": "minyak",
+      "dari": 160,
+      "nilai": 190,
+      "warna": "panas",
+      "pada": "panasnya"
+     },
+     {
+      "label": "air",
+      "nilai": 100,
+      "warna": "air",
+      "pada": "Air"
+     }
+    ],
+    "sumber": "FSIS (USDA), suhu goreng",
+    "karakter": "ibu-jelasin"
+   }
+  },
+  {
+   "template": "penampang-zoom",
+   "teks": "Air lebih berat, jadi tenggelam ke dasar. Langsung mendidih, jadi uap, minyaknya kelempar.",
+   "kunci": [
+    "tenggelam",
+    "uap"
+   ],
+   "data": {
+    "ketukan": {
+     "jatuh": "Air",
+     "dasar": "tenggelam",
+     "didih": "mendidih",
+     "uap": "uap",
+     "ciprat": "kelempar"
+    },
+    "label": [
+     {
+      "teks": "air lebih berat",
+      "jangkar": "tetes",
+      "pada": "berat",
+      "warna": "air"
+     },
+     {
+      "teks": "mendidih, 100°C",
+      "jangkar": "dasar",
+      "pada": "mendidih",
+      "warna": "panas"
+     },
+     {
+      "teks": "jadi uap",
+      "jangkar": "uap",
+      "pada": "uap",
+      "warna": "air"
+     }
+    ],
+    "karakter": "ibu-mikir"
+   }
+  },
+  {
+   "template": "skala-angka",
+   "teks": "Satu sendok makan air jadi uap, ngembang sekitar seribu enam ratus kali. Kira-kira dua puluh empat liter.",
+   "kunci": [
+    "ngembang"
+   ],
+   "data": {
+    "mode": "tumbuh",
+    "awal": "1 sdm air",
+    "pada": "seribu",
+    "ke": 1600,
+    "akhiran": "×",
+    "sel": 24,
+    "sel_label": "1 L",
+    "hasil": "± 24 liter uap",
+    "hasil_pada": "liter",
+    "sumber": "Univ. Illinois & SFPE",
+    "karakter": "ibu-kaget"
+   }
+  },
+  {
+   "template": "langkah-tangan",
+   "teks": "Makanya bahan dilap kering dulu. Masukinnya pelan, jangan dijatuhin dari atas.",
+   "kunci": [
+    "kering"
+   ],
+   "data": {
+    "langkah": [
+     {
+      "teks": "lap sampai kering",
+      "aksi": "lap",
+      "pada": "dilap"
+     },
+     {
+      "teks": "masukin pelan",
+      "aksi": "pinggir",
+      "pada": "pelan"
+     }
+    ],
+    "karakter": "ibu-wajan"
+   }
+  },
+  {
+   "template": "langkah-tangan",
+   "teks": "Kalau minyaknya kebakar, jangan disiram air, wajan jangan dipindah. Matikan kompor, tutup pakai tutup logam.",
+   "kunci": [
+    "kebakar"
+   ],
+   "data": {
+    "langkah": [
+     {
+      "teks": "jangan siram air",
+      "aksi": "jangan-air",
+      "pada": "disiram"
+     },
+     {
+      "teks": "wajan jangan dipindah",
+      "aksi": "jangan-pindah",
+      "pada": "dipindah"
+     },
+     {
+      "teks": "matikan kompor",
+      "aksi": "kompor",
+      "pada": "Matikan"
+     },
+     {
+      "teks": "tutup pakai tutup logam",
+      "aksi": "tutup",
+      "pada": "tutup"
+     }
+    ],
+    "karakter": "ibu-nunjuk"
+   }
+  },
+  {
+   "template": "payoff-loop",
+   "teks": "Udah, keringin dulu ya. Soalnya kalau enggak,",
+   "kunci": [
+    "keringin"
+   ],
+   "data": {
+    "rangkum": [
+     "air",
+     "tenggelam",
+     "uap ×1.600",
+     "muncrat"
+    ],
+    "karakter": "ibu-jempol"
+   }
+  }
+ ],
+ "affiliate": null
+}

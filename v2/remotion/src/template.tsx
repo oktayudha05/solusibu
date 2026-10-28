@@ -510,7 +510,7 @@ const IkonV: React.FC<{ c: Ctx; id: string; at: number }> = ({ c, id, at }) => {
     const n = id === 'spora' ? 7 : 11, warna = id === 'spora' ? w.catatan2 : w.kata
     return <svg width={300} height={260} style={{ position: 'absolute', left: 0, top: 0, overflow: 'visible' }}>
       {Array.from({ length: n }, (_, i) => {
-        const a = i * 2.4, r = i === 0 ? 0 : 40 + (i % 3) * 30, x = 150 + Math.cos(a) * r * 1.3, y = 130 + Math.sin(a) * r * 0.8
+        const a = i * 2.4, r = i === 0 ? 0 : 40 + (i % 3) * 30, x = 150 + Math.cos(a) * r * 1.3 + goyang(t * 2, i, 6), y = 130 + Math.sin(a) * r * 0.8 + goyang(t * 2.6, i * 2, 8) // ngambang pelan: ga pernah diam
         const s = (id === 'racun' ? 34 + 6 * Math.sin(t * 8 + i) : 30) * popS(t, at + i * F)
         return <g key={i} opacity={prog(t, at + i * F, at + i * F + 0.1)}>
           <polygon points={`${x + 8},${y - s + 8} ${x + s * 0.7 + 8},${y + 8} ${x + 8},${y + s + 8} ${x - s * 0.7 + 8},${y + 8}`} fill={w.bayangan} />

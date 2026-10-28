@@ -4,12 +4,13 @@ import json, pathlib, re, sys
 
 DIR = pathlib.Path(__file__).parent
 ASET = {x["id"] for x in json.loads((DIR / "aset/index.json").read_text())["aset"] if x.get("jenis") != "sfx"}
-TEMPLATE = {"hook-freeze": [], "penampang-zoom": ["ketukan"], "skala-angka": ["mode"], "langkah-tangan": ["langkah"], "payoff-loop": ["rangkum"], "rantai-proses": ["langkah"]}
+TEMPLATE = {"hook-freeze": [], "penampang-zoom": ["ketukan"], "skala-angka": ["mode"], "langkah-tangan": ["langkah"], "payoff-loop": ["rangkum"], "rantai-proses": ["langkah"],
+            "banding-belah": ["atas", "bawah"], "bedah-label": ["objek", "label"]}
 MODE = {"termometer": ["seri"], "tumbuh": ["pada", "ke"]}  # skala-angka
 AKSI = {"lap", "pinggir", "jangan-air", "jangan-pindah", "kompor", "tutup"}  # langkah-tangan (selain ini: id properti dari aset)
 IKON = {"spora", "bakteri", "racun"}  # rantai-proses: ikon vektor (selain ini: id sprite dari aset)
 JANGKAR = {"dapur", "wajan", "atas", "minyak", "dasar", "permukaan", "tetes", "uap", "api"}
-KOLOM_ASET = ("karakter",)
+KOLOM_ASET = ("karakter", "objek")
 HARAM = ["tahukah kamu", "pernahkah kamu", "fakta menarik", "yuk simak", "mari kita", "di video ini", "melainkan", "semoga bermanfaat",
          "penting untuk diingat", "jadi mulai sekarang", "rahasia", "jitu", "ampuh", "dijamin", "wajib tahu", "game changer",
          "solusi terbaik", "anda", "tentunya", "selain itu", "oleh karena itu", "merupakan", "adalah sebuah"]
@@ -34,11 +35,11 @@ def cek(p):
         if t == "skala-angka":
             if d.get("mode") not in MODE: m.append(f"adegan {i}: mode '{d.get('mode')}' ga ada (termometer/tumbuh)")
             else: m += [f"adegan {i}: data.{k} kosong" for k in MODE[d["mode"]] if not d.get(k)]
-        ikon = [k for x in lst("langkah") for k in (x.get("ikon") if isinstance(x.get("ikon"), list) else [x.get("ikon")]) if k]
+        ikon = [k for x in lst("langkah") + [d.get("atas") or {}, d.get("bawah") or {}] for k in (x.get("ikon") if isinstance(x.get("ikon"), list) else [x.get("ikon")]) if k]
         m += [f"adegan {i}: ikon '{k}' ga ada" for k in ikon if k not in IKON | ASET]
         m += [f"adegan {i}: aksi '{x.get('aksi')}' ga ada" for x in lst("langkah") if t == "langkah-tangan" and x.get("aksi") not in AKSI | ASET]
-        m += [f"adegan {i}: jangkar '{x.get('jangkar')}' ga ada" for x in lst("label") if x.get("jangkar") not in JANGKAR]
-        pada = [d.get(k) for k in ("pada", "hasil_pada", "label_pada")] + list((d.get("ketukan") or {}).values())
+        m += [f"adegan {i}: jangkar '{x.get('jangkar')}' ga ada" for x in lst("label") if t == "penampang-zoom" and x.get("jangkar") not in JANGKAR]
+        pada = [d.get(k) for k in ("pada", "hasil_pada", "label_pada", "pemenang_pada")] + [(d.get(k) or {}).get("pada") for k in ("atas", "bawah")] + list((d.get("ketukan") or {}).values())
         pada += [x.get("pada") for k in ("label", "seri", "langkah") for x in lst(k)]
         m += [f"adegan {i}: pada '{w}' ga ada di teks" for w in pada if w and norm(w) not in kata]
         # angka di teks bikin forced alignment (suara.py) gagal hitung kata → tulis pakai huruf. Angka di layar taruh di data.

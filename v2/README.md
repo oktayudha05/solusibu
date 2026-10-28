@@ -35,15 +35,17 @@ Satu kanvas, kamera jalan (`kamera.tsx`). Template "dapur" (`hook-freeze`, `pena
 | | `mode: "tumbuh"`: `awal`, `pada`, `ke`, `akhiran?`, `sel?`, `sel_label?`, `hasil?`, `hasil_pada?`, `sumber` | sendok air → grid kotak (`sel` buah) + penghitung ×`ke` |
 | `langkah-tangan` | `langkah: [{teks, aksi, pada}]` | kartu bernomor + ilustrasi yg diperagakan. `aksi`: lap, pinggir, jangan-air, jangan-pindah, kompor, tutup (atau id properti) |
 | `rantai-proses` | `langkah: [{teks, ikon, pada}]` | sebab-akibat 3-6 langkah, kartu ular 2 per baris + panah bersudut, kamera turun per baris, akhir mundur lihat semua. `ikon`: id sprite atau vektor `spora`/`bakteri`/`racun`, boleh daftar (ditumpuk) |
+| `banding-belah` | `atas`/`bawah`: `{label, cap?, ikon, pada}`, `pemenang?` (atas/bawah/null), `pemenang_pada?` | salah vs benar: 2 panel ada dari awal, `pada` = cap SALAH/BENAR + denyut, `pemenang_pada` = yg kalah dicoret, yg menang membesar. `ikon` sama dgn rantai-proses |
+| `bedah-label` | `objek` (id sprite), `label: [{teks, titik: [x,y] 0..1, pada, warna?}]` | objek besar (x2) di kanan, label satu kolom kiri muncul pas `pada`, panah bersudut ke titik di objek |
 | `payoff-loop` | `rangkum: [kata...]`, `karakter?` | kamera mundur + jejak kata kunci → balik ke komposisi frame 0, tetes jatuh (nyambung ke hook). Wajib adegan terakhir; kartu affiliate + disclosure di sini kalau `affiliate` diisi. Kalimat akhir sebaiknya nyambung ke kalimat pertama |
 
-Belum dibikin (R1 §8): `banding-belah`, `bedah-label`. Video tanpa template dapur (selain payoff) ga gambar wajan: adegan 1 jadi wilayah 0 dan payoff pulang ke situ (loop). Adegan pertama ga wajib `hook-freeze`.
+Video tanpa template dapur (selain payoff) ga gambar wajan: adegan 1 jadi wilayah 0 dan payoff pulang ke situ (loop). Adegan pertama ga wajib `hook-freeze`.
 
 Aset dipanggil pakai `id` dari `aset/index.json` (cari: `grep '"tag"' -A8 aset/index.json \| grep wajan`). Sprite skala bulat (x8, maskot x5).
 
 ## Isi folder
 - `aset/`: `potong.py` (sheet AI → sprite bersih pakai spritegrid), `ambil_sfx.py` (subset wyzowl/sfx-kit CC0 + titik sinkron + `desis-minyak` sintesis ffmpeg), `index.json`
-- `remotion/src/`: `lib.tsx` (gerak, kertas, sprite, grain PNG), `kamera.tsx` (kamera satu kanvas, parallax, blur cuma pas whip), `kinetik.tsx` (teks per kata), `dapur.tsx` (wajan penampang), `template.tsx` (5 template), `index.tsx` (rakit + SFX), `tema.ts`
+- `remotion/src/`: `lib.tsx` (gerak, kertas, sprite, grain PNG), `kamera.tsx` (kamera satu kanvas, parallax, blur cuma pas whip), `kinetik.tsx` (teks per kata), `dapur.tsx` (wajan penampang), `template.tsx` (8 template), `index.tsx` (rakit + SFX), `tema.ts`
 - `remotion/lembar.mjs`: review lokal tanpa render: `node lembar.mjs <props.json> <folder> [frame...]` → still + `lembar-kontak.png` + % area aman terisi (target ≥55%)
 - `uji_gerak.py` (uji anti-slideshow dari mp4: hard cut + diam >0,4 dtk → `out/<slug>/uji-gerak.txt`, jalan di workflow, gagal = warning)
 - `cek_naskah.py` (cek naskah, stdlib) · `suara.py` + `suara/` (referensi suara terpilih) · `requirements.txt` (deps Python CPU)

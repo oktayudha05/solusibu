@@ -568,6 +568,83 @@ const rantaiKamera = (c: Ctx): KeyKamera[] => {
 const rantaiSfx = (c: Ctx): Sfx => [...rnAts(c).flatMap((at: number, i: number) => [[at - 0.3, i ? 'swish-soft' : 'pop-small-in'], [at - 0.12, 'pop-medium-in'], [at + 0.1, 'writing-marker-tick']] as Sfx),
   [rnRangkum(c), 'whoosh-medium-soft']]
 
+// ================= 7. BANDING-BELAH (wilayah sendiri) =================
+// salah vs benar, dua panel atas/bawah (ikon dari pustaka/vektor). Masing2 muncul pas `pada`; pas `pemenang_pada` yg kalah dicoret, yg menang membesar + cap.
+const BB = { x: 64, w: 952, h: 440, y: [600, 1080] }
+const Banding: React.FC<Ctx> = (c) => {
+  const w = c.tema.warna, t = c.t, d = c.a.data, sisi = ['atas', 'bawah'] as const
+  const ats = sisi.map((k, i) => waktu(c, d[k]?.pada, 0.2 + i * 1.4)), masuk = [c.mulai + 0.2, c.mulai + 0.4] // dua panel udah ada dari awal (serentak), `pada` = cap + denyut
+  const tMenang = waktu(c, d.pemenang_pada, (c.selesai - c.mulai) * 0.75), menang = d.pemenang ?? 'bawah'
+  return <>{sisi.map((k, i) => {
+    const P = d[k] ?? {}, at = ats[i], y = BB.y[i], kalah = d.pemenang !== null && k !== menang
+    if (t < masuk[i] - 0.05) return null
+    const ikon: string[] = Array.isArray(P.ikon) ? P.ikon : P.ikon ? [P.ikon] : []
+    const s = (k === menang ? kf(t, [[tMenang, 1], [tMenang + 8 * F, 1.06, ease.out3]]) : 1) * (t >= at ? popS(t, at, 0.96) : 1), redup = kalah ? 1 - 0.35 * prog(t, tMenang, tMenang + 0.3) : 1
+    const benar = P.cap ? /benar|bener|aman|oke/i.test(P.cap) : k === menang
+    return <div key={k} style={{ position: 'absolute', left: 0, top: 0, ...muncul(t, masuk[i]), transformOrigin: `540px ${y + BB.h / 2}px` }}>
+      <div style={{ position: 'absolute', left: 0, top: 0, transform: `scale(${s})`, transformOrigin: `540px ${y + BB.h / 2}px`, opacity: redup }}>
+        <Kertas tema={c.tema} t={t} l={BB.x} top={y} w={BB.w} h={BB.h} warna={i ? w.stabilo : w.catatan2} seed={200 + i * 17}>
+          <div style={{ position: 'absolute', left: 20, top: 20, width: 300, height: 260, transform: 'scale(1.5)', transformOrigin: '0 0' }}>{ikon.map((id, j) => <IkonV key={j} c={c} id={id} at={j ? at + j * 0.25 : masuk[i]} />)}</div>
+          <div style={{ position: 'absolute', left: 480, top: 40, width: 330, height: 360, display: 'flex', alignItems: 'center', ...fontT(c, 'display', (P.label ?? '').length > 12 ? 58 : 72), color: w.tintaCatatan }}>{P.label}</div>
+        </Kertas>
+      </div>
+      {P.cap && <div style={{ position: 'absolute', left: 560, top: y - 30, padding: '6px 22px', ...fontT(c, 'display', 64), color: benar ? w.latar : w.tintaPintu,
+        background: benar ? w.catatan : w.kata, outline: `5px solid ${w.latar}`, boxShadow: `9px 9px 0 ${w.bayangan}`, transform: `rotate(${i ? 4 : -4}deg) scale(${popS(t, at + 0.2)})`, opacity: prog(t, at + 0.2, at + 0.3) }}>{P.cap}</div>}
+      {kalah && t >= tMenang && <svg width={1080} height={1920} style={{ position: 'absolute', left: 0, top: 0, overflow: 'visible' }}>
+        <Gores d={`M 140 ${y + 60} L 940 ${y + BB.h - 60}`} p={prog(t, tMenang, tMenang + 0.2)} warna={w.kata} lebar={22} bayangan={w.bayangan} />
+        <Gores d={`M 940 ${y + 60} L 140 ${y + BB.h - 60}`} p={prog(t, tMenang + 0.12, tMenang + 0.32)} warna={w.kata} lebar={22} bayangan={w.bayangan} />
+      </svg>}
+    </div>
+  })}</>
+}
+const bandingKamera = (c: Ctx): KeyKamera[] => [{ t: c.mulai + 10 * F, fokus: [c.ox + 540, c.oy + 860], zoom: 1.0, ease: 'inOut5' },
+  { t: c.selesai, fokus: [c.ox + 540, c.oy + 850], zoom: 1.05 }]
+const bandingSfx = (c: Ctx): Sfx => {
+  const d = c.a.data, a1 = waktu(c, d.atas?.pada, 0.2), a2 = waktu(c, d.bawah?.pada, 1.6), m = waktu(c, d.pemenang_pada, (c.selesai - c.mulai) * 0.75)
+  return [[c.mulai + 0.15, 'swish-soft'], [c.mulai + 0.35, 'swish-soft'], [a1 + 0.2, 'impact-medium-soft'], [a2 + 0.2, 'impact-medium-soft'], ...(d.pemenang === null ? [] : [[m, 'writing-scribble'], [m + 0.3, 'notification-success-chime']] as Sfx)]
+}
+
+// ================= 8. BEDAH-LABEL (wilayah sendiri) =================
+// satu objek besar (sprite pustaka, x2) + label tulisan tangan berpanah ke titik relatif objek ([0..1, 0..1]), muncul satu-satu pas `pada`.
+const BL = { cx: 660, bawah: 1400 } // objek agak kanan: kolom label di kiri (x 64-500)
+const blGeo = (c: Ctx) => {
+  const id = c.a.data.objek, [sw, sh] = UKURAN[id] ?? [300, 300], k = Math.min(2, Math.floor(Math.min(600 / sw, 700 / sh) * 2) / 2) || 1
+  return { id, w: sw * k, h: sh * k, x: Math.min(BL.cx - (sw * k) / 2, 1016 - sw * k), y: BL.bawah - sh * k }
+}
+const Bedah: React.FC<Ctx> = (c) => {
+  const w = c.tema.warna, g = blGeo(c)
+  return <>
+    <Kertas tema={c.tema} t={c.t} l={g.x - 50} top={g.y - 60} w={g.w + 100} h={g.h + 120} warna={w.catatan2} seed={311} style={muncul(c.t, c.mulai - 0.15)} />
+    <Sprite src={`aset/sprite/${g.id}.png`} fx={bayang(w.bayangan, 12)} style={{ left: g.x, top: g.y, width: g.w, height: g.h, ...muncul(c.t, c.mulai) }} />
+  </>
+}
+// label disusun satu kolom di kiri (ga numpuk), panah bersudut ke titiknya di objek
+const BedahLayar: React.FC<CtxLayar> = (c) => {
+  const g = blGeo(c), L = c.a.data.label ?? [], w = c.tema.warna, t = c.t, H = 110, gap = 40, y0 = Math.max(660, 1080 - (L.length * (H + gap)) / 2)
+  return <>{L.map((l: any, i: number) => {
+    const at = waktu(c, l.pada, 0.4 + i), keluar = prog(t, c.selesai - 0.2, c.selesai, ease.in3)
+    if (t < at) return null
+    const ujung = proyeksi(c.cam, [c.ox + g.x + (l.titik?.[0] ?? 0.5) * g.w, c.oy + g.y + (l.titik?.[1] ?? 0.5) * g.h]), T = y0 + i * (H + gap)
+    const pangkal: Titik = [64 + 440, T + H / 2], p = prog(t, at + 0.1, at + 0.4, ease.inOut3)
+    const d = `M ${pangkal[0]} ${pangkal[1]} L ${(pangkal[0] + ujung[0]) / 2} ${pangkal[1]} L ${ujung[0] - 10} ${ujung[1]}`
+    return <AbsoluteFill key={i} style={{ opacity: 1 - keluar }}>
+      <svg width={1080} height={1920} style={{ position: 'absolute', inset: 0 }}>
+        <Gores d={d} p={p} warna={w.tintaPintu} lebar={7} bayangan={w.bayangan} />
+        {p > 0.95 && <><polygon points={kepala([ujung[0] - 10, ujung[1]], [(pangkal[0] + ujung[0]) / 2, pangkal[1]], 30)} fill={w.tintaPintu} stroke={w.bayangan} strokeWidth={3} />
+          <rect x={ujung[0] - 14} y={ujung[1] - 14} width={28} height={28} fill={warnaSemantik(c, l.warna)} stroke={w.latar} strokeWidth={5} /></>}
+      </svg>
+      <div style={{ position: 'absolute', left: 64, top: T, width: 440, height: H, boxSizing: 'border-box', padding: '8px 22px', display: 'flex', alignItems: 'center',
+        background: l.warna ? warnaSemantik(c, l.warna) : w.stabilo, color: w.latar, ...fontT(c, 'tangan', l.teks.length > 16 ? 54 : 64), filter: bayang(w.bayangan),
+        transform: `rotate(${i % 2 ? 2 : -2}deg) scale(${popS(t, at)})`, opacity: prog(t, at, at + 4 * F) }}>{l.teks}</div>
+    </AbsoluteFill>
+  })}</>
+}
+const bedahKamera = (c: Ctx): KeyKamera[] => {
+  const pusat: Titik = [c.ox + 540, c.oy + 1000]
+  return [{ t: c.mulai + 10 * F, fokus: pusat, zoom: 1.0, ease: 'inOut5' }, { t: c.selesai, fokus: [pusat[0] + 10, pusat[1] - 10], zoom: 1.05 }]
+}
+const bedahSfx = (c: Ctx): Sfx => [[c.mulai, 'pop-medium-in'], ...(c.a.data.label ?? []).flatMap((l: any, i: number) => labelSfx(waktu(c, l.pada, 0.4 + i)))]
+
 export type Template = { dapur?: boolean; aktor?: boolean; K?: React.FC<Ctx>; Layar?: React.FC<CtxLayar>; kamera: (c: Ctx & { dunia?: number[] }) => KeyKamera[]; sfx: (c: Ctx) => Sfx; peristiwa?: (c: Ctx) => Peristiwa; pose: string }
 export const TEMPLATE: Record<string, Template> = {
   'hook-freeze': { dapur: true, Layar: HookLayar, kamera: hookKamera, sfx: hookSfx, peristiwa: hookPeristiwa, pose: 'ibu-kaget' },
@@ -575,6 +652,8 @@ export const TEMPLATE: Record<string, Template> = {
   'skala-angka': { K: Skala, Layar: SkalaLayar, kamera: skalaKamera, sfx: skalaSfx, pose: 'ibu-jelasin' },
   'langkah-tangan': { K: Langkah, kamera: langkahKamera, sfx: langkahSfx, pose: 'ibu-nunjuk', aktor: true },
   'rantai-proses': { K: Rantai2, kamera: rantaiKamera, sfx: rantaiSfx, pose: 'ibu-jelasin' },
+  'banding-belah': { K: Banding, kamera: bandingKamera, sfx: bandingSfx, pose: 'ibu-nunjuk', aktor: true },
+  'bedah-label': { K: Bedah, Layar: BedahLayar, kamera: bedahKamera, sfx: bedahSfx, pose: 'ibu-jelasin' },
   'payoff-loop': { dapur: true, Layar: PayLayar, kamera: payKamera, sfx: paySfx, peristiwa: payPeristiwa, pose: 'ibu-jempol' },
 }
 export { FPS }

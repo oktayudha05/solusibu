@@ -242,7 +242,7 @@ const Tumbuh: React.FC<Ctx> = (c) => {
     {Array.from({ length: n }, (_, i) => <div key={'k' + i} style={{ position: 'absolute', left: x0 + (i % KOL) * SEL, top: yBawah - (Math.floor(i / KOL) + 1) * SEL,
       width: SEL - 10, height: SEL - 10, outline: `4px dashed ${w.catatan2}`, opacity: 0.55 * prog(t, c.mulai + 0.2 + (i % 5) * F, c.mulai + 0.5 + (i % 5) * F) }} />)}
     {Array.from({ length: n }, (_, i) => {
-      const kol = i % KOL, br = Math.floor(i / KOL), s = at + i * 2 * F
+      const kol = i % KOL, br = Math.floor(i / KOL), s = at + i * 1.5 * F
       return <div key={i} style={{ position: 'absolute', left: x0 + kol * SEL, top: yBawah - (br + 1) * SEL, width: SEL - 10, height: SEL - 10,
         background: `${halftone(w.latar, 10, 3)}, ${w.catatan2}`, outline: `5px solid ${w.latar}`, boxShadow: `8px 8px 0 ${w.bayangan}`,
         ...muncul(t, s), transformOrigin: '50% 100%' }}>
@@ -251,13 +251,13 @@ const Tumbuh: React.FC<Ctx> = (c) => {
     })}
     {/* garis ukur tinggi tumpukan di kanan (grafis, boleh di rel) */}
     <svg width={1080} height={1920} style={{ position: 'absolute', left: 0, top: 0, overflow: 'visible' }}>
-      <Gores d={`M ${x0 + KOL * SEL + 40} ${yBawah} L ${x0 + KOL * SEL + 40} ${yBawah - baris * SEL}`} p={prog(t, at, at + n * 2 * F)} warna={w.tintaPintu} lebar={8} />
+      <Gores d={`M ${x0 + KOL * SEL + 40} ${yBawah} L ${x0 + KOL * SEL + 40} ${yBawah - baris * SEL}`} p={prog(t, at, at + n * 1.5 * F)} warna={w.tintaPintu} lebar={8} />
     </svg>
   </>
 }
 const TumbuhLayar: React.FC<CtxLayar> = (c) => {
   const w = c.tema.warna, d = c.a.data, t = c.t, at = waktu(c, d.pada, 1), n = d.sel ?? 24
-  const angka = Math.round(Math.exp(kf(t, [[at, 0], [at + n * 2 * F + 0.2, Math.log(d.ke ?? 1600), ease.out3]])))
+  const angka = Math.round(Math.exp(kf(t, [[at, 0], [at + n * 1.5 * F, Math.log(d.ke ?? 1600), ease.out3]]))) // nyampe pas ~1,1 dtk (seirama "seribu enam ratus kali")
   const pos = proyeksi(c.cam, [c.ox + 540, c.oy + 1180 - Math.ceil(n / KOL) * SEL * 0.5])
   const atH = waktu(c, d.hasil_pada, 2.5)
   return <>
@@ -291,8 +291,8 @@ const skalaSfx = (c: Ctx): Sfx => {
   const d = c.a.data
   if (d.mode === 'tumbuh') {
     const at = waktu(c, d.pada, 1), n = d.sel ?? 24
-    return [[c.mulai + 0.1, 'pop-medium-in'], [c.mulai + 0.25, 'props-drip'], [at - 0.3, 'writing-marker-tick'], [at + n * 2 * F - 0.98, 'riser-1s-soft'],
-      ...Array.from({ length: Math.ceil(n / 3) }, (_, i) => [at + i * 6 * F, i % 2 ? 'pop-small-bubble' : 'pop-small-in'] as [number, string]),
+    return [[c.mulai + 0.1, 'pop-medium-in'], [c.mulai + 0.25, 'props-drip'], [at - 0.3, 'writing-marker-tick'], [at + n * 1.5 * F - 0.98, 'riser-1s-soft'],
+      ...Array.from({ length: Math.ceil(n / 3) }, (_, i) => [at + i * 4.5 * F, i % 2 ? 'pop-small-bubble' : 'pop-small-in'] as [number, string]),
       [waktu(c, d.hasil_pada, 2.5), 'impact-medium-soft']]
   }
   return [[c.mulai + 0.05, 'swish-soft'], ...d.seri.flatMap((s: any, i: number) => {

@@ -8,7 +8,7 @@
    "template": "hook-freeze",
    "teks": "Setetes air doang, minyaknya muncrat kayak gini. Kok bisa?",
    "kunci": [
-    "muncrat"
+    "muncrat:muncrat?"
    ],
    "data": {
     "label": "cuma setetes air?",
@@ -20,7 +20,7 @@
    "template": "skala-angka",
    "teks": "Minyak goreng panasnya sampai seratus sembilan puluh derajat. Air mendidih di seratus.",
    "kunci": [
-    "mendidih"
+    "mendidih:100°C"
    ],
    "data": {
     "mode": "termometer",
@@ -86,7 +86,7 @@
    "template": "skala-angka",
    "teks": "Satu sendok makan air jadi uap, ngembang sekitar seribu enam ratus kali. Kira-kira dua puluh empat liter.",
    "kunci": [
-    "ngembang"
+    "seribu:1.600 kali"
    ],
    "data": {
     "mode": "tumbuh",
@@ -128,7 +128,7 @@
    "template": "langkah-tangan",
    "teks": "Kalau minyaknya kebakar, jangan disiram air, wajan jangan dipindah. Matikan kompor, tutup pakai tutup logam.",
    "kunci": [
-    "kebakar"
+    "kebakar:kebakar?"
    ],
    "data": {
     "langkah": [
@@ -138,7 +138,7 @@
       "pada": "disiram"
      },
      {
-      "teks": "wajan jangan dipindah",
+      "teks": "jangan dipindah",
       "aksi": "jangan-pindah",
       "pada": "dipindah"
      },
@@ -148,7 +148,7 @@
       "pada": "Matikan"
      },
      {
-      "teks": "tutup pakai tutup logam",
+      "teks": "tutup logam",
       "aksi": "tutup",
       "pada": "tutup"
      }
@@ -160,7 +160,7 @@
    "template": "payoff-loop",
    "teks": "Udah, keringin dulu ya. Soalnya kalau enggak,",
    "kunci": [
-    "keringin"
+    "keringin:keringin!"
    ],
    "data": {
     "rangkum": [

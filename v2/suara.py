@@ -60,6 +60,10 @@ potong = model.generate(text=[s["teks"] for s in naskah["adegan"]], language="id
                         speed=ref.get("speed", 1.0), num_step=a.step)
 jeda = np.zeros(int(SR * 0.25), dtype=np.float32)
 sf.write(wav, np.concatenate([x for p in potong for x in (p.astype(np.float32), jeda)]), SR)
+# samain kerasnya ke standar Shorts (~-16 LUFS); dulu rata2 -26 dB, kekecilan di HP
+tmp = out / "suara-mentah.wav"; wav.rename(tmp)
+subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(tmp), "-af", "loudnorm=I=-16:TP=-1.5:LRA=11", "-ar", str(SR), str(wav)], check=True)
+tmp.unlink()
 t_gen = time.time() - t0
 durasi = float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", str(wav)],
                               capture_output=True, text=True, check=True).stdout)

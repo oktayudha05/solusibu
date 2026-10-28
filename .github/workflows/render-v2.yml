@@ -98,3 +98,4 @@ jobs:
           path: |
             v2/out/*/video.mp4
             v2/out/*/suara-log.json
+            v2/out/*/props.json

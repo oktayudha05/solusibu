@@ -104,7 +104,7 @@ jobs:
           (cd remotion && npm ci --no-audit --no-fund && ln -sfn ../../aset public/aset && ln -sfn ../../out public/out)
           for s in $DAFTAR; do
             python suara.py "naskah/$s.json" "out/$s"
-            (cd remotion && npx remotion render src/index.tsx Video "../out/$s/video.mp4" --props="../out/$s/props.json")
+            (cd remotion && npx remotion render src/index.tsx Video "../out/$s/video.mp4" --props="../out/$s/props.json" --crf 23)
           done
       - name: simpan cache suara
         if: env.TUGAS == 'render' && steps.cache-suara.outputs.cache-hit != 'true'

@@ -2,7 +2,7 @@
 // Satu kanvas: wilayah 0 = dapur (wajan bersama), template lain dapat wilayah sendiri di grid 2 kolom. Kamera (kamera.tsx) jalan di atasnya.
 import React from 'react'
 import { AbsoluteFill, Audio, Composition, Sequence, registerRoot, staticFile, useCurrentFrame } from 'remotion'
-import { F, FPS, GrainPng, SAFE, Sprite, bayang, ease, goyang, halftone, kf, popS } from './lib'
+import { F, FPS, GrainPng, prog, SAFE, Sprite, bayang, ease, goyang, halftone, kf, popS } from './lib'
 import { Kamera, KeyKamera, Titik, kameraDi, kecepatan } from './kamera'
 import { Dapur, Peristiwa, jangkarDapur, jariDapur } from './dapur'
 import { KataBesar, KataK } from './kinetik'
@@ -53,9 +53,9 @@ const Coretan: React.FC<{ tema: Tema; coret: string[] }> = ({ tema, coret: CORET
   ))}
 </div>
 // lapis depan: penggaris kekunci di bawah layar (y≈1500), geser horizontal 1.35x kamera (parallax), selalu ngisi bawah
-const Depan: React.FC<{ tema: Tema; cam: { x: number; zoom: number; rot: number } }> = ({ tema, cam }) => {
+const Depan: React.FC<{ tema: Tema; cam: { x: number; zoom: number; rot: number }; turun: number }> = ({ tema, cam, turun }) => {
   const w = tema.warna
-  return <div style={{ position: 'absolute', left: -200, top: 1530, width: 1480, height: 64, background: w.catatan, filter: bayang(w.bayangan, 12),
+  return <div style={{ position: 'absolute', left: -200, top: 1530 + 120 * turun, width: 1480, height: 64, background: w.catatan, filter: bayang(w.bayangan, 12),
     transform: `rotate(${-3 + cam.rot * 1.35}deg)`, backgroundImage: `repeating-linear-gradient(90deg, ${w.latar} 0 6px, transparent 6px 32px)`,
     backgroundSize: '160px 22px', backgroundRepeat: 'repeat-x', backgroundPositionX: `${-cam.x * 1.35 * cam.zoom}px` }}>
     <div style={{ position: 'absolute', inset: 0, backgroundImage: `repeating-linear-gradient(90deg, ${w.latar} 0 6px, transparent 6px 160px)`, backgroundSize: '160px 40px',
@@ -103,7 +103,11 @@ export const Video: React.FC<Naskah> = (n) => {
   ]
 
   // maskot: kekunci di layar kiri bawah (objek yg kebawa di semua beat), ganti pose per adegan, lompat pas ciprat
-  const pi = pose(aktif), [mw, mh] = (UKURAN[pi] ?? [300, 620]).map((v) => (v * 5) / 8) // x5 (tetap kelipatan bulat pixel art)
+  const mk = TEMPLATE[adegan[aktif]?.template]?.maskot // template boleh minta maskot lebih besar / di kanan
+  const pi = pose(aktif), [mw, mh] = (UKURAN[pi] ?? [300, 620]).map((v) => (v * (mk?.skala ?? 5)) / 8) // x5 (tetap kelipatan bulat pixel art)
+  // penggaris turun di beat wajan (dulu motong badan kompor), naik lagi di beat lain
+  const da = (i: number) => (TEMPLATE[adegan[i]?.template]?.dapur ? 1 : 0), dPrev = aktif ? da(aktif - 1) : da(0)
+  const turun = dPrev + (da(aktif) - dPrev) * prog(t, mulai[aktif], mulai[aktif] + 0.4, ease.inOut3)
   const kaget = ps.some((p) => t >= p.ciprat && t < p.ciprat + 0.4 && !(p.beku && t >= p.beku[0] && t < p.beku[1]))
   const pc = ps.find((p) => t >= p.ciprat && t < p.ciprat + 0.4)
   const lompat = kaget && pc ? kf(t, [[pc.ciprat, 0], [pc.ciprat + 0.12, -70, ease.out3], [pc.ciprat + 0.3, 0, ease.in2]]) : 0
@@ -129,8 +133,8 @@ export const Video: React.FC<Naskah> = (n) => {
       ))}
       <Kamera t={t} keys={keys} jangkar={jangkar} blur={blurOn ? 'hantu' : 'none'} sampel={8}
         lapis={[{ d: 0.3, isi: <Latar tema={tema} /> }, { d: 0.6, isi: <Coretan tema={tema} coret={coret.length ? coret : ['?']} /> }, { d: 1, isi: isiDunia }]} />
-      <Depan tema={tema} cam={cam} />
-      {!TEMPLATE[adegan[aktif]?.template]?.aktor && <div style={{ position: 'absolute', left: 40, top: 1536 - mh + lompat + goyang(t, 1, 4), width: mw, height: mh, transformOrigin: '50% 100%',
+      <Depan tema={tema} cam={cam} turun={turun} />
+      {!TEMPLATE[adegan[aktif]?.template]?.aktor && <div style={{ position: 'absolute', left: mk?.kanan ? 1070 - mw : 40, top: 1536 - mh + lompat + goyang(t, 1, 4), width: mw, height: mh, transformOrigin: '50% 100%',
         transform: `rotate(${kaget ? goyang(t * 6, 0, 3) : goyang(t, 0, 1)}deg) scale(${t >= ganti ? popS(t, ganti) : 1})` }}>
         <Sprite src={`aset/sprite/${pi}.png`} fx={`drop-shadow(-5px 4px 0 ${w.misreg ?? w.catatan2}) ${bayang(w.bayangan)}`} style={{ left: 0, top: 0, width: mw, height: mh }} />
       </div>}

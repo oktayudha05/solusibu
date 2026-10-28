@@ -83,6 +83,21 @@ jobs:
       - uses: actions/setup-node@v4
         if: env.TUGAS == 'render'
         with: { node-version: 22, cache: npm, cache-dependency-path: v2/remotion/package-lock.json }
+      # cache suara: kunci = teks yg diucap (semua slug) + referensi suara + suara.py. Hit → suara.py langsung pakai suara.wav + kata.json lama.
+      - name: kunci cache suara
+        id: kunci
+        if: env.TUGAS == 'render'
+        run: |
+          k=$(python3 -c "import hashlib,json,sys;h=hashlib.sha256()
+          for s in sys.argv[1:]: h.update(' '.join(a['teks'].strip() for a in json.load(open(f'naskah/{s}.json'))['adegan']).encode())
+          for f in ('suara/referensi.wav','suara/referensi.json','suara.py'): h.update(open(f,'rb').read())
+          print(h.hexdigest()[:20])" $DAFTAR)
+          echo "kunci=suara-$k" >> "$GITHUB_OUTPUT"
+      - name: ambil cache suara
+        id: cache-suara
+        if: env.TUGAS == 'render'
+        uses: actions/cache/restore@v4
+        with: { path: "v2/out/*/suara.wav\nv2/out/*/kata.json", key: "${{ steps.kunci.outputs.kunci }}" }
       - name: suara + render
         if: env.TUGAS == 'render'
         run: |
@@ -91,6 +106,10 @@ jobs:
             python suara.py "naskah/$s.json" "out/$s"
             (cd remotion && npx remotion render src/index.tsx Video "../out/$s/video.mp4" --props="../out/$s/props.json")
           done
+      - name: simpan cache suara
+        if: env.TUGAS == 'render' && steps.cache-suara.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with: { path: "v2/out/*/suara.wav\nv2/out/*/kata.json", key: "${{ steps.kunci.outputs.kunci }}" }
       - uses: actions/upload-artifact@v4
         if: env.TUGAS == 'render'
         with:

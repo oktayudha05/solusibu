@@ -27,6 +27,26 @@ a = ap.parse_args()
 if not a.kandidat and not (a.naskah and a.out):
     ap.error("butuh naskah + out, atau --kandidat DIR")
 
+def tulis_props(naskah, kata, durasi, out):
+    i = 0
+    for s in naskah["adegan"]:
+        k = len(s["teks"].split()); s["kata"] = kata[i:i + k]; i += k
+    naskah["audio"] = {"file": f"out/{out.name}/suara.wav", "durasi": round(durasi, 3)}  # relatif ke remotion/public/
+    (out / "props.json").write_text(json.dumps(naskah, ensure_ascii=False, indent=1))
+
+# cache (actions/cache di workflow): teks yg diucap sama persis → pakai suara.wav + kata.json lama, lewati OmniVoice & alignment.
+# Revisi visual doang jadi ~3-5 mnt, bukan ~30.
+if not a.kandidat:
+    naskah = json.loads(pathlib.Path(a.naskah).read_text())
+    out = pathlib.Path(a.out); out.mkdir(parents=True, exist_ok=True)
+    teks = " ".join(s["teks"].strip() for s in naskah["adegan"])
+    c = out / "kata.json"
+    if c.exists() and (out / "suara.wav").exists() and json.loads(c.read_text()).get("teks") == teks:
+        lama = json.loads(c.read_text())
+        tulis_props(naskah, lama["kata"], lama["durasi"], out)
+        (out / "suara-log.json").write_text(json.dumps({"cache": True, "durasi_audio": round(lama["durasi"], 2)}, indent=1))
+        print("suara dari cache"); sys.exit(0)
+
 t0 = time.time()
 torch.set_num_threads(os.cpu_count() or 4)
 from omnivoice import OmniVoice
@@ -47,9 +67,6 @@ if a.kandidat:
 if not (REF / "referensi.wav").exists():
     sys.exit("suara/referensi.wav belum ada: jalanin tugas kandidat-suara, Oring pilih, commit referensinya dulu")
 ref = json.loads((REF / "referensi.json").read_text())
-naskah = json.loads(pathlib.Path(a.naskah).read_text())
-out = pathlib.Path(a.out); out.mkdir(parents=True, exist_ok=True)
-teks = " ".join(s["teks"].strip() for s in naskah["adegan"])
 wav = out / "suara.wav"
 
 t0 = time.time()
@@ -83,11 +100,8 @@ t_align = time.time() - t1
 kata_asli = teks.split()
 assert len(hasil) == len(kata_asli), f"jumlah kata beda: align {len(hasil)} vs naskah {len(kata_asli)}"
 kata = [[w, round(r["start"], 3), round(r["end"], 3)] for w, r in zip(kata_asli, hasil)]
-i = 0
-for s in naskah["adegan"]:
-    k = len(s["teks"].split()); s["kata"] = kata[i:i + k]; i += k
-naskah["audio"] = {"file": f"out/{out.name}/suara.wav", "durasi": round(durasi, 3)}  # relatif ke remotion/public/
-(out / "props.json").write_text(json.dumps(naskah, ensure_ascii=False, indent=1))
+(out / "kata.json").write_text(json.dumps({"teks": teks, "kata": kata, "durasi": durasi}, ensure_ascii=False))
+tulis_props(naskah, kata, durasi, out)
 log = {"step": a.step, "seed": ref["seed"], "durasi_audio": round(durasi, 2), "detik_load_model": round(t_load, 1),
        "detik_generate": round(t_gen, 1), "detik_alignment": round(t_align, 1)}
 (out / "suara-log.json").write_text(json.dumps(log, indent=1))

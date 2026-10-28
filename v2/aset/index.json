@@ -977,6 +977,26 @@
    "lufs": -23.5,
    "di_bawah_suara_db": -3,
    "lisensi": "CC0 wyzowl/sfx-kit"
+  },
+  {
+   "id": "desis-minyak",
+   "file": "sfx/desis-minyak.wav",
+   "jenis": "sfx",
+   "tag": [
+    "foley",
+    "desis",
+    "minyak",
+    "goreng",
+    "sizzle",
+    "panas"
+   ],
+   "catatan": "minyak panas kena air (hook, penampang)",
+   "durasi": 1.6,
+   "sync_at": 0.03,
+   "sync_meets": "onset",
+   "lufs": null,
+   "di_bawah_suara_db": null,
+   "lisensi": "sintesis ffmpeg (ambil_sfx.py), bebas"
   }
  ]
 }

@@ -106,6 +106,10 @@ jobs:
             python suara.py "naskah/$s.json" "out/$s"
             (cd remotion && npx remotion render src/index.tsx Video "../out/$s/video.mp4" --props="../out/$s/props.json" --crf 23)
           done
+      - name: uji anti-slideshow (hard cut + diam > 0,4 dtk; gagal = warning)
+        if: env.TUGAS == 'render'
+        continue-on-error: true
+        run: python3 uji_gerak.py out/*/video.mp4
       - name: simpan cache suara
         if: env.TUGAS == 'render' && steps.cache-suara.outputs.cache-hit != 'true'
         uses: actions/cache/save@v4
@@ -118,3 +122,4 @@ jobs:
             v2/out/*/video.mp4
             v2/out/*/suara-log.json
             v2/out/*/props.json
+            v2/out/*/uji-gerak.txt

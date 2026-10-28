@@ -85,7 +85,7 @@ const Sumber: React.FC<{ c: Ctx; at: number; teks?: string }> = ({ c, at, teks }
 
 // ================= 1. HOOK-FREEZE (dapur) =================
 // frame 0 sudah ada aksinya: uap + ciprat → BEKU (flash) → kotak bidik + label "pelakunya?" → lanjut jatuh pas adegan habis.
-const hookBeku = (c: Ctx) => c.mulai + 0.3
+const hookBeku = (c: Ctx) => c.mulai + 0.1 // beku pas uap masih ngembang + ciprat terbang (frame penuh)
 const hookPeristiwa = (c: Ctx): Peristiwa => {
   const m = c.mulai
   return { jatuh: m - 1.9, sentuh: m - 1.45, dasar: m - 1.05, didih: m - 0.9, uap: m - 0.68, ciprat: m - 0.1, beku: [hookBeku(c), c.selesai - 0.25] } // frame 0 = ciprat udah jalan
@@ -112,11 +112,11 @@ const HookLayar: React.FC<CtxLayar> = (c) => {
 const hookKamera = (c: Ctx): KeyKamera[] => {
   const b = hookBeku(c)
   return [{ t: c.mulai, fokus: 'dapur', zoom: 1.12 }, { t: b, fokus: 'dapur', zoom: 1.15 },
-    { t: b + 4 * F, fokus: [540, 860], zoom: 1.22, ease: 'out5' }, { t: c.selesai - 0.3, fokus: [540, 860], zoom: 1.28 }]
+    { t: b + 4 * F, fokus: [540, 950], zoom: 1.55, ease: 'out5' }, { t: c.selesai - 0.3, fokus: [540, 950], zoom: 1.6 }] // snap ke wajan: penuh layar
 }
 const hookSfx = (c: Ctx): Sfx => {
   const b = hookBeku(c)
-  return [[c.mulai, 'props-splash'], [b, 'impact-heavy-soft'], [b + 3 * F, 'writing-scribble'], ...labelSfx(waktu(c, c.a.data.label_pada, 0.9)), [c.selesai - 0.25, 'whoosh-fast-soft']]
+  return [[c.mulai, 'props-splash'], [c.mulai, 'desis-minyak'], [b, 'impact-heavy-soft'], [b + 3 * F, 'writing-scribble'], ...labelSfx(waktu(c, c.a.data.label_pada, 0.9)), [c.selesai - 0.25, 'whoosh-fast-soft']]
 }
 
 // ================= 2. PENAMPANG-ZOOM (dapur) =================
@@ -169,7 +169,7 @@ const penKamera = (c: Ctx): KeyKamera[] => {
 }
 const penSfx = (c: Ctx): Sfx => {
   const k = penKetuk(c), lab = (c.a.data.label ?? []).flatMap((l: any, i: number) => labelSfx(waktu(c, l.pada, 0.3 + i)))
-  return [[k.jatuh, 'swish-soft'], [k.sentuh, 'props-drip'], [k.dasar, 'impact-medium-soft'], [k.didih, 'zip-in-soft'],
+  return [[k.jatuh, 'swish-soft'], [k.sentuh, 'props-drip'], [k.dasar, 'impact-medium-soft'], [k.sentuh, 'desis-minyak'], [k.didih, 'zip-in-soft'], [k.didih + 0.1, 'desis-minyak'],
     [k.uap - 0.6, 'riser-1s-soft'], [k.ciprat, 'props-splash'], [k.ciprat + 0.02, 'impact-heavy-soft'], [k.ciprat + 0.05, 'whoosh-medium-soft'], ...lab]
 }
 
@@ -227,8 +227,10 @@ const Termometer: React.FC<Ctx> = (c) => {
 }
 // sendok makan (vektor kotak) + grid kotak 1 L
 const SEL = 130, KOL = 5
+// grid + penghitung mulai sebelum kata angka, nyampe ×ke pas kunci angka nongol (3f sebelum diucap)
+const tumbuhAt = (c: Ctx) => { const n = c.a.data.sel ?? 24; return Math.max(c.mulai + 0.6, waktu(c, c.a.data.pada, 1) - 3 * F - n * 1.5 * F) }
 const Tumbuh: React.FC<Ctx> = (c) => {
-  const w = c.tema.warna, d = c.a.data, t = c.t, at = waktu(c, d.pada, 1), n = d.sel ?? 24
+  const w = c.tema.warna, d = c.a.data, t = c.t, at = tumbuhAt(c), n = d.sel ?? 24
   const baris = Math.ceil(n / KOL), x0 = 540 - (KOL * SEL) / 2, yBawah = 1180
   return <>
     {/* sendok: kepala kotak + gagang */}
@@ -256,8 +258,8 @@ const Tumbuh: React.FC<Ctx> = (c) => {
   </>
 }
 const TumbuhLayar: React.FC<CtxLayar> = (c) => {
-  const w = c.tema.warna, d = c.a.data, t = c.t, at = waktu(c, d.pada, 1), n = d.sel ?? 24
-  const angka = Math.round(Math.exp(kf(t, [[at, 0], [at + n * 1.5 * F, Math.log(d.ke ?? 1600), ease.out3]]))) // nyampe pas ~1,1 dtk (seirama "seribu enam ratus kali")
+  const w = c.tema.warna, d = c.a.data, t = c.t, at = tumbuhAt(c), n = d.sel ?? 24
+  const angka = Math.round(Math.exp(kf(t, [[at, 0], [at + n * 1.5 * F, Math.log(d.ke ?? 1600), ease.out3]])))
   const pos = proyeksi(c.cam, [c.ox + 540, c.oy + 1180 - Math.ceil(n / KOL) * SEL * 0.5])
   const atH = waktu(c, d.hasil_pada, 2.5)
   return <>
@@ -279,7 +281,7 @@ const SkalaLayar: React.FC<CtxLayar> = (c) => <>
 const skalaKamera = (c: Ctx): KeyKamera[] => {
   const o = (x: number, y: number): Titik => [c.ox + x, c.oy + y]
   if (c.a.data.mode === 'tumbuh') {
-    const at = waktu(c, c.a.data.pada, 1)
+    const at = tumbuhAt(c)
     return [{ t: c.mulai + 10 * F, fokus: o(560, 1120), zoom: 1.4, ease: 'inOut5' }, { t: at - 0.1, fokus: o(560, 1110), zoom: 1.5 },
       { t: at + 1.0, fokus: o(560, 930), zoom: 1.0, ease: 'inOut3' }, { t: c.selesai, fokus: o(560, 925), zoom: 1.03 }]
   }
@@ -290,7 +292,7 @@ const skalaKamera = (c: Ctx): KeyKamera[] => {
 const skalaSfx = (c: Ctx): Sfx => {
   const d = c.a.data
   if (d.mode === 'tumbuh') {
-    const at = waktu(c, d.pada, 1), n = d.sel ?? 24
+    const at = tumbuhAt(c), n = d.sel ?? 24
     return [[c.mulai + 0.1, 'pop-medium-in'], [c.mulai + 0.25, 'props-drip'], [at - 0.3, 'writing-marker-tick'], [at + n * 1.5 * F - 0.98, 'riser-1s-soft'],
       ...Array.from({ length: Math.ceil(n / 3) }, (_, i) => [at + i * 4.5 * F, i % 2 ? 'pop-small-bubble' : 'pop-small-in'] as [number, string]),
       [waktu(c, d.hasil_pada, 2.5), 'impact-medium-soft']]
@@ -376,6 +378,29 @@ const Ilustrasi: React.FC<{ c: Ctx; aksi: string; at: number }> = ({ c, aksi, at
 // tata letak: zona kata kunci (230-630) → PANGGUNG 560-1060 (ibu = aktor + ilustrasi langkah aktif x1.6) → kartu 1090-1500 pop bareng isinya.
 // Maskot layar disembunyiin di template ini (ibu udah main di panggung). Teks kartu ≤ x880 (rel tombol).
 const PANGGUNG = { x: 64, y: 560, w: 952, h: 500 }
+// panggung atas (y 196-560, di belakang kata kunci): wajan besar di kompor. Ada langkah kebakaran → api di atas minyak, padam pas kompor/tutup.
+const KEBAKAR = ['jangan-air', 'jangan-pindah', 'kompor', 'tutup']
+const PanggungAtas: React.FC<Ctx & { ats: number[] }> = (c) => {
+  const w = c.tema.warna, t = c.t, L = c.a.data.langkah ?? []
+  const iP = L.findIndex((l: any) => l.aksi === 'kompor' || l.aksi === 'tutup'), padam = iP < 0 ? 1e9 : c.ats[iP] + 0.3
+  const iT = L.findIndex((l: any) => l.aksi === 'tutup'), tutup = iT < 0 ? 0 : prog(t, c.ats[iT], c.ats[iT] + 0.45, ease.out3)
+  const kebakar = L.some((l: any) => KEBAKAR.includes(l.aksi)), apiAtas = kebakar ? 1 - prog(t, padam, padam + 0.4) : 0
+  const wajan: Titik[] = [[150, 300], [930, 300], [840, 470], [240, 470]]
+  return <>
+    <Kertas tema={c.tema} t={t} l={64} top={196} w={952} h={380} warna={w.catatan2} seed={55} style={muncul(t, c.mulai - 0.2)} />
+    <svg width={1080} height={700} style={{ position: 'absolute', left: 0, top: 0, overflow: 'visible', ...muncul(t, c.mulai - 0.1) }}>
+      <Api tema={c.tema} t={t} x0={300} n={9} y={560} besar={1.1} nyala={kebakar ? 1 - prog(t, padam, padam + 0.4) : 1} />
+      {apiAtas > 0.01 && <Api tema={c.tema} t={t} x0={210} n={11} y={312} besar={2.2} nyala={apiAtas} />}
+      <path d={poly(wajan)} transform="translate(12 12)" fill={w.bayangan} />
+      <path d={poly(wajan)} fill={w.latar} />
+      <rect x={168} y={300} width={744} height={34} fill={w.catatan} />
+      <rect x={930} y={300} width={86} height={26} fill={w.latar} />
+      {tutup > 0 && <g transform={`translate(${-900 + tutup * 900} ${-20 * (1 - tutup)})`}>
+        <rect x={140 + 12} y={256 + 12} width={800} height={44} fill={w.bayangan} /><rect x={140} y={256} width={800} height={44} fill={w.tintaPintu} />
+        <rect x={500} y={222} width={80} height={36} fill={w.latar} /></g>}
+    </svg>
+  </>
+}
 const kartuGeo = (n: number) => {
   const kol = n > 2 ? 2 : 1, baris = Math.ceil(n / kol), h = Math.min(200, Math.floor(410 / baris) - 12), w = kol === 2 ? 400 : 816
   return { kol, h, w, pos: (i: number): [number, number] => [64 + (i % kol) * (w + 16), 1090 + Math.floor(i / kol) * (h + 12)] }
@@ -386,6 +411,7 @@ const Langkah: React.FC<Ctx> = (c) => {
   const aktif = Math.max(0, ats.findLastIndex((x: number) => c.t >= x - 0.15))
   const [pw, ph] = (UKURAN[pose] ?? [300, 620]).map((v) => (v * 3) / 4)
   return <>
+    <PanggungAtas {...c} ats={ats} />
     <Kertas tema={c.tema} t={c.t} l={PANGGUNG.x} top={PANGGUNG.y} w={PANGGUNG.w} h={PANGGUNG.h} warna={w.stabilo} seed={77} style={muncul(c.t, c.mulai - 0.15)} />
     <div style={{ position: 'absolute', left: 100, top: PANGGUNG.y + PANGGUNG.h - ph - 10, width: pw, height: ph, transformOrigin: '50% 100%',
       transform: `rotate(${goyang(c.t, 2, 1)}deg) scale(${popS(c.t, c.mulai)})` }}>

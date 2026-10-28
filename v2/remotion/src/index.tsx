@@ -107,7 +107,7 @@ export const Video: React.FC<Naskah> = (n) => {
   const ganti = aktif > 0 && pose(aktif) !== pose(aktif - 1) ? mulai[aktif] + 0.2 : -9
 
   const Lp = TEMPLATE[adegan[aktif]?.template]?.Layar
-  const blurOn = kecepatan(t, keys, jangkar) > 40
+  const blurOn = kecepatan(t, keys, jangkar) > 40 && adegan[aktif]?.template !== 'payoff-loop' // payoff: mundur jauh, blur hantu jadi berlapis
   const isiDunia = (
     <div style={{ position: 'absolute', left: 0, top: 0 }}>
       <Dapur tema={tema} t={t} ps={ps} gambar={-10} />

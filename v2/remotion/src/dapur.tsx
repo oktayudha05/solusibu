@@ -85,16 +85,22 @@ const Kompor: React.FC<{ tema: Tema; t: number; gambar: number }> = ({ tema, t, 
   return (
     <svg width={1080} height={1900} style={{ position: 'absolute', left: 0, top: 0, overflow: 'visible' }}>
       <Api tema={tema} t={t} x0={300} n={9} y={1262} nyala={prog(t, gambar + 0.3, gambar + 0.7, ease.back)} />
-      <rect x={200} y={1276} width={680} height={40} fill={w.bayangan} transform="translate(12 12)" />
-      <rect x={200} y={1262} width={680} height={40} fill={w.latar} />
-      <rect x={232} y={1272} width={24} height={20} fill={w.catatan2} /><rect x={824} y={1272} width={24} height={20} fill={w.catatan2} />
-      {/* meja dapur: ngisi bawah layar (y 1300-1536 dulu kosong) */}
+      {/* meja polos (dulu ubin garis-garis biru = pita tanpa makna) */}
       <rect x={-500} y={1330} width={1700} height={600} fill={w.bayangan} transform="translate(14 14)" />
       <rect x={-500} y={1330} width={1700} height={600} fill={w.catatan2} />
       <rect x={-500} y={1330} width={1700} height={600} fill="url(#ht)" />
-      {/* ubin keramik: kotak selang-seling */}
-      {Array.from({ length: 17 * 5 }, (_, i) => (i + Math.floor(i / 17)) % 2 ? null : <rect key={i} x={-500 + (i % 17) * 100} y={1346 + Math.floor(i / 17) * 100} width={100} height={100} fill={w.latar} opacity={0.18} />)}
       <rect x={-500} y={1330} width={1700} height={16} fill={w.tintaPintu} />
+      {/* badan kompor gas: tungku + panel kenop, ngisi bawah layar (y 1262-1500) */}
+      <rect x={170} y={1262} width={740} height={250} fill={w.bayangan} transform="translate(14 14)" />
+      <rect x={170} y={1262} width={740} height={250} fill={w.struk ?? w.catatan2} />
+      <rect x={170} y={1262} width={740} height={250} fill="url(#ht)" />
+      <rect x={170} y={1262} width={740} height={44} fill={w.latar} />
+      <rect x={232} y={1272} width={24} height={20} fill={w.catatan2} /><rect x={824} y={1272} width={24} height={20} fill={w.catatan2} />
+      <rect x={200} y={1340} width={680} height={130} fill={w.latar} opacity={0.9} />
+      {[300, 540, 780].map((x) => <g key={x}>
+        <rect x={x - 46} y={1359} width={92} height={92} fill={w.tintaPintu} stroke={w.bayangan} strokeWidth={6} />
+        <rect x={x - 9} y={1365} width={18} height={44} fill={w.catatan} />
+      </g>)}
     </svg>
   )
 }

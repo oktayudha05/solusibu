@@ -22,6 +22,14 @@ for sid, kapan in PILIH.items():
     out.append({"id": sid, "file": f"sfx/{sid}.wav", "jenis": "sfx", "tag": [x["category"]] + x["tags"][:6],
                 "catatan": kapan, "durasi": x["duration"], "sync_at": x["sync"]["at"], "sync_meets": x["sync"]["meets"],
                 "lufs": x["level"]["lufs"], "di_bawah_suara_db": x.get("under_voiceover_db"), "lisensi": "CC0 wyzowl/sfx-kit"})
+# desis minyak: sintesis sendiri (noise pink bandpass 2,5-9 kHz + tremolo acak buat "kretek" + envelope), bebas lisensi
+DESIS = ["ffmpeg", "-v", "error", "-y", "-f", "lavfi", "-i", "anoisesrc=d=1.6:c=pink:a=0.6:r=48000:s=7", "-af",
+         "highpass=f=2500,lowpass=f=9000,tremolo=f=17:d=0.5,tremolo=f=41:d=0.35,afade=t=in:d=0.04,afade=t=out:st=0.7:d=0.9,volume=1.0",
+         "-c:a", "pcm_s16le", str(HERE / "sfx/desis-minyak.wav")]
+subprocess.run(DESIS, check=True)
+out.append({"id": "desis-minyak", "file": "sfx/desis-minyak.wav", "jenis": "sfx", "tag": ["foley", "desis", "minyak", "goreng", "sizzle", "panas"],
+            "catatan": "minyak panas kena air (hook, penampang)", "durasi": 1.6, "sync_at": 0.03, "sync_meets": "onset",
+            "lufs": None, "di_bawah_suara_db": None, "lisensi": "sintesis ffmpeg (ambil_sfx.py), bebas"})
 sprite = json.loads((HERE / "sprite.json").read_text())
 (HERE / "index.json").write_text(json.dumps({"catatan": "cari aset = grep tag. sfx: mulai di (momen - sync_at).",
     "aset": sprite + out}, indent=1, ensure_ascii=False))

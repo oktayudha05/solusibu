@@ -41,8 +41,9 @@ Belum dibikin (R1 §8): `rantai-proses`, `banding-belah`, `bedah-label`.
 Aset dipanggil pakai `id` dari `aset/index.json` (cari: `grep '"tag"' -A8 aset/index.json \| grep wajan`). Sprite skala bulat (x8, maskot x5).
 
 ## Isi folder
-- `aset/`: `potong.py` (sheet AI → sprite bersih pakai spritegrid), `ambil_sfx.py` (subset wyzowl/sfx-kit CC0 + titik sinkron), `index.json`
+- `aset/`: `potong.py` (sheet AI → sprite bersih pakai spritegrid), `ambil_sfx.py` (subset wyzowl/sfx-kit CC0 + titik sinkron + `desis-minyak` sintesis ffmpeg), `index.json`
 - `remotion/src/`: `lib.tsx` (gerak, kertas, sprite, grain PNG), `kamera.tsx` (kamera satu kanvas, parallax, blur cuma pas whip), `kinetik.tsx` (teks per kata), `dapur.tsx` (wajan penampang), `template.tsx` (5 template), `index.tsx` (rakit + SFX), `tema.ts`
 - `remotion/lembar.mjs`: review lokal tanpa render: `node lembar.mjs <props.json> <folder> [frame...]` → still + `lembar-kontak.png` + % area aman terisi (target ≥55%)
+- `uji_gerak.py` (uji anti-slideshow dari mp4: hard cut + diam >0,4 dtk → `out/<slug>/uji-gerak.txt`, jalan di workflow, gagal = warning)
 - `cek_naskah.py` (cek naskah, stdlib) · `suara.py` + `suara/` (referensi suara terpilih) · `requirements.txt` (deps Python CPU)
 - `naskah/`: naskah per video · `out/`: hasil (ga di-commit) · `referensi-naskah/`: transkrip referensi

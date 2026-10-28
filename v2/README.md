@@ -2,6 +2,7 @@
 Alurnya: naskah.json (ditulis penulis) → `suara.py` (suara + timing per kata) → `remotion render`. Semua jalan di GitHub Actions (`.github/workflows/render-v2.yml`), laptop ga dipakai buat suara/render. Gaya visual: `STYLE.md` (E3 marun, angka di `remotion/src/tema.ts`). Gaya naskah: `GAYA-NASKAH.md`.
 
 ## Jalanin (GitHub Actions, branch `v2`)
+- **Sebelum push**: `python3 cek_naskah.py naskah/<slug>.json` harus lolos (template, data wajib, id aset, kata `kunci`/`pada` ada di teks, frasa haram, disclosure affiliate, `cek_fakta`). Workflow ngecek ulang sebelum render.
 - **Render**: commit + push `v2/naskah/<slug>.json` ke branch `v2` → workflow render naskah yg berubah di commit terakhir → artifact `video-<nomor run>` (mp4 + suara-log). Oring download, review.
 - **Kandidat suara** (sekali, atau kalau mau ganti suara): push commit yg pesannya ada `[kandidat-suara]` (dan nyentuh `v2/suara/` atau `v2/suara.py`) → artifact `kandidat-suara` (kandidat-1..5 .wav + .json).
 - Setelah Oring milih kandidat N: salin `kandidat-N.wav` → `v2/suara/referensi.wav` dan `kandidat-N.json` → `v2/suara/referensi.json`, commit, push. Semua render berikutnya clone suara itu + seed tetap → satu orang yg sama.
@@ -37,5 +38,5 @@ Aset dipanggil pakai `id` dari `aset/index.json` (cari: `grep '"tag"' -A8 aset/i
 ## Isi folder
 - `aset/`: `potong.py` (sheet AI → sprite bersih pakai spritegrid), `ambil_sfx.py` (subset wyzowl/sfx-kit CC0 + titik sinkron), `index.json`
 - `remotion/src/`: `lib.tsx` (gerak, kertas, sprite), `template.tsx` (6 template), `index.tsx` (kamera satu kanvas, caption per kata, SFX), `tema.ts`
-- `suara.py` + `suara/` (referensi suara terpilih) · `requirements.txt` (deps Python CPU)
+- `cek_naskah.py` (cek naskah, stdlib) · `suara.py` + `suara/` (referensi suara terpilih) · `requirements.txt` (deps Python CPU)
 - `naskah/`: naskah per video · `out/`: hasil (ga di-commit) · `referensi-naskah/`: transkrip referensi

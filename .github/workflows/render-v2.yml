@@ -42,6 +42,7 @@ jobs:
             [[ "$s" =~ ^[a-z0-9-]+$ && -f "naskah/$s.json" ]] || { echo "slug ga valid / naskah ga ada: $s"; exit 1; }
           done
           [ -n "$daftar" ] || { echo "ga ada naskah berubah, skip"; exit 0; }
+          python3 cek_naskah.py $(printf 'naskah/%s.json ' $daftar)
           { echo "tugas=render"; echo "slug=$(echo $daftar)"; } >> "$GITHUB_OUTPUT"
 
   jalan:

@@ -29,10 +29,12 @@ export const jadwal = (n: Naskah) => {
   const total = (n.audio?.durasi ?? t) + EKOR
   const mulai = adegan.map((a, i) => (i === 0 ? 0 : Math.max(0, a.kata[0][1] - 0.25)))
   // wilayah: dapur = [0,0]; lainnya urut di grid 2 kolom (k=1 di kanan dapur → wajan masih ngintip pas pindah)
-  let k = 0
+  // tanpa template dapur (selain payoff) → wajan ga digambar, adegan 1 nempatin wilayah 0 (payoff pulang ke situ = loop)
+  const pakaiDapur = adegan.some((a) => TEMPLATE[a.template]?.dapur && a.template !== 'payoff-loop')
+  let k = pakaiDapur ? 0 : -1
   const wil = adegan.map((a): Titik => (TEMPLATE[a.template]?.dapur ? [0, 0] : (k++, [((k) % 2) * WIL[0], Math.floor(k / 2) * WIL[1]])))
   const dunia = [-200, -200, Math.max(...wil.map((w) => w[0])) + 1280, Math.max(...wil.map((w) => w[1])) + 1700]
-  return { adegan, total, mulai, selesai: mulai.map((_, i) => mulai[i + 1] ?? total), wil, dunia }
+  return { adegan, total, mulai, selesai: mulai.map((_, i) => mulai[i + 1] ?? total), wil, dunia, pakaiDapur }
 }
 
 // latar parallax: kertas grafik + halftone (d 0.3), coretan catatan lab (d 0.6), penggaris depan (d 1.35)
@@ -43,8 +45,8 @@ const Latar: React.FC<{ tema: Tema }> = ({ tema }) => {
     <div style={{ position: 'absolute', inset: 0, opacity: 0.5, background: halftone(w.latar, 11, 3) }} />
   </div>
 }
-const CORET = ['H₂O', '100°C', '±190°C', 'uap ↑', '×1.600', '1 L', 'jangan air!', 'kering']
-const Coretan: React.FC<{ tema: Tema }> = ({ tema }) => <div style={{ position: 'absolute', left: 0, top: 0 }}>
+// coretan latar = kata kunci + rangkuman naskah ini (dulu daftar tetap topik minyak)
+const Coretan: React.FC<{ tema: Tema; coret: string[] }> = ({ tema, coret: CORET }) => <div style={{ position: 'absolute', left: 0, top: 0 }}>
   {Array.from({ length: 24 }, (_, i) => (
     <div key={i} style={{ position: 'absolute', left: -400 + (i % 4) * 520 + (i % 3) * 90, top: -300 + Math.floor(i / 4) * 620, fontFamily: tema.font.tangan, fontSize: 92,
       color: tema.warna.tintaPintu, opacity: 0.12, transform: `rotate(${i % 2 ? 6 : -5}deg)` }}>{CORET[i % CORET.length]}</div>
@@ -64,7 +66,8 @@ const Depan: React.FC<{ tema: Tema; cam: { x: number; zoom: number; rot: number 
 export const Video: React.FC<Naskah> = (n) => {
   const frame = useCurrentFrame(), t = frame / FPS
   const tema = TEMA[n.tema] ?? E3, w = tema.warna
-  const { adegan, total, mulai, selesai, wil, dunia } = jadwal(n)
+  const { adegan, total, mulai, selesai, wil, dunia, pakaiDapur } = jadwal(n)
+  const coret = [...new Set(adegan.flatMap((a) => [...a.kunci.map((k) => k.split(':').pop()!), ...(a.data?.rangkum ?? [])]))]
   const ctx = (i: number): Ctx & { dunia: number[] } => ({ tema, t, a: adegan[i], mulai: mulai[i], selesai: selesai[i], affiliate: n.affiliate, ox: wil[i][0], oy: wil[i][1], dunia })
   const aktif = Math.max(0, mulai.findLastIndex((m) => t >= m))
   const ps: Peristiwa[] = adegan.flatMap((a, i) => (TEMPLATE[a.template]?.peristiwa ? [TEMPLATE[a.template].peristiwa!(ctx(i))] : []))
@@ -110,7 +113,7 @@ export const Video: React.FC<Naskah> = (n) => {
   const blurOn = kecepatan(t, keys, jangkar) > 40 && adegan[aktif]?.template !== 'payoff-loop' // payoff: mundur jauh, blur hantu jadi berlapis
   const isiDunia = (
     <div style={{ position: 'absolute', left: 0, top: 0 }}>
-      <Dapur tema={tema} t={t} ps={ps} gambar={-10} />
+      {pakaiDapur && <Dapur tema={tema} t={t} ps={ps} gambar={-10} />}
       {adegan.map((a, i) => {
         const T = TEMPLATE[a.template]
         if (!T?.K) return null
@@ -125,7 +128,7 @@ export const Video: React.FC<Naskah> = (n) => {
         <Sequence key={i} from={Math.max(0, Math.round((at - (SYNC[id] ?? 0)) * FPS))}><Audio src={staticFile(`aset/sfx/${id}.wav`)} volume={id.startsWith('pop') || id.startsWith('writing') ? 0.3 : 0.45} /></Sequence>
       ))}
       <Kamera t={t} keys={keys} jangkar={jangkar} blur={blurOn ? 'hantu' : 'none'} sampel={8}
-        lapis={[{ d: 0.3, isi: <Latar tema={tema} /> }, { d: 0.6, isi: <Coretan tema={tema} /> }, { d: 1, isi: isiDunia }]} />
+        lapis={[{ d: 0.3, isi: <Latar tema={tema} /> }, { d: 0.6, isi: <Coretan tema={tema} coret={coret.length ? coret : ['?']} /> }, { d: 1, isi: isiDunia }]} />
       <Depan tema={tema} cam={cam} />
       {!TEMPLATE[adegan[aktif]?.template]?.aktor && <div style={{ position: 'absolute', left: 40, top: 1536 - mh + lompat + goyang(t, 1, 4), width: mw, height: mh, transformOrigin: '50% 100%',
         transform: `rotate(${kaget ? goyang(t * 6, 0, 3) : goyang(t, 0, 1)}deg) scale(${t >= ganti ? popS(t, ganti) : 1})` }}>

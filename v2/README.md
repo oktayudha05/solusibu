@@ -29,14 +29,15 @@ Satu kanvas, kamera jalan (`kamera.tsx`). Template "dapur" (`hook-freeze`, `pena
 
 | template | data | isi |
 |---|---|---|
-| `hook-freeze` | `label?`, `label_pada?`, `karakter?` | frame 0 udah ciprat → BEKU + flash + kotak bidik + label. Wajib adegan pertama |
+| `hook-freeze` | `label?`, `label_pada?`, `karakter?` | (topik wajan) frame 0 udah ciprat → BEKU + flash + snap ke wajan + label. Taruh di adegan pertama |
 | `penampang-zoom` | `ketukan: {jatuh, dasar, didih, uap, ciprat}` (kata), `label?: [{teks, jangkar, pada, warna?}]` | penampang wajan: tetes jatuh, tenggelam, mendidih (snap zoom), uap ngembang, ciprat (whip). `jangkar`: tetes/dasar/uap/minyak/permukaan/api. `warna`: air/panas |
 | `skala-angka` | `mode: "termometer"`: `seri: [{label, nilai, dari?, warna?, pada}]`, `maks?`, `sumber` | batang termometer naik pas `pada`, pita rentang `dari`-`nilai` |
 | | `mode: "tumbuh"`: `awal`, `pada`, `ke`, `akhiran?`, `sel?`, `sel_label?`, `hasil?`, `hasil_pada?`, `sumber` | sendok air → grid kotak (`sel` buah) + penghitung ×`ke` |
 | `langkah-tangan` | `langkah: [{teks, aksi, pada}]` | kartu bernomor + ilustrasi yg diperagakan. `aksi`: lap, pinggir, jangan-air, jangan-pindah, kompor, tutup (atau id properti) |
+| `rantai-proses` | `langkah: [{teks, ikon, pada}]` | sebab-akibat 3-6 langkah, kartu ular 2 per baris + panah bersudut, kamera turun per baris, akhir mundur lihat semua. `ikon`: id sprite atau vektor `spora`/`bakteri`/`racun`, boleh daftar (ditumpuk) |
 | `payoff-loop` | `rangkum: [kata...]`, `karakter?` | kamera mundur + jejak kata kunci → balik ke komposisi frame 0, tetes jatuh (nyambung ke hook). Wajib adegan terakhir; kartu affiliate + disclosure di sini kalau `affiliate` diisi. Kalimat akhir sebaiknya nyambung ke kalimat pertama |
 
-Belum dibikin (R1 §8): `rantai-proses`, `banding-belah`, `bedah-label`.
+Belum dibikin (R1 §8): `banding-belah`, `bedah-label`. Video tanpa template dapur (selain payoff) ga gambar wajan: adegan 1 jadi wilayah 0 dan payoff pulang ke situ (loop). Adegan pertama ga wajib `hook-freeze`.
 
 Aset dipanggil pakai `id` dari `aset/index.json` (cari: `grep '"tag"' -A8 aset/index.json \| grep wajan`). Sprite skala bulat (x8, maskot x5).
 

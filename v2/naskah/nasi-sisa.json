@@ -1,0 +1,126 @@
+{
+ "slug": "nasi-sisa",
+ "judul": "Nasi sisa dipanasin lagi, aman?",
+ "tema": "E3",
+ "cek_fakta": true,
+ "adegan": [
+  {
+   "template": "skala-angka",
+   "teks": "Nasi sisa dipanasin lagi, biar aman? Eh, racunnya enggak ikut mati loh.",
+   "kunci": [
+    "mati:enggak mati"
+   ],
+   "data": {
+    "mode": "termometer",
+    "maks": 140,
+    "seri": [
+     {
+      "label": "dipanasin",
+      "nilai": 100,
+      "warna": "panas",
+      "pada": "Nasi"
+     },
+     {
+      "label": "racun",
+      "nilai": 121,
+      "warna": "air",
+      "pada": "racunnya"
+     }
+    ],
+    "sumber": "FDA Bad Bug Book",
+    "karakter": "ibu-kaget"
+   }
+  },
+  {
+   "template": "rantai-proses",
+   "teks": "Soalnya beras itu bawa spora bakteri. Dimasak pun, sporanya tetap hidup. Terus nasinya dibiarin di suhu ruang, bakterinya beranak, bikin racun. Racun ini tahan panas. Dipanasin seratus dua puluh satu derajat setengah jam, masih utuh.",
+   "kunci": [
+    "spora",
+    "seratus:121°C"
+   ],
+   "data": {
+    "langkah": [
+     {
+      "teks": "spora di beras",
+      "ikon": "spora",
+      "pada": "spora"
+     },
+     {
+      "teks": "dimasak: tetap hidup",
+      "ikon": [
+       "rice-cooker",
+       "spora"
+      ],
+      "pada": "hidup"
+     },
+     {
+      "teks": "suhu ruang",
+      "ikon": "nasi-piring",
+      "pada": "ruang"
+     },
+     {
+      "teks": "bakteri beranak",
+      "ikon": [
+       "nasi-piring",
+       "bakteri"
+      ],
+      "pada": "beranak"
+     },
+     {
+      "teks": "racun tahan panas",
+      "ikon": [
+       "nasi-piring",
+       "racun"
+      ],
+      "pada": "racun"
+     }
+    ],
+    "karakter": "ibu-jelasin"
+   }
+  },
+  {
+   "template": "langkah-tangan",
+   "teks": "Jadi jangan dibiarin dingin di rice cooker. Bagi ke wadah kecil, masuk kulkas paling lambat sejam, habisin sehari. Panasin sekali aja, sampai ngebul.",
+   "kunci": [
+    "sejam:≤ 1 jam"
+   ],
+   "data": {
+    "langkah": [
+     {
+      "teks": "jangan di rice cooker",
+      "aksi": "rice-cooker",
+      "pada": "rice"
+     },
+     {
+      "teks": "kulkas ≤1 jam",
+      "aksi": "nasi-piring",
+      "pada": "kulkas"
+     },
+     {
+      "teks": "panasin sekali",
+      "aksi": "asap",
+      "pada": "Panasin"
+     }
+    ],
+    "karakter": "ibu-nunjuk"
+   }
+  },
+  {
+   "template": "payoff-loop",
+   "teks": "Masalahnya tuh di cara nyimpen, Bun. Kalau salah nyimpen, terus",
+   "kunci": [
+    "nyimpen:cara nyimpen"
+   ],
+   "data": {
+    "rangkum": [
+     "spora",
+     "suhu ruang",
+     "racun",
+     "kulkas ≤1 jam"
+    ],
+    "karakter": "ibu-jempol"
+   }
+  }
+ ],
+ "affiliate": null
+}

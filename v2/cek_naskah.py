@@ -28,7 +28,7 @@ def cek(p):
         if t not in TEMPLATE: m.append(f"adegan {i}: template '{t}' ga ada"); continue
         m += [f"adegan {i}: data.{k} kosong" for k in TEMPLATE[t] if not d.get(k)]
         m += [f"adegan {i}: aset '{d[k]}' ga ada di aset/index.json" for k in KOLOM_ASET if d.get(k) and d[k] not in ASET]
-        m += [f"adegan {i}: kunci '{k}' ga ada di teks" for k in a.get("kunci", []) if norm(k) not in kata]
+        m += [f"adegan {i}: kunci '{k}' ga ada di teks" for k in a.get("kunci", []) if norm(k.split(":")[0]) not in kata]  # "kata:tampilan"
         lst = lambda k: d[k] if isinstance(d.get(k), list) else []  # hook-freeze: label = string, penampang: label = daftar
         if t == "skala-angka":
             if d.get("mode") not in MODE: m.append(f"adegan {i}: mode '{d.get('mode')}' ga ada (termometer/tumbuh)")

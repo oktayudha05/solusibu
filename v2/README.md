@@ -22,7 +22,7 @@ Alurnya: naskah.json (ditulis penulis) → `suara.py` (suara + timing per kata) 
   "affiliate": null                    // atau { "produk", "teks", "aset"?, "disclosure" } → tampil di penutup
 }
 ```
-`kunci` = kata di `teks` yang ditonjolkan (Playfair raksasa + stabilo, SFX banting). Kolom `pada` = satu kata di `teks` yang jadi pemicu. `suara.py` menambahkan `kata: [[kata, mulai, selesai], ...]` per adegan dan `audio`, lalu hasilnya disimpan ke `out/<slug>/props.json`.
+`kunci` = kata di `teks` yang tampil di layar (CUMA ini yg tampil, sisanya dibawa suara; Playfair raksasa + stabilo, SFX banting). Format `"kata"` atau `"kata:tampilan"` (mis. `"seribu:1.600 kali"`). 1-2 per adegan. Kolom `pada` = satu kata di `teks` yang jadi pemicu. `suara.py` menambahkan `kata: [[kata, mulai, selesai], ...]` per adegan dan `audio`, lalu hasilnya disimpan ke `out/<slug>/props.json`.
 **Angka di `teks` tulis pakai huruf** ("seratus sembilan puluh"), angka buat layar taruh di `data`. Digit bikin hitungan kata alignment meleset (dicek `cek_naskah.py`).
 
 Satu kanvas, kamera jalan (`kamera.tsx`). Template "dapur" (`hook-freeze`, `penampang-zoom`, `payoff-loop`) berbagi satu wajan penampang (`dapur.tsx`); template lain dapat wilayah sendiri di sebelahnya. Teks: frasa ≤3 kata di zona atas (y 230-630, `kinetik.tsx`), label tulisan tangan nempel objek, maskot kiri bawah ganti pose per adegan (`data.karakter`, opsional). Semua teks ≤ x880 di pita y 653-1517 (rel tombol YouTube).

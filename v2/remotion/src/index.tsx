@@ -5,7 +5,7 @@ import { AbsoluteFill, Audio, Composition, Sequence, registerRoot, staticFile, u
 import { F, FPS, GrainPng, SAFE, Sprite, bayang, ease, goyang, halftone, kf, popS } from './lib'
 import { Kamera, KeyKamera, Titik, kameraDi, kecepatan } from './kamera'
 import { Dapur, Peristiwa, jangkarDapur, jariDapur } from './dapur'
-import { KataBesar, KataK, potongFrasa } from './kinetik'
+import { KataBesar, KataK } from './kinetik'
 import { E3, Tema } from './tema'
 import { Adegan, Affiliate, Ctx, TEMPLATE, UKURAN, norm } from './template'
 import idx from '../public/aset/index.json'
@@ -85,9 +85,12 @@ export const Video: React.FC<Naskah> = (n) => {
   const cam = kameraDi(t, keys, jangkar)
 
   // sfx: per template + kamera ngebut (whip) + kata kunci (banting + stabilo) + ganti pose maskot
-  const kunciK = (a: Adegan) => new Set(a.kunci.map(norm))
-  const kata: KataK[] = adegan.flatMap((a) => a.kata.map(([k, s, e]) => ({ kata: k, s, e, kunci: kunciK(a).has(norm(k)) })))
-  const frasa = potongFrasa(kata)
+  // kunci "kata" atau "kata:tampilan" (angka diucap pakai huruf, tampil sbg angka). Cuma kata kunci yg tampil di layar.
+  const kata: KataK[] = adegan.flatMap((a, i) => {
+    const km = new Map(a.kunci.map((k) => { const [w, tampil] = k.split(':'); return [norm(w), tampil] as [string, string | undefined] }))
+    return a.kata.map(([k, s, e]) => ({ kata: k, s, e, kunci: km.has(norm(k)), tampil: km.get(norm(k)), sampai: selesai[i] - 0.15 }))
+  })
+  const frasa = kata.filter((k) => k.kunci).map((k) => [k])
   const pose = (i: number) => adegan[i].data?.karakter ?? TEMPLATE[adegan[i].template]?.pose ?? 'ibu-senyum'
   const sfx: [number, string][] = [
     ...adegan.flatMap((a, i) => TEMPLATE[a.template]?.sfx(ctx(i)) ?? []),
@@ -124,10 +127,10 @@ export const Video: React.FC<Naskah> = (n) => {
       <Kamera t={t} keys={keys} jangkar={jangkar} blur={blurOn ? 'hantu' : 'none'} sampel={8}
         lapis={[{ d: 0.3, isi: <Latar tema={tema} /> }, { d: 0.6, isi: <Coretan tema={tema} /> }, { d: 1, isi: isiDunia }]} />
       <Depan tema={tema} cam={cam} />
-      <div style={{ position: 'absolute', left: 40 + cam.x * 0.0, top: 1536 - mh + lompat + goyang(t, 1, 4), width: mw, height: mh, transformOrigin: '50% 100%',
+      {!TEMPLATE[adegan[aktif]?.template]?.aktor && <div style={{ position: 'absolute', left: 40, top: 1536 - mh + lompat + goyang(t, 1, 4), width: mw, height: mh, transformOrigin: '50% 100%',
         transform: `rotate(${kaget ? goyang(t * 6, 0, 3) : goyang(t, 0, 1)}deg) scale(${t >= ganti ? popS(t, ganti) : 1})` }}>
         <Sprite src={`aset/sprite/${pi}.png`} fx={`drop-shadow(-5px 4px 0 ${w.misreg ?? w.catatan2}) ${bayang(w.bayangan)}`} style={{ left: 0, top: 0, width: mw, height: mh }} />
-      </div>
+      </div>}
       {Lp && <Lp {...ctx(aktif)} cam={cam} jangkar={jangkar} jari={jari} dunia={dunia as any} />}
       <KataBesar tema={tema} t={t} kata={kata} frasa={frasa} />
       <GrainPng frame={frame} opacity={tema.bentuk.grain} />

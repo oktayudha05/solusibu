@@ -54,9 +54,9 @@ export const LabelPanah: React.FC<{ c: Ctx; at: number; sampai?: number; teks: s
     const keluar = sampai ? prog(t, sampai, sampai + 5 * F, ease.in3) : 0
     const H = teks.length > 16 ? 140 : 84, Wb = lebar, jauh = jari + 50
     const kiri = ujung[0] >= 540
-    let L = Math.min(Math.max(64, kiri ? ujung[0] - jauh - Wb : ujung[0] + jauh), 880 - Wb), T = Math.min(Math.max(660, ujung[1] - 40 - H), 1500 - H)
+    let L = Math.min(Math.max(64, kiri ? ujung[0] - jauh - Wb : ujung[0] + jauh), 880 - Wb), T = Math.min(Math.max(660, ujung[1] - 40 - H), 1320 - H)
     const tabrakX = L < ujung[0] + jari + 20 && L + Wb > ujung[0] - jari - 20, tabrakY = T < ujung[1] + jari + 20 && T + H > ujung[1] - jari - 20
-    if (tabrakX && tabrakY) T = ujung[1] - jauh - H >= 660 ? ujung[1] - jauh - H : Math.min(ujung[1] + jauh, 1500 - H)
+    if (tabrakX && tabrakY) T = ujung[1] - jauh - H >= 660 ? ujung[1] - jauh - H : Math.min(ujung[1] + jauh, 1320 - H)
     if (T + H > 1140) L = Math.min(Math.max(L, 300), 880 - Wb) // maskot di kiri bawah
     const pangkal: Titik = [Math.min(Math.max(ujung[0], L + 30), L + Wb - 30), T + H / 2 < ujung[1] ? T + H : T]
     const dx = ujung[0] - pangkal[0], dy = ujung[1] - pangkal[1], len = Math.hypot(dx, dy) || 1
@@ -129,7 +129,30 @@ const penKetuk = (c: Ctx) => {
   return { jatuh: jatuh - 0.2, sentuh: jatuh + 0.3, dasar, didih, uap, ciprat }
 }
 const penPeristiwa = (c: Ctx): Peristiwa => penKetuk(c)
+const RANTAI = ['tetes', 'turun', 'api', 'uap', 'ciprat'] as const
+const Rantai: React.FC<CtxLayar> = (c) => {
+  const w = c.tema.warna, k = penKetuk(c), ts = [k.jatuh, k.dasar, k.didih, k.uap, k.ciprat], t = c.t
+  const ikon = (j: number, nyala: boolean) => {
+    const isi = nyala ? w.latar : w.tintaPintu
+    if (RANTAI[j] === 'tetes') return <Sprite src="aset/sprite/tetes-air.png" warna={nyala ? w.tetes : w.catatan2} fx="none" style={{ left: 26, top: 6, width: 40, height: 62 }} />
+    if (RANTAI[j] === 'turun') return <svg width={92} height={80}><rect x={40} y={8} width={12} height={40} fill={isi} /><polygon points="26,46 66,46 46,72" fill={isi} /></svg>
+    if (RANTAI[j] === 'api') return <svg width={92} height={80}>{[18, 46, 74].map((x, i) => <polygon key={i} points={`${x - 14},72 ${x + 14},72 ${x},${i === 1 ? 14 : 30}`} fill={isi} />)}</svg>
+    if (RANTAI[j] === 'uap') return <svg width={92} height={80}><rect x={14} y={14} width={64} height={56} fill={nyala ? w.catatan2 : 'none'} stroke={isi} strokeWidth={6} /></svg>
+    return <Sprite src="aset/sprite/ciprat-minyak.png" warna={nyala ? w.cipratan : w.catatan2} fx="none" style={{ left: 6, top: 4, width: 80, height: 72 }} />
+  }
+  return <div style={{ position: 'absolute', left: 300, top: 1340, display: 'flex', alignItems: 'center', gap: 6, ...muncul(t, c.mulai + 0.2), transformOrigin: '0 50%' }}>
+    {RANTAI.map((_, j) => {
+      const nyala = t >= ts[j], aktif = nyala && (j === 4 || t < ts[j + 1])
+      return <React.Fragment key={j}>
+        {j > 0 && <div style={{ width: 18, height: 8, background: t >= ts[j] ? w.tintaPintu : w.catatan2, opacity: 0.9 }} />}
+        <div style={{ position: 'relative', width: 92, height: 84, background: nyala ? (aktif ? w.catatan : w.stabilo) : w.latar, outline: `4px solid ${w.tintaPintu}`,
+          boxShadow: `7px 7px 0 ${w.bayangan}`, transform: `scale(${t >= ts[j] ? popS(t, ts[j]) * (aktif ? 1.12 : 1) : 1})` }}>{ikon(j, nyala)}</div>
+      </React.Fragment>
+    })}
+  </div>
+}
 const PenLayar: React.FC<CtxLayar> = (c) => <>
+  <Rantai {...c} />
   {(c.a.data.label ?? []).map((l: any, i: number) => {
     const at = waktu(c, l.pada, 0.3 + i), next = c.a.data.label[i + 1]
     const sampai = l.sampai ? waktu(c, l.sampai) : next ? waktu(c, next.pada, 0.3 + i + 1) - 0.05 : c.selesai - 0.2
@@ -206,21 +229,16 @@ const Termometer: React.FC<Ctx> = (c) => {
 const SEL = 130, KOL = 5
 const Tumbuh: React.FC<Ctx> = (c) => {
   const w = c.tema.warna, d = c.a.data, t = c.t, at = waktu(c, d.pada, 1), n = d.sel ?? 24
-  const baris = Math.ceil(n / KOL), x0 = 330, yBawah = 1230
+  const baris = Math.ceil(n / KOL), x0 = 540 - (KOL * SEL) / 2, yBawah = 1180
   return <>
     {/* sendok: kepala kotak + gagang */}
-    <div style={{ position: 'absolute', left: 200, top: 1270, ...muncul(t, c.mulai + 0.1) }}>
+    <div style={{ position: 'absolute', left: 390, top: 1220, ...muncul(t, c.mulai + 0.1) }}>
       <div style={{ position: 'absolute', left: 0, top: 0, width: 300, height: 110, background: w.catatan2, filter: bayang(w.bayangan, 10), clipPath: 'polygon(0 0,100% 0,88% 100%,12% 100%)' }} />
       <div style={{ position: 'absolute', left: 290, top: 20, width: 380, height: 40, background: w.catatan2, filter: bayang(w.bayangan, 10) }} />
       <div style={{ position: 'absolute', left: 30, top: 8, width: 240, height: 34, background: w.tetes }} />
       <Sprite src="aset/sprite/tetes-air.png" warna={w.tetes} fx={bayang(w.bayangan, 6)} style={{ left: 110, top: -110, width: 80, height: 124, transform: `translateY(${kf(t, [[c.mulai + 0.1, -60], [c.mulai + 0.4, 0, ease.out3]])}px)` }} />
     </div>
-    {d.awal && <div style={{ position: 'absolute', left: 330, top: 1380, ...fontT(c, 'display', 64), color: w.tintaPintu, textShadow: `6px 6px 0 ${w.bayangan}`, ...muncul(t, c.mulai + 0.3), transformOrigin: '0 0' }}>{d.awal}</div>}
-    {/* panah uap naik dari sendok ke tumpukan */}
-    <svg width={1080} height={1920} style={{ position: 'absolute', left: 0, top: 0, overflow: 'visible' }}>
-      <Gores d={`M 300 1250 L 300 1150 L ${x0 - 20} 1150`} p={prog(t, at - 0.3, at, ease.inOut3)} warna={w.stabilo} lebar={10} bayangan={w.bayangan} />
-      {t > at && <polygon points={kepala([x0 - 4, 1150], [300, 1150], 36)} fill={w.stabilo} />}
-    </svg>
+    {d.awal && <div style={{ position: 'absolute', left: 390, top: 1350, ...fontT(c, 'display', 64), color: w.tintaPintu, textShadow: `6px 6px 0 ${w.bayangan}`, ...muncul(t, c.mulai + 0.3), transformOrigin: '0 0' }}>{d.awal}</div>}
     {Array.from({ length: n }, (_, i) => <div key={'k' + i} style={{ position: 'absolute', left: x0 + (i % KOL) * SEL, top: yBawah - (Math.floor(i / KOL) + 1) * SEL,
       width: SEL - 10, height: SEL - 10, outline: `4px dashed ${w.catatan2}`, opacity: 0.55 * prog(t, c.mulai + 0.2 + (i % 5) * F, c.mulai + 0.5 + (i % 5) * F) }} />)}
     {Array.from({ length: n }, (_, i) => {
@@ -240,12 +258,12 @@ const Tumbuh: React.FC<Ctx> = (c) => {
 const TumbuhLayar: React.FC<CtxLayar> = (c) => {
   const w = c.tema.warna, d = c.a.data, t = c.t, at = waktu(c, d.pada, 1), n = d.sel ?? 24
   const angka = Math.round(Math.exp(kf(t, [[at, 0], [at + n * 2 * F + 0.2, Math.log(d.ke ?? 1600), ease.out3]])))
-  const pos = proyeksi(c.cam, [c.ox + 330 + KOL * SEL / 2, c.oy + 1230 - Math.ceil(n / KOL) * SEL * 0.5])
+  const pos = proyeksi(c.cam, [c.ox + 540, c.oy + 1180 - Math.ceil(n / KOL) * SEL * 0.5])
   const atH = waktu(c, d.hasil_pada, 2.5)
   return <>
-    {t >= at && <div style={{ position: 'absolute', left: Math.min(Math.max(64, pos[0] - 300), 280), top: Math.max(660, pos[1] - 120), width: 600, textAlign: 'center' }}>
+    {t >= at - 3 * F && <div style={{ position: 'absolute', left: 140, top: Math.max(660, pos[1] - 110), width: 740, textAlign: 'center' }}>
       <div style={{ display: 'inline-block', background: w.latar, padding: '6px 26px', transform: `rotate(-3deg) scale(${popS(t, at)})`, boxShadow: `12px 12px 0 ${w.bayangan}` }}>
-        <span style={{ ...fontT(c, 'display', 150), color: w.tintaPintu, textShadow: misreg(w.misreg ?? w.catatan2) }}>{d.akhiran ?? '×'}{angka.toLocaleString('id-ID')}</span>
+        <span style={{ ...fontT(c, 'display', 170), color: w.tintaPintu, textShadow: misreg(w.misreg ?? w.catatan2), fontVariantNumeric: 'tabular-nums' }}>{d.akhiran ?? '×'}{angka.toLocaleString('id-ID')}</span>
       </div>
     </div>}
     {d.hasil && t >= atH && <div style={{ position: 'absolute', left: 64, top: Math.min(1340, pos[1] + 160), width: 816, textAlign: 'center' }}>
@@ -262,8 +280,8 @@ const skalaKamera = (c: Ctx): KeyKamera[] => {
   const o = (x: number, y: number): Titik => [c.ox + x, c.oy + y]
   if (c.a.data.mode === 'tumbuh') {
     const at = waktu(c, c.a.data.pada, 1)
-    return [{ t: c.mulai + 10 * F, fokus: o(520, 1060), zoom: 1.15, ease: 'inOut5' }, { t: at - 0.1, fokus: o(520, 1050), zoom: 1.2 },
-      { t: at + 0.9, fokus: o(610, 930), zoom: 0.98, ease: 'inOut3' }, { t: c.selesai, fokus: o(610, 925), zoom: 0.96 }]
+    return [{ t: c.mulai + 10 * F, fokus: o(560, 1120), zoom: 1.4, ease: 'inOut5' }, { t: at - 0.1, fokus: o(560, 1110), zoom: 1.5 },
+      { t: at + 1.0, fokus: o(560, 930), zoom: 1.0, ease: 'inOut3' }, { t: c.selesai, fokus: o(560, 925), zoom: 1.03 }]
   }
   const d = c.a.data, t1 = waktu(c, d.seri[0]?.pada, 0.4), t2 = waktu(c, d.seri[1]?.pada, 1.6)
   return [{ t: c.mulai + 10 * F, fokus: o(560, 880), zoom: 1.0, ease: 'inOut5' }, { t: Math.min(t1, t2) + 0.2, fokus: o(550, 870), zoom: 1.01, ease: 'inOut3' },
@@ -285,7 +303,6 @@ const skalaSfx = (c: Ctx): Sfx => {
 
 // ================= 4. LANGKAH-TANGAN (wilayah sendiri) =================
 // tiap langkah = kartu bernomor + ilustrasi mini yg DIPERAGAKAN (bukan dicentang). Langkah lama tetap jadi jejak di atas.
-const KARTU_Y = 600, KARTU_H = 360, KARTU_JARAK = 390, KARTU_X = 290, KARTU_W = 730
 const WajanMini: React.FC<{ c: Ctx; x: number; y: number; api?: number }> = ({ c, x, y, api = 0 }) => {
   const w = c.tema.warna
   return <svg width={320} height={260} style={{ position: 'absolute', left: x, top: y, overflow: 'visible' }}>
@@ -299,13 +316,13 @@ const WajanMini: React.FC<{ c: Ctx; x: number; y: number; api?: number }> = ({ c
 const Ilustrasi: React.FC<{ c: Ctx; aksi: string; at: number }> = ({ c, aksi, at }) => {
   const w = c.tema.warna, t = c.t, p = (a: number, b: number, e = ease.inOut3) => prog(t, at + a, at + b, e)
   const X = (cx: number, cy: number, s: number, pp: number) => <svg width={1} height={1} style={{ position: 'absolute', left: 0, top: 0, overflow: 'visible' }}>
-    <Gores d={`M ${cx - s} ${cy - s} L ${cx + s} ${cy + s}`} p={Math.min(1, pp * 2)} warna={w.stabilo} lebar={20} bayangan={w.bayangan} />
-    <Gores d={`M ${cx + s} ${cy - s} L ${cx - s} ${cy + s}`} p={Math.max(0, pp * 2 - 1)} warna={w.stabilo} lebar={20} bayangan={w.bayangan} />
+    <Gores d={`M ${cx - s} ${cy - s} L ${cx + s} ${cy + s}`} p={Math.min(1, pp * 2)} warna={w.kata} lebar={20} bayangan={w.bayangan} />
+    <Gores d={`M ${cx + s} ${cy - s} L ${cx - s} ${cy + s}`} p={Math.max(0, pp * 2 - 1)} warna={w.kata} lebar={20} bayangan={w.bayangan} />
   </svg>
   if (aksi === 'lap') { // bahan basah (tetes) → tisu nyapu → kering
     const sapu = p(0.1, 0.7)
     return <>
-      <div style={{ position: 'absolute', left: 20, top: 120, width: 280, height: 150, background: w.stabilo, filter: bayang(w.bayangan, 9), clipPath: 'polygon(8% 0,100% 12%,92% 100%,0 86%)' }} />
+      <div style={{ position: 'absolute', left: 20, top: 120, width: 280, height: 150, background: w.catatan, filter: bayang(w.bayangan, 9), clipPath: 'polygon(8% 0,100% 12%,92% 100%,0 86%)' }} />
       {[[60, 70], [150, 50], [220, 90]].map(([x, y], i) => <Sprite key={i} src="aset/sprite/tetes-air.png" warna={w.tetes} fx={bayang(w.bayangan, 4)}
         style={{ left: x, top: y, width: 40, height: 62, opacity: sapu * 300 > x + 20 ? 0 : 1 }} />)}
       <div style={{ position: 'absolute', left: -60 + sapu * 300, top: 40, width: 120, height: 200, background: w.struk, filter: bayang(w.bayangan, 8), transform: `rotate(${-8 + sapu * 10}deg)`,
@@ -316,7 +333,7 @@ const Ilustrasi: React.FC<{ c: Ctx; aksi: string; at: number }> = ({ c, aksi, at
     const m = p(0.1, 0.8, ease.out3)
     return <>
       <WajanMini c={c} x={0} y={60} />
-      <div style={{ position: 'absolute', left: 250 - m * 120, top: 60 + m * 110, width: 90, height: 56, background: w.stabilo, filter: bayang(w.bayangan, 6), transform: `rotate(${30 - m * 30}deg)` }} />
+      <div style={{ position: 'absolute', left: 250 - m * 120, top: 60 + m * 110, width: 90, height: 56, background: w.catatan, filter: bayang(w.bayangan, 6), transform: `rotate(${30 - m * 30}deg)` }} />
       <svg width={1} height={1} style={{ position: 'absolute', left: 0, top: 0, overflow: 'visible' }}>
         <Gores d="M 120 40 L 220 40 L 300 0" p={p(0.4, 0.8)} warna={w.tintaPintu} lebar={9} bayangan={w.bayangan} />
         {t > at + 0.8 && <polygon points={kepala([300, 0], [220, 40], 30)} fill={w.tintaPintu} />}
@@ -338,8 +355,8 @@ const Ilustrasi: React.FC<{ c: Ctx; aksi: string; at: number }> = ({ c, aksi, at
   if (aksi === 'kompor') { // kenop diputar → api mati
     const r = p(0, 0.35)
     return <>
-      <WajanMini c={c} x={0} y={40} api={1 - p(0.25, 0.6)} />
-      <div style={{ position: 'absolute', left: 110, top: 250, width: 100, height: 100, background: w.latar, outline: `6px solid ${w.tintaPintu}`, filter: bayang(w.bayangan, 8), transform: `rotate(${r * 90}deg)` }}>
+      <WajanMini c={c} x={0} y={0} api={1 - p(0.25, 0.6)} />
+      <div style={{ position: 'absolute', left: 110, top: 205, width: 100, height: 100, background: w.latar, outline: `6px solid ${w.tintaPintu}`, filter: bayang(w.bayangan, 8), transform: `rotate(${r * 90}deg)` }}>
         <div style={{ position: 'absolute', left: 42, top: 6, width: 16, height: 50, background: w.catatan }} />
       </div>
     </>
@@ -356,33 +373,49 @@ const Ilustrasi: React.FC<{ c: Ctx; aksi: string; at: number }> = ({ c, aksi, at
   // fallback: sprite properti dari pustaka
   return aksi ? <Sprite src={`aset/sprite/${aksi}.png`} fx={bayang(w.bayangan, 8)} style={{ left: 0, top: 0, width: UKURAN[aksi]?.[0] ?? 300, height: UKURAN[aksi]?.[1] ?? 300, ...muncul(t, at) }} /> : null
 }
+// tata letak: zona kata kunci (230-630) → PANGGUNG 560-1060 (ibu = aktor + ilustrasi langkah aktif x1.6) → kartu 1090-1500 pop bareng isinya.
+// Maskot layar disembunyiin di template ini (ibu udah main di panggung). Teks kartu ≤ x880 (rel tombol).
+const PANGGUNG = { x: 64, y: 560, w: 952, h: 500 }
+const kartuGeo = (n: number) => {
+  const kol = n > 2 ? 2 : 1, baris = Math.ceil(n / kol), h = Math.min(200, Math.floor(410 / baris) - 12), w = kol === 2 ? 400 : 816
+  return { kol, h, w, pos: (i: number): [number, number] => [64 + (i % kol) * (w + 16), 1090 + Math.floor(i / kol) * (h + 12)] }
+}
 const Langkah: React.FC<Ctx> = (c) => {
-  const w = c.tema.warna
-  return <>{(c.a.data.langkah ?? []).map((l: any, i: number) => {
-    const at = waktu(c, l.pada, 0.4 + i * 1.5), y = KARTU_Y + i * KARTU_JARAK, warna = i % 2 ? w.catatan2 : w.catatan
-    return <div key={i} style={{ position: 'absolute', left: 0, top: 0, ...muncul(c.t, Math.min(at - 0.15, c.mulai + 0.25 + i * 4 * F)), transformOrigin: `${KARTU_X + KARTU_W / 2}px ${y + KARTU_H / 2}px` }}>
-      <Kertas tema={c.tema} t={c.t} l={KARTU_X} top={y} w={KARTU_W} h={KARTU_H} warna={warna} seed={91 + i * 7}>
-        <div style={{ position: 'absolute', left: 30, top: 14, ...fontT(c, 'serif', 150), color: w.kata, textShadow: misreg(w.misreg ?? w.catatan2) }}>{i + 1}</div>
-        <div style={{ position: 'absolute', left: 30, top: 170, width: 370, height: 170, zIndex: 1, display: 'flex', alignItems: 'center', ...fontT(c, 'display', l.teks.length > 12 ? 54 : 64), color: w.tintaCatatan, ...muncul(c.t, at - 0.1), transformOrigin: '0 50%' }}>{l.teks}</div>
-        <div style={{ position: 'absolute', left: 400, top: 40, width: 320, height: 300, opacity: prog(c.t, at - 0.15, at) }}><Ilustrasi c={c} aksi={l.aksi} at={at} /></div>
-      </Kertas>
+  const w = c.tema.warna, L = c.a.data.langkah ?? [], g = kartuGeo(L.length), pose = c.a.data.karakter ?? 'ibu-nunjuk'
+  const ats = L.map((l: any, i: number) => waktu(c, l.pada, 0.4 + i * 1.5))
+  const aktif = Math.max(0, ats.findLastIndex((x: number) => c.t >= x - 0.15))
+  const [pw, ph] = (UKURAN[pose] ?? [300, 620]).map((v) => (v * 3) / 4)
+  return <>
+    <Kertas tema={c.tema} t={c.t} l={PANGGUNG.x} top={PANGGUNG.y} w={PANGGUNG.w} h={PANGGUNG.h} warna={w.stabilo} seed={77} style={muncul(c.t, c.mulai - 0.15)} />
+    <div style={{ position: 'absolute', left: 100, top: PANGGUNG.y + PANGGUNG.h - ph - 10, width: pw, height: ph, transformOrigin: '50% 100%',
+      transform: `rotate(${goyang(c.t, 2, 1)}deg) scale(${popS(c.t, c.mulai)})` }}>
+      <Sprite src={`aset/sprite/${pose}.png`} fx={`drop-shadow(-5px 4px 0 ${w.misreg ?? w.catatan2}) ${bayang(w.bayangan)}`} style={{ left: 0, top: 0, width: pw, height: ph }} />
     </div>
-  })}</>
+    {L.map((l: any, i: number) => {
+      if (i !== aktif) return null
+      const at = ats[i], masuk = i === 0 ? Math.min(at - 0.15, c.mulai + 0.2) : at - 0.15 // langkah 1 udah nongol (keadaan "sebelum")
+      return <div key={'p' + i} style={{ position: 'absolute', left: 440, top: PANGGUNG.y + 10, width: 320, height: 300,
+        transform: `scale(${1.6 * popS(c.t, masuk)})`, transformOrigin: '0 0', opacity: prog(c.t, masuk, masuk + 0.1) }}>
+        <Ilustrasi c={c} aksi={l.aksi} at={at} />
+      </div>
+    })}
+    {L.map((l: any, i: number) => {
+      const at = ats[i], [x, y] = g.pos(i), warna = i === aktif ? w.catatan : w.catatan2, nf = g.kol === 2 ? 100 : 130
+      if (c.t < at - 0.2) return null
+      return <div key={i} style={{ position: 'absolute', left: 0, top: 0, ...muncul(c.t, at - 0.15), transformOrigin: `${x + g.w / 2}px ${y + g.h / 2}px` }}>
+        <Kertas tema={c.tema} t={c.t} l={x} top={y} w={g.w} h={g.h} warna={warna} seed={91 + i * 7}>
+          <div style={{ position: 'absolute', left: 22, top: 0, height: g.h, display: 'flex', alignItems: 'center', ...fontT(c, 'serif', nf), color: w.kata, textShadow: misreg(w.misreg ?? w.catatan2) }}>{i + 1}</div>
+          <div style={{ position: 'absolute', left: 22 + nf * 0.75, top: 0, width: g.w - 40 - nf * 0.75, height: g.h, display: 'flex', alignItems: 'center', ...fontT(c, 'display', 58), color: w.tintaCatatan }}>{l.teks}</div>
+        </Kertas>
+      </div>
+    })}
+  </>
 }
-const langkahKamera = (c: Ctx): KeyKamera[] => {
-  const L = c.a.data.langkah ?? []
-  // pusat layar (y 860) = tengah antara kartu i-1 & i → kartu aktif di y≈1060-1420, kartu sebelumnya di atasnya
-  const fy = (i: number) => c.oy + KARTU_Y + Math.max(0, i - 1) * KARTU_JARAK + (i ? KARTU_JARAK : 0) + KARTU_H / 2 - (i ? 360 : 140)
-  return [{ t: c.mulai + 10 * F, fokus: [c.ox + 560, fy(0)], zoom: 1.0, ease: 'inOut5' },
-    ...L.slice(1).flatMap((l: any, i: number) => {
-      const at = waktu(c, l.pada, 0.4 + (i + 1) * 1.5)
-      return [{ t: at - 0.45, fokus: [c.ox + 560, fy(i)], zoom: 1.0 }, { t: at + 0.1, fokus: [c.ox + 560, fy(i + 1)], zoom: 1.0, ease: 'inOut3' }] as KeyKamera[]
-    }), { t: c.selesai, fokus: [c.ox + 560, fy(L.length - 1) - 10], zoom: 1.02 }]
-}
+const langkahKamera = (c: Ctx): KeyKamera[] => [{ t: c.mulai + 10 * F, fokus: [c.ox + 540, c.oy + 870], zoom: 1.0, ease: 'inOut5' }, { t: c.selesai, fokus: [c.ox + 540, c.oy + 860], zoom: 1.04 }]
 const langkahSfx = (c: Ctx): Sfx => (c.a.data.langkah ?? []).flatMap((l: any, i: number) => {
   const at = waktu(c, l.pada, 0.4 + i * 1.5)
   const aksi: Record<string, string> = { lap: 'swish-soft', pinggir: 'swish-soft', 'jangan-air': 'writing-scribble', 'jangan-pindah': 'writing-scribble', kompor: 'zip-out-soft', tutup: 'impact-medium-soft' }
-  return [[at - 0.15, 'pop-medium-in'], [at + 0.15, aksi[l.aksi] ?? 'pop-small-in'], ...(i ? [[at - 0.45, 'whoosh-fast-soft']] : [])] as Sfx
+  return [[at - 0.15, 'pop-medium-in'], [at + 0.15, aksi[l.aksi] ?? 'pop-small-in']] as Sfx
 })
 
 // ================= 5. PAYOFF-LOOP (dapur) =================
@@ -417,19 +450,19 @@ const PayLayar: React.FC<CtxLayar> = (c) => {
 }
 const payKamera = (c: Ctx): KeyKamera[] => {
   // ungkap: mundur sampai dapur + wilayah sebelahnya kelihatan (seluruh kanvas kekecilan buat HP)
-  const z = 0.5, pusat: Titik = [1190, 1050], pulang = payPulang(c)
+  const z = 0.42, pusat: Titik = [1190, 1850], pulang = payPulang(c)
   return [{ t: c.mulai + 24 * F, fokus: pusat, zoom: z, ease: 'inOut5' }, { t: pulang, fokus: pusat, zoom: z * 1.04 },
     { t: pulang + 20 * F, fokus: 'dapur', zoom: 1.12, ease: 'inOut5' }]
 }
 const paySfx = (c: Ctx): Sfx => [[c.mulai, 'whoosh-medium-soft'], ...(c.a.data.rangkum ?? []).map((_: string, i: number) => [c.mulai + 0.5 + i * 8 * F, i === c.a.data.rangkum.length - 1 ? 'impact-medium-soft' : 'pop-small-in'] as [number, string]),
   [payPulang(c) - 0.05, 'whoosh-fast-soft'], [c.selesai - 0.7, 'swish-soft']]
 
-export type Template = { dapur?: boolean; K?: React.FC<Ctx>; Layar?: React.FC<CtxLayar>; kamera: (c: Ctx & { dunia?: number[] }) => KeyKamera[]; sfx: (c: Ctx) => Sfx; peristiwa?: (c: Ctx) => Peristiwa; pose: string }
+export type Template = { dapur?: boolean; aktor?: boolean; K?: React.FC<Ctx>; Layar?: React.FC<CtxLayar>; kamera: (c: Ctx & { dunia?: number[] }) => KeyKamera[]; sfx: (c: Ctx) => Sfx; peristiwa?: (c: Ctx) => Peristiwa; pose: string }
 export const TEMPLATE: Record<string, Template> = {
   'hook-freeze': { dapur: true, Layar: HookLayar, kamera: hookKamera, sfx: hookSfx, peristiwa: hookPeristiwa, pose: 'ibu-kaget' },
   'penampang-zoom': { dapur: true, Layar: PenLayar, kamera: penKamera, sfx: penSfx, peristiwa: penPeristiwa, pose: 'ibu-mikir' },
   'skala-angka': { K: Skala, Layar: SkalaLayar, kamera: skalaKamera, sfx: skalaSfx, pose: 'ibu-jelasin' },
-  'langkah-tangan': { K: Langkah, kamera: langkahKamera, sfx: langkahSfx, pose: 'ibu-nunjuk' },
+  'langkah-tangan': { K: Langkah, kamera: langkahKamera, sfx: langkahSfx, pose: 'ibu-nunjuk', aktor: true },
   'payoff-loop': { dapur: true, Layar: PayLayar, kamera: payKamera, sfx: paySfx, peristiwa: payPeristiwa, pose: 'ibu-jempol' },
 }
 export { FPS }

@@ -22,21 +22,27 @@ Alurnya: naskah.json (ditulis penulis) → `suara.py` (suara + timing per kata) 
   "affiliate": null                    // atau { "produk", "teks", "aset"?, "disclosure" } → tampil di penutup
 }
 ```
-`kunci` = kata di `teks` yang ditonjolkan (caption serif italic, stabilo, SFX). Kolom `pada` di bawah = satu kata di `teks` yang jadi pemicu muncul. `suara.py` menambahkan `kata: [[kata, mulai, selesai], ...]` per adegan dan `audio`, lalu hasilnya disimpan ke `out/<slug>/props.json`.
+`kunci` = kata di `teks` yang ditonjolkan (Playfair raksasa + stabilo, SFX banting). Kolom `pada` = satu kata di `teks` yang jadi pemicu. `suara.py` menambahkan `kata: [[kata, mulai, selesai], ...]` per adegan dan `audio`, lalu hasilnya disimpan ke `out/<slug>/props.json`.
+**Angka di `teks` tulis pakai huruf** ("seratus sembilan puluh"), angka buat layar taruh di `data`. Digit bikin hitungan kata alignment meleset (dicek `cek_naskah.py`).
+
+Satu kanvas, kamera jalan (`kamera.tsx`). Template "dapur" (`hook-freeze`, `penampang-zoom`, `payoff-loop`) berbagi satu wajan penampang (`dapur.tsx`); template lain dapat wilayah sendiri di sebelahnya. Teks: frasa ≤3 kata di zona atas (y 230-630, `kinetik.tsx`), label tulisan tangan nempel objek, maskot kiri bawah ganti pose per adegan (`data.karakter`, opsional). Semua teks ≤ x880 di pita y 653-1517 (rel tombol YouTube).
 
 | template | data | isi |
 |---|---|---|
-| `hook-kejutan` | `label?`, `besar`, `karakter`, `properti` | catatan + kata raksasa di `kunci[0]`, karakter, properti di magnet, ciprat |
-| `sebab-akibat` | `sebab`, `akibat`, `sebab_aset`, `akibat_aset`, `karakter` | kartu sebab di `kunci[0]`, panah, kartu akibat di `kunci[1]` |
-| `salah-vs-benar` | `salah`, `benar`, `benar_pada`, `coret_pada?`, `karakter` | kartu salah dicoret, kartu benar dicentang |
-| `checklist-pop` | `judul`, `item: [{teks, pada}]`, `properti` | item muncul + dicentang pas diucapkan (jumlah item bebas, jangan selalu 3) |
-| `chat-takeover` | `nama`, `pesan: [{dari: "dia"\|"aku", teks, pada}]` | layar chat naik nutupin layar, gelembung muncul per pesan |
-| `penutup` | `besar`, `karakter` | kalimat penutup + karakter. Kalau `affiliate` diisi: kartu produk + strip disclosure (wajib) |
+| `hook-freeze` | `label?`, `label_pada?`, `karakter?` | frame 0 udah ciprat → BEKU + flash + kotak bidik + label. Wajib adegan pertama |
+| `penampang-zoom` | `ketukan: {jatuh, dasar, didih, uap, ciprat}` (kata), `label?: [{teks, jangkar, pada, warna?}]` | penampang wajan: tetes jatuh, tenggelam, mendidih (snap zoom), uap ngembang, ciprat (whip). `jangkar`: tetes/dasar/uap/minyak/permukaan/api. `warna`: air/panas |
+| `skala-angka` | `mode: "termometer"`: `seri: [{label, nilai, dari?, warna?, pada}]`, `maks?`, `sumber` | batang termometer naik pas `pada`, pita rentang `dari`-`nilai` |
+| | `mode: "tumbuh"`: `awal`, `pada`, `ke`, `akhiran?`, `sel?`, `sel_label?`, `hasil?`, `hasil_pada?`, `sumber` | sendok air → grid kotak (`sel` buah) + penghitung ×`ke` |
+| `langkah-tangan` | `langkah: [{teks, aksi, pada}]` | kartu bernomor + ilustrasi yg diperagakan. `aksi`: lap, pinggir, jangan-air, jangan-pindah, kompor, tutup (atau id properti) |
+| `payoff-loop` | `rangkum: [kata...]`, `karakter?` | kamera mundur + jejak kata kunci → balik ke komposisi frame 0, tetes jatuh (nyambung ke hook). Wajib adegan terakhir; kartu affiliate + disclosure di sini kalau `affiliate` diisi. Kalimat akhir sebaiknya nyambung ke kalimat pertama |
 
-Aset dipanggil pakai `id` dari `aset/index.json` (cari: `grep '"tag"' -A8 aset/index.json \| grep wajan`). Semua sprite skala x8. Properti yang warnanya di luar palet (tetes, ciprat) otomatis diwarnai ulang lewat tema.
+Belum dibikin (R1 §8): `rantai-proses`, `banding-belah`, `bedah-label`.
+
+Aset dipanggil pakai `id` dari `aset/index.json` (cari: `grep '"tag"' -A8 aset/index.json \| grep wajan`). Sprite skala bulat (x8, maskot x5).
 
 ## Isi folder
 - `aset/`: `potong.py` (sheet AI → sprite bersih pakai spritegrid), `ambil_sfx.py` (subset wyzowl/sfx-kit CC0 + titik sinkron), `index.json`
-- `remotion/src/`: `lib.tsx` (gerak, kertas, sprite), `template.tsx` (6 template), `index.tsx` (kamera satu kanvas, caption per kata, SFX), `tema.ts`
+- `remotion/src/`: `lib.tsx` (gerak, kertas, sprite, grain PNG), `kamera.tsx` (kamera satu kanvas, parallax, blur cuma pas whip), `kinetik.tsx` (teks per kata), `dapur.tsx` (wajan penampang), `template.tsx` (5 template), `index.tsx` (rakit + SFX), `tema.ts`
+- `remotion/lembar.mjs`: review lokal tanpa render: `node lembar.mjs <props.json> <folder> [frame...]` → still + `lembar-kontak.png` + % area aman terisi (target ≥55%)
 - `cek_naskah.py` (cek naskah, stdlib) · `suara.py` + `suara/` (referensi suara terpilih) · `requirements.txt` (deps Python CPU)
 - `naskah/`: naskah per video · `out/`: hasil (ga di-commit) · `referensi-naskah/`: transkrip referensi

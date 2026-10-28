@@ -4,10 +4,11 @@ import json, pathlib, re, sys
 
 DIR = pathlib.Path(__file__).parent
 ASET = {x["id"] for x in json.loads((DIR / "aset/index.json").read_text())["aset"] if x.get("jenis") != "sfx"}
-TEMPLATE = {"hook-kejutan": ["besar", "karakter", "properti"], "sebab-akibat": ["sebab", "akibat", "sebab_aset", "akibat_aset", "karakter"],
-            "salah-vs-benar": ["salah", "benar", "benar_pada", "karakter"], "checklist-pop": ["judul", "item", "properti"],
-            "chat-takeover": ["nama", "pesan"], "penutup": ["besar", "karakter"]}
-KOLOM_ASET = ("karakter", "properti", "sebab_aset", "akibat_aset")
+TEMPLATE = {"hook-freeze": [], "penampang-zoom": ["ketukan"], "skala-angka": ["mode"], "langkah-tangan": ["langkah"], "payoff-loop": ["rangkum"]}
+MODE = {"termometer": ["seri"], "tumbuh": ["pada", "ke"]}  # skala-angka
+AKSI = {"lap", "pinggir", "jangan-air", "jangan-pindah", "kompor", "tutup"}  # langkah-tangan (selain ini: id properti dari aset)
+JANGKAR = {"dapur", "wajan", "atas", "minyak", "dasar", "permukaan", "tetes", "uap", "api"}
+KOLOM_ASET = ("karakter",)
 HARAM = ["tahukah kamu", "pernahkah kamu", "fakta menarik", "yuk simak", "mari kita", "di video ini", "melainkan", "semoga bermanfaat",
          "penting untuk diingat", "jadi mulai sekarang", "rahasia", "jitu", "ampuh", "dijamin", "wajib tahu", "game changer",
          "solusi terbaik", "anda", "tentunya", "selain itu", "oleh karena itu", "merupakan", "adalah sebuah"]
@@ -20,7 +21,7 @@ def cek(p):
     if not re.fullmatch(r"[a-z0-9-]+", pathlib.Path(p).stem): m.append("nama file cuma boleh a-z 0-9 -")
     adegan = n.get("adegan") or []
     if not adegan: m.append("adegan kosong")
-    if adegan and adegan[-1].get("template") != "penutup": m.append("adegan terakhir harus penutup")
+    if adegan and adegan[-1].get("template") != "payoff-loop": m.append("adegan terakhir harus payoff-loop")
     for i, a in enumerate(adegan, 1):
         t, d, teks = a.get("template"), a.get("data") or {}, a.get("teks", "")
         kata = {norm(w) for w in teks.split()}
@@ -28,8 +29,17 @@ def cek(p):
         m += [f"adegan {i}: data.{k} kosong" for k in TEMPLATE[t] if not d.get(k)]
         m += [f"adegan {i}: aset '{d[k]}' ga ada di aset/index.json" for k in KOLOM_ASET if d.get(k) and d[k] not in ASET]
         m += [f"adegan {i}: kunci '{k}' ga ada di teks" for k in a.get("kunci", []) if norm(k) not in kata]
-        pada = [d.get("benar_pada"), d.get("coret_pada")] + [x.get("pada") for x in d.get("item", []) + d.get("pesan", [])]
+        lst = lambda k: d[k] if isinstance(d.get(k), list) else []  # hook-freeze: label = string, penampang: label = daftar
+        if t == "skala-angka":
+            if d.get("mode") not in MODE: m.append(f"adegan {i}: mode '{d.get('mode')}' ga ada (termometer/tumbuh)")
+            else: m += [f"adegan {i}: data.{k} kosong" for k in MODE[d["mode"]] if not d.get(k)]
+        m += [f"adegan {i}: aksi '{x.get('aksi')}' ga ada" for x in lst("langkah") if x.get("aksi") not in AKSI | ASET]
+        m += [f"adegan {i}: jangkar '{x.get('jangkar')}' ga ada" for x in lst("label") if x.get("jangkar") not in JANGKAR]
+        pada = [d.get(k) for k in ("pada", "hasil_pada", "label_pada")] + list((d.get("ketukan") or {}).values())
+        pada += [x.get("pada") for k in ("label", "seri", "langkah") for x in lst(k)]
         m += [f"adegan {i}: pada '{w}' ga ada di teks" for w in pada if w and norm(w) not in kata]
+        # angka di teks bikin forced alignment (suara.py) gagal hitung kata → tulis pakai huruf. Angka di layar taruh di data.
+        m += [f"adegan {i}: '{w}' ada angkanya, tulis pakai huruf" for w in teks.split() if re.search(r"\d", w)]
         low = f" {teks.lower()} "
         m += [f"adegan {i}: frasa haram '{h}'" for h in HARAM if re.search(rf"\b{h}\b", low)]
     af = n.get("affiliate")

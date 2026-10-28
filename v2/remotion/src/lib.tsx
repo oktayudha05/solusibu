@@ -1,9 +1,10 @@
 import React from 'react'
-import { Easing, Img, interpolate, staticFile } from 'remotion'
+import { AbsoluteFill, Easing, Img, interpolate, random, staticFile } from 'remotion'
 import { loadFont } from '@remotion/fonts'
 import { FONTS, Tema } from './tema'
 
-FONTS.forEach(([family, file, opt]) => loadFont({ family, url: staticFile(`fonts/${file}.woff2`), ...(opt ?? {}) }))
+// font WAJIB ke-load sebelum fitText/measureText (ukurannya salah diam-diam kalau belum)
+export const fontSiap = Promise.all(FONTS.map(([family, file, opt]) => loadFont({ family, url: staticFile(`fonts/${file}.woff2`), ...(opt ?? {}) })))
 
 export const FPS = 30
 // safe area Shorts (px layar 1080x1920): atas 10%, bawah 20% (UI YouTube), kiri-kanan 64
@@ -14,8 +15,14 @@ export const lin: E = (x) => x
 export const out2 = Easing.out(Easing.quad), inOut3 = Easing.inOut(Easing.cubic), out3 = Easing.out(Easing.cubic)
 export const out5 = Easing.out(Easing.poly(5)), in2 = Easing.in(Easing.quad), back = Easing.out(Easing.back(3))
 
+// easing ala After Effects (dari proto R2)
+export const ease = {
+  inOut3: inOut3, inOut5: Easing.inOut(Easing.poly(5)), out3, out5, in2, in3: Easing.in(Easing.cubic),
+  back: Easing.out(Easing.back(1.7)), aeEasy: Easing.bezier(0.75, 0, 0.25, 1),
+}
 // keyframe [detik, nilai, ease menuju key ini]; di luar rentang ditahan
-export const kf = (t: number, keys: [number, number, E?][]) => {
+export type Key = [number, number, E?]
+export const kf = (t: number, keys: Key[]) => {
   if (t <= keys[0][0]) return keys[0][1]
   for (let i = 1; i < keys.length; i++) {
     const [t1, v1, e] = keys[i], [t0, v0] = keys[i - 1]
@@ -74,3 +81,20 @@ export const Sprite: React.FC<{ src: string; warna?: string; fx: string; style: 
   )
 }
 
+
+// 0→1 antara a..b
+export const prog = (t: number, a: number, b: number, e: E = lin) =>
+  interpolate(t, [a, b], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: e })
+// misregistrasi riso (efek 0.5 → -2px/1.5px) & bayangan keras
+export const misreg = (warna: string, ef = 0.5) => `${-4 * ef}px ${3 * ef}px 0 ${warna}`
+export const bayang = (warna: string, d = 9) => `drop-shadow(${d}px ${d}px 0 ${warna})`
+// halftone kotak (tanpa bulat), dirasterisasi sekali
+export const halftone = (warna: string, step = 10, titik = 3) =>
+  `url("data:image/svg+xml,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='${step}' height='${step}'><rect width='${titik}' height='${titik}' fill='${warna}'/></svg>`)}") 0 0/${step}px ${step}px`
+// grain murah: 1 PNG noise di-tile, digeser acak tiap 2 frame (bukan feTurbulence per frame)
+export const GrainPng: React.FC<{ frame: number; opacity: number }> = ({ frame, opacity }) => {
+  const k = Math.floor(frame / 2)
+  return <AbsoluteFill style={{ pointerEvents: 'none', opacity, mixBlendMode: 'overlay',
+    backgroundImage: `url(${staticFile('tekstur/grain.png')})`, backgroundSize: '512px 512px', imageRendering: 'pixelated',
+    backgroundPosition: `${Math.floor(random(`gx${k}`) * 512)}px ${Math.floor(random(`gy${k}`) * 512)}px` }} />
+}

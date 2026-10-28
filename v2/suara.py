@@ -3,7 +3,7 @@ Jalannya di GitHub Actions (.github/workflows/render-v2.yml), bukan di laptop.
   render  : python suara.py naskah/<slug>.json out/<slug>   -> suara.wav, props.json, suara-log.json
   kandidat: python suara.py --kandidat out/kandidat-suara    -> kandidat-N.wav + kandidat-N.json (Oring pilih satu,
             lalu salin jadi suara/referensi.wav + suara/referensi.json dan commit)."""
-import argparse, json, os, pathlib, subprocess, sys, time
+import argparse, json, os, pathlib, re, subprocess, sys, time
 
 import numpy as np, soundfile as sf, torch
 
@@ -70,7 +70,8 @@ from ctc_forced_aligner import (generate_emissions, get_alignments, get_spans, l
 t1 = time.time()
 am, tok = load_alignment_model("cpu", dtype=torch.float32)
 em, stride = generate_emissions(am, load_audio(str(wav), am.dtype, am.device), batch_size=4)
-toks, txt = preprocess_text(teks, romanize=False, language="ind")
+# tanda hubung ("kira-kira") bikin aligner gagal (k != -): buang buat alignment aja, jumlah kata tetap sama
+toks, txt = preprocess_text(re.sub(r"[-–—]", "", teks), romanize=False, language="ind")
 seg, scores, blank = get_alignments(em, toks, tok)
 hasil = postprocess_results(txt, get_spans(toks, seg, blank), stride, scores)
 t_align = time.time() - t1

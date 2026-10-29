@@ -1,0 +1,194 @@
+{
+ "slug": "pemutih-porselen",
+ "judul": "Pemutih dicampur pembersih porselen? Jangan",
+ "tema": "E3",
+ "cek_fakta": true,
+ "adegan": [
+  {
+   "template": "bedah-label",
+   "teks": "Biar kamar mandi kinclong, pemutih dicampur pembersih porselen? Eh, jangan ya.",
+   "kunci": [
+    "jangan:jangan dicampur"
+   ],
+   "data": {
+    "objek": "sabun-cuci",
+    "label": [
+     {
+      "teks": "pemutih",
+      "titik": [
+       0.5,
+       0.3
+      ],
+      "pada": "pemutih"
+     },
+     {
+      "teks": "+ pembersih porselen",
+      "titik": [
+       0.5,
+       0.55
+      ],
+      "pada": "porselen"
+     },
+     {
+      "teks": "= gas bahaya",
+      "titik": [
+       0.5,
+       0.8
+      ],
+      "pada": "jangan",
+      "warna": "panas"
+     }
+    ],
+    "karakter": "ibu-kaget"
+   }
+  },
+  {
+   "template": "rantai-proses",
+   "teks": "Kok bisa? Gini, pemutih itu bahannya klorin. Nah, pembersih porselen ada yang isinya asam. Kalau dua-duanya ketemu, keluar gas klorin.",
+   "kunci": [
+    "gas:gas klorin"
+   ],
+   "data": {
+    "langkah": [
+     {
+      "teks": "pemutih: klorin",
+      "ikon": "sabun-cuci",
+      "pada": "klorin"
+     },
+     {
+      "teks": "pembersih: asam",
+      "ikon": "cuka",
+      "pada": "asam"
+     },
+     {
+      "teks": "ketemu",
+      "ikon": [
+       "sabun-cuci",
+       "cuka"
+      ],
+      "pada": "ketemu"
+     },
+     {
+      "teks": "gas klorin",
+      "ikon": [
+       "asap",
+       "racun"
+      ],
+      "pada": "gas"
+     }
+    ],
+    "karakter": "ibu-jelasin"
+   }
+  },
+  {
+   "template": "bedah-label",
+   "teks": "Terus kenapa bahaya? Soalnya gas ini bikin perih mata sama tenggorokan. Kehirup dikit aja, bisa batuk sampai sesak napas.",
+   "kunci": [
+    "sesak"
+   ],
+   "data": {
+    "objek": "asap",
+    "label": [
+     {
+      "teks": "mata perih",
+      "titik": [
+       0.4,
+       0.3
+      ],
+      "pada": "perih",
+      "warna": "panas"
+     },
+     {
+      "teks": "batuk",
+      "titik": [
+       0.6,
+       0.5
+      ],
+      "pada": "batuk"
+     },
+     {
+      "teks": "sesak napas",
+      "titik": [
+       0.5,
+       0.75
+      ],
+      "pada": "sesak",
+      "warna": "panas"
+     }
+    ],
+    "karakter": "ibu-mikir"
+   }
+  },
+  {
+   "template": "banding-belah",
+   "teks": "Makanya jangan asal dicampur. Sebelum dipakai, baca labelnya dulu ya.",
+   "kunci": [
+    "labelnya:baca label"
+   ],
+   "data": {
+    "atas": {
+     "label": "asal dicampur",
+     "cap": "SALAH",
+     "ikon": [
+      "sabun-cuci",
+      "cuka"
+     ],
+     "pada": "dicampur"
+    },
+    "bawah": {
+     "label": "baca label dulu",
+     "cap": "BENAR",
+     "ikon": "sabun-cuci",
+     "pada": "baca"
+    },
+    "pemenang": "bawah",
+    "pemenang_pada": "labelnya",
+    "karakter": "ibu-nunjuk"
+   }
+  },
+  {
+   "template": "langkah-tangan",
+   "teks": "Nah, kalau terlanjur kecampur, langsung keluar cari udara segar. Biarin ruangannya ganti udara dulu. Kalau sampai sesak, cepet ke dokter.",
+   "kunci": [
+    "keluar"
+   ],
+   "data": {
+    "langkah": [
+     {
+      "teks": "keluar, udara segar",
+      "aksi": "asap",
+      "pada": "keluar"
+     },
+     {
+      "teks": "tunggu ganti udara",
+      "aksi": "asap",
+      "pada": "ganti"
+     },
+     {
+      "teks": "sesak? ke dokter",
+      "aksi": "ibu-kaget",
+      "pada": "dokter"
+     }
+    ],
+    "karakter": "nenek-nasihat"
+   }
+  },
+  {
+   "template": "payoff-loop",
+   "teks": "Jadi pemutih jangan ketemu pembersih porselen ya, Bun. Soalnya kalau dicampur,",
+   "kunci": [
+    "ketemu:jangan ketemu"
+   ],
+   "data": {
+    "rangkum": [
+     "klorin",
+     "asam",
+     "gas klorin",
+     "baca label"
+    ],
+    "karakter": "ibu-jempol"
+   }
+  }
+ ],
+ "affiliate": null
+}

@@ -1,0 +1,107 @@
+[
+ {
+  "slug": "minyak-muncrat",
+  "judul": "Setetes air bikin minyak muncrat, kok bisa?",
+  "skor": 25,
+  "status": "jadi",
+  "catatan": "T1 R3; video ulang 29 Okt (jembatan)"
+ },
+ {
+  "slug": "nasi-sisa",
+  "judul": "Nasi sisa dipanasin lagi, aman?",
+  "skor": 25,
+  "status": "jadi",
+  "catatan": "T2 R3; video ulang 29 Okt (jembatan)"
+ },
+ {
+  "slug": "pemutih-porselen",
+  "judul": "Pemutih dicampur pembersih porselen? Jangan",
+  "skor": 25,
+  "status": "baru",
+  "catatan": "T3 R3 §3.3 (riset lengkap)"
+ },
+ {
+  "slug": "roti-berjamur",
+  "judul": "Roti jamuran dikit, buang pojoknya aja cukup?",
+  "skor": 25,
+  "status": "baru",
+  "catatan": "T4 R3"
+ },
+ {
+  "slug": "ayam-beku-meja",
+  "judul": "Ayam beku dicairin di meja dapur, aman?",
+  "skor": 24,
+  "status": "baru",
+  "catatan": "T5 R3"
+ },
+ {
+  "slug": "telur-rebus-hijau",
+  "judul": "Kuning telur rebus ada lingkaran hijau, kenapa?",
+  "skor": 24,
+  "status": "baru",
+  "catatan": "T6 R3"
+ },
+ {
+  "slug": "bawang-nangis",
+  "judul": "Motong bawang kok bikin nangis?",
+  "skor": 24,
+  "status": "baru",
+  "catatan": "T8 R3"
+ },
+ {
+  "slug": "apel-cokelat",
+  "judul": "Apel dipotong kok cepet cokelat?",
+  "skor": 24,
+  "status": "baru",
+  "catatan": "T9 R3"
+ },
+ {
+  "slug": "masakan-panas-kulkas",
+  "judul": "Masakan panas boleh langsung masuk kulkas?",
+  "skor": 24,
+  "status": "baru",
+  "catatan": "T10 R3"
+ },
+ {
+  "slug": "soda-kue-cuka",
+  "judul": "Soda kue + cuka buat bersih-bersih, beneran?",
+  "skor": 24,
+  "status": "baru",
+  "catatan": "T13 R3"
+ },
+ {
+  "slug": "sayur-kusam",
+  "judul": "Sayur hijau direbus kok jadi kusam?",
+  "skor": 24,
+  "status": "baru",
+  "catatan": "T14 R3"
+ },
+ {
+  "slug": "telur-mengapung",
+  "judul": "Telur mengapung artinya busuk?",
+  "skor": 23,
+  "status": "baru",
+  "catatan": "T7 R3"
+ },
+ {
+  "slug": "microwave-ga-rata",
+  "judul": "Makanan dari microwave kok panasnya ga rata?",
+  "skor": 23,
+  "status": "baru",
+  "catatan": "T12 R3"
+ },
+ {
+  "slug": "panci-presto",
+  "judul": "Kenapa panci presto bikin daging cepet empuk?",
+  "skor": 22,
+  "status": "baru",
+  "catatan": "T11 R3"
+ },
+ {
+  "slug": "pisang-kulkas",
+  "judul": "Pisang di kulkas kulitnya kok jadi hitam?",
+  "skor": 21,
+  "status": "baru",
+  "catatan": "T15 R3"
+ }
+]

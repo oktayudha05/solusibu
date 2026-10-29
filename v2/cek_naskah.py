@@ -1,5 +1,5 @@
 """Cek naskah.json v2 sebelum di-push (stdlib, beberapa detik). Juga dijalanin workflow sebelum render.
-Pakai: python3 cek_naskah.py naskah/<slug>.json [...]   -> exit 1 + daftar masalah kalau ada yg salah."""
+Pakai: python3 cek_naskah.py naskah/<slug>.json [...]   -> exit 1 + daftar masalah kalau ada yg salah ("peringatan:" ga bikin gagal)."""
 import json, pathlib, re, sys
 
 DIR = pathlib.Path(__file__).parent
@@ -14,6 +14,10 @@ KOLOM_ASET = ("karakter", "objek")
 HARAM = ["tahukah kamu", "pernahkah kamu", "fakta menarik", "yuk simak", "mari kita", "di video ini", "melainkan", "semoga bermanfaat",
          "penting untuk diingat", "jadi mulai sekarang", "rahasia", "jitu", "ampuh", "dijamin", "wajib tahu", "game changer",
          "solusi terbaik", "anda", "tentunya", "selain itu", "oleh karena itu", "merupakan", "adalah sebuah"]
+# jembatan antar adegan (GAYA-NASKAH "Alur & jembatan"): adegan 2.. wajib ada salah satu di awal kalimat/klausa
+PENGHUBUNG = {"nah", "terus", "trus", "soalnya", "makanya", "jadi", "padahal", "gini", "kalau", "kalo", "kenapa", "kok", "karena",
+              "garagara", "masalahnya", "tapi", "eh", "akhirnya", "abis", "habis", "nanti"}
+MAKS_KATA = 12  # per kalimat; lebih = peringatan (ga bikin gagal)
 norm = lambda w: re.sub(r"[^a-z0-9]", "", w.lower())  # sama dgn norm() di remotion/src/template.tsx
 
 
@@ -44,6 +48,9 @@ def cek(p):
         m += [f"adegan {i}: pada '{w}' ga ada di teks" for w in pada if w and norm(w) not in kata]
         # angka di teks bikin forced alignment (suara.py) gagal hitung kata → tulis pakai huruf. Angka di layar taruh di data.
         m += [f"adegan {i}: '{w}' ada angkanya, tulis pakai huruf" for w in teks.split() if re.search(r"\d", w)]
+        buka = {norm(w) for k in re.split(r"[.?!,]+", teks) for w in k.split()[:2]}  # penghubung harus di awal kalimat/klausa ("jadi uap" ga diitung)
+        if i > 1 and not buka & PENGHUBUNG: m.append(f"adegan {i}: ga ada kata penghubung (nah/terus/soalnya/makanya/jadi/padahal/kalau/...), sambungin ke adegan sebelumnya")
+        m += [f"peringatan: adegan {i}: kalimat {len(k.split())} kata (>{MAKS_KATA}), pecah: '{k.strip()[:50]}'" for k in re.split(r"[.?!]+", teks) if len(k.split()) > MAKS_KATA]
         low = f" {teks.lower()} "
         m += [f"adegan {i}: frasa haram '{h}'" for h in HARAM if re.search(rf"\b{h}\b", low)]
     af = n.get("affiliate")
@@ -57,5 +64,5 @@ def cek(p):
 if __name__ == "__main__":
     gagal = 0
     for p in sys.argv[1:]:
-        for x in cek(p): print(f"{p}: {x}"); gagal = 1
+        for x in cek(p): print(f"{p}: {x}"); gagal |= not x.startswith("peringatan")
     sys.exit(gagal)

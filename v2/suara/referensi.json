@@ -1,8 +1,8 @@
 {
  "teks": "Ibu-ibu, pernah nggak sih lagi masak terus kepikiran, kok bisa gini ya? Nah, hari ini aku cerita dikit, santai aja, sambil nunggu nasinya mateng.",
- "seed": 11,
- "speed": 1.0,
+ "seed": 55,
+ "speed": 1.1,
  "instruct": "female, young adult, moderate pitch",
  "step": 32,
- "catatan": "SEMENTARA (kandidat-1) buat tes end-to-end; ganti setelah Oring milih"
+ "catatan": "kandidat-5 pilihan Oring (run 40686124110), 2026-10-29"
 }

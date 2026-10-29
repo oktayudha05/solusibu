@@ -2,7 +2,7 @@
 Alurnya: naskah.json (ditulis penulis) → `suara.py` (suara + timing per kata) → `remotion render`. Semua jalan di GitHub Actions (`.github/workflows/render-v2.yml`), laptop ga dipakai buat suara/render. Gaya visual: `STYLE.md` (E3 marun, angka di `remotion/src/tema.ts`). Gaya naskah: `GAYA-NASKAH.md`.
 
 ## Jalanin (GitHub Actions, branch `v2`)
-- **Sebelum push**: `python3 cek_naskah.py naskah/<slug>.json` harus lolos (template, data wajib, id aset, kata `kunci`/`pada` ada di teks, frasa haram, disclosure affiliate, `cek_fakta`). Workflow ngecek ulang sebelum render.
+- **Sebelum push**: `python3 cek_naskah.py naskah/<slug>.json` harus lolos (template, data wajib, id aset, kata `kunci`/`pada` ada di teks, frasa haram, penghubung di awal adegan 2 dst, disclosure affiliate, `cek_fakta`; kalimat >12 kata = peringatan). Workflow ngecek ulang sebelum render.
 - **Render**: commit + push `v2/naskah/<slug>.json` ke branch `v2` → workflow render naskah yg berubah di commit terakhir → artifact `video-<nomor run>` (mp4 + suara-log). Oring download, review.
 - **Kandidat suara** (sekali, atau kalau mau ganti suara): push commit yg pesannya ada `[kandidat-suara]` (dan nyentuh `v2/suara/` atau `v2/suara.py`) → artifact `kandidat-suara` (kandidat-1..5 .wav + .json).
 - Setelah Oring milih kandidat N: salin `kandidat-N.wav` → `v2/suara/referensi.wav` dan `kandidat-N.json` → `v2/suara/referensi.json`, commit, push. Semua render berikutnya clone suara itu + seed tetap → satu orang yg sama.

@@ -18,7 +18,7 @@
   },
   {
    "template": "skala-angka",
-   "teks": "Minyak goreng panasnya sampai seratus sembilan puluh derajat. Air mendidih di seratus.",
+   "teks": "Gini, Bun. Minyak goreng panasnya bisa sampai seratus sembilan puluh derajat. Padahal air udah mendidih di seratus.",
    "kunci": [
     "mendidih:100°C"
    ],
@@ -46,14 +46,14 @@
   },
   {
    "template": "penampang-zoom",
-   "teks": "Air lebih berat, jadi tenggelam ke dasar. Langsung mendidih, jadi uap, minyaknya kelempar.",
+   "teks": "Nah, air itu lebih berat dari minyak. Makanya tetesnya tenggelam ke dasar. Di situ airnya langsung mendidih, berubah jadi uap. Uapnya ngembang cepet, minyaknya ikut kelempar.",
    "kunci": [
     "tenggelam",
     "uap"
    ],
    "data": {
     "ketukan": {
-     "jatuh": "Air",
+     "jatuh": "air",
      "dasar": "tenggelam",
      "didih": "mendidih",
      "uap": "uap",
@@ -84,7 +84,7 @@
   },
   {
    "template": "skala-angka",
-   "teks": "Satu sendok makan air jadi uap, ngembang sekitar seribu enam ratus kali. Kira-kira dua puluh empat liter.",
+   "teks": "Terus kenapa bisa sekenceng itu? Soalnya uap itu ngembang sekitar seribu enam ratus kali. Satu sendok makan air bisa jadi kira-kira dua puluh empat liter uap.",
    "kunci": [
     "seribu:1.600 kali"
    ],
@@ -104,7 +104,7 @@
   },
   {
    "template": "langkah-tangan",
-   "teks": "Makanya bahan dilap kering dulu. Masukinnya pelan, jangan dijatuhin dari atas.",
+   "teks": "Makanya, sebelum digoreng bahannya dilap kering dulu. Terus masukinnya pelan aja, jangan dijatuhin dari atas.",
    "kunci": [
     "kering"
    ],
@@ -126,7 +126,7 @@
   },
   {
    "template": "langkah-tangan",
-   "teks": "Kalau minyaknya kebakar, jangan disiram air, wajan jangan dipindah. Matikan kompor, tutup pakai tutup logam.",
+   "teks": "Nah, kalau minyaknya sampai kebakar, jangan disiram air. Nanti airnya jadi uap kayak tadi. Wajan juga jangan dipindah. Matikan kompor, terus tutup pakai tutup logam.",
    "kunci": [
     "kebakar:kebakar?"
    ],
@@ -158,7 +158,7 @@
   },
   {
    "template": "payoff-loop",
-   "teks": "Udah, keringin dulu ya. Soalnya kalau enggak,",
+   "teks": "Udah, gitu aja. Keringin dulu ya, Bun. Soalnya kalau enggak,",
    "kunci": [
     "keringin:keringin!"
    ],

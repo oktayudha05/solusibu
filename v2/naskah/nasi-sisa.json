@@ -33,10 +33,10 @@
   },
   {
    "template": "rantai-proses",
-   "teks": "Soalnya beras itu bawa spora bakteri. Dimasak pun, sporanya tetap hidup. Terus nasinya dibiarin di suhu ruang, bakterinya beranak, bikin racun. Racun ini tahan panas. Dipanasin seratus dua puluh satu derajat setengah jam, masih utuh. Kemakan, bisa mual, muntah.",
+   "teks": "Kok bisa? Beras mentah itu bisa bawa spora bakteri. Spora itu kayak biji yang lagi tidur. Makanya dimasak pun, sporanya tetap hidup. Nah, masalahnya kalau nasi dibiarin di suhu ruang. Sporanya bangun, terus bakterinya beranak. Bakteri ini ngeluarin racun.",
    "kunci": [
     "spora",
-    "seratus:121°C"
+    "ruang:suhu ruang"
    ],
    "data": {
     "langkah": [
@@ -67,7 +67,7 @@
       "pada": "beranak"
      },
      {
-      "teks": "racun tahan panas",
+      "teks": "keluar racun",
       "ikon": [
        "nasi-piring",
        "racun"
@@ -79,35 +79,97 @@
    }
   },
   {
+   "template": "bedah-label",
+   "teks": "Terus kenapa dipanasin enggak mempan? Soalnya racun ini bandel sama panas. Dipanasin seratus dua puluh satu derajat setengah jam, masih utuh. Kalau kemakan, bisa mual sampai muntah.",
+   "kunci": [
+    "utuh:121°C, masih utuh"
+   ],
+   "data": {
+    "objek": "nasi-piring",
+    "label": [
+     {
+      "teks": "racun tahan panas",
+      "titik": [
+       0.5,
+       0.35
+      ],
+      "pada": "bandel",
+      "warna": "panas"
+     },
+     {
+      "teks": "121°C 30 menit: utuh",
+      "titik": [
+       0.4,
+       0.55
+      ],
+      "pada": "utuh"
+     },
+     {
+      "teks": "mual, muntah",
+      "titik": [
+       0.6,
+       0.7
+      ],
+      "pada": "muntah"
+     }
+    ],
+    "karakter": "ibu-kaget"
+   }
+  },
+  {
+   "template": "banding-belah",
+   "teks": "Makanya nasi sisa jangan dibiarin dingin di rice cooker. Mending dibagi ke wadah kecil, terus masuk kulkas.",
+   "kunci": [
+    "kulkas"
+   ],
+   "data": {
+    "atas": {
+     "label": "dingin di rice cooker",
+     "cap": "SALAH",
+     "ikon": "rice-cooker",
+     "pada": "dingin"
+    },
+    "bawah": {
+     "label": "wadah kecil, kulkas",
+     "cap": "BENAR",
+     "ikon": "nasi-piring",
+     "pada": "wadah"
+    },
+    "pemenang": "bawah",
+    "pemenang_pada": "kulkas",
+    "karakter": "ibu-nunjuk"
+   }
+  },
+  {
    "template": "langkah-tangan",
-   "teks": "Jadi jangan dibiarin dingin di rice cooker. Bagi ke wadah kecil, masuk kulkas paling lambat sejam, habisin sehari. Panasin sekali aja, sampai ngebul.",
+   "teks": "Masuk kulkasnya paling lambat sejam ya. Terus habisin dalam sehari. Kalau mau dimakan, panasin sekali aja sampai ngebul.",
    "kunci": [
     "sejam:≤ 1 jam"
    ],
    "data": {
     "langkah": [
      {
-      "teks": "jangan di rice cooker",
-      "aksi": "rice-cooker",
-      "pada": "rice"
-     },
-     {
       "teks": "kulkas ≤1 jam",
       "aksi": "nasi-piring",
-      "pada": "kulkas"
+      "pada": "sejam"
+     },
+     {
+      "teks": "habisin ≤24 jam",
+      "aksi": "nasi-piring",
+      "pada": "sehari"
      },
      {
       "teks": "panasin sekali",
       "aksi": "asap",
-      "pada": "Panasin"
+      "pada": "panasin"
      }
     ],
-    "karakter": "ibu-nunjuk"
+    "karakter": "nenek-nasihat"
    }
   },
   {
    "template": "payoff-loop",
-   "teks": "Masalahnya tuh di cara nyimpen, Bun. Kalau salah nyimpen, terus",
+   "teks": "Jadi yang bikin bahaya itu cara nyimpennya, Bun. Kalau salah nyimpen, terus",
    "kunci": [
     "nyimpen:cara nyimpen"
    ],
